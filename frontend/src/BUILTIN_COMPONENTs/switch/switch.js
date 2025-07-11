@@ -309,8 +309,8 @@ const Switch = ({
         className="mini-ui-switch-thumb"
         style={{
           transition:
-            "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
+            "left 0.2s ease, " +
+            "background-color 0.12s ease",
           position: "absolute",
           top: "50%",
           left: on
@@ -336,7 +336,7 @@ const Switch = ({
       <Icon
         src={on ? on_icon_src : off_icon_src}
         style={{
-          transition: "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+          transition: "left 0.2s ease",
           position: "absolute",
           top: "50%",
           left:

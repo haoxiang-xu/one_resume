@@ -1,110 +1,78 @@
-# **Resume Score:** `8.5`
+# **Resume Score:** `7.0`
 
-**Comment:** The applicant demonstrates outstanding alignment with nearly all technical and architectural requirements for the Data Solution Architect role, including deep expertise in Microsoft Azure, data warehousing, BI, analytics architecture, and relevant modeling tools (Erwin, Visio). The resume also shows strong leadership and mentoring abilities, stakeholder collaboration, and Agile experience, fulfilling the majority of key responsibilities. However, there is a significant shortfall regarding the required 7+ years of progressive experience in a client-facing Data Solution Architect role—the documented experience falls below 2 years. The lack of Azure or industry-recognized certifications is another minor gap.
+**Comment:** The applicant demonstrates excellent technical skills, modern stack expertise, and full SDLC project leadership—matching Amazon's requirements for system design, DevOps, CI/CD, and end-to-end delivery. However, the candidate does not meet the strict requirement of 3+ years of non-internship, professional software development experience, nor 2+ years of non-internship software architecture experience. Most of the detailed work is from academic projects or a single 6-month industry short-term role. The prestigious education and depth of skills are partial compensating strengths.
 
-**Feedback:** To improve fit for senior architect roles, gain additional years of hands-on, client-facing data solution architecture experience and obtain relevant Azure or industry certifications. Consider strengthening your resume with longer-term or additional roles to clearly meet the 7+ years requirement.
+**Feedback:** Pursue additional industry roles to accumulate 3+ years of non-internship, professional software development experience, and focus on gaining 2+ years of system design/architecture in a clear work setting. Highlight future professional projects to reduce reliance on academic examples.
 
 ## Qualification Match Report
 
 ### Skills
 
-- **Qualification**: Data Warehouse architecture
+- **Qualification**: software development
   - **Score**: `10`
-  - **Comment**: The resume explicitly lists 'Data Warehouse Architecture' under Skills, and describes experience designing and implementing backend architectures supporting complex data workflows. This is further evidenced by mentions of Kimball methodology and data modeling.
+  - **Comment**: The candidate has multiple roles explicitly titled 'Software Development Engineer', 'Full Stack Developer', and 'Lead Backend Developer.' Each experience details hands-on software development responsibilities including designing, building, and deploying production systems. This is strongly corroborated by the summary and the listed skills.
 
-- **Qualification**: Business Intelligence architecture
-  - **Score**: `10`
-  - **Comment**: Business Intelligence (BI) is listed under Skills. The candidate has built analytics platforms, reporting solutions, and dashboards, and is proficient in relevant BI tools such as Power BI, SSAS, and SSRS.
+- **Qualification**: software architecture
+  - **Score**: `9`
+  - **Comment**: Resume states 'Expertise in backend architecture' and multiple experiences describe leading the 'design, development, and deployment' of systems, 'architecting' solutions, and designing 'backend architecture.' The skills section features 'System Architecture & Scalability.' This is clear, repeated evidence of direct software architecture work.
 
-- **Qualification**: Analytics solution architecture
-  - **Score**: `10`
-  - **Comment**: Describes multiple experiences architecting analytics and AI platforms, overseeing analytics workflows, and building dashboards. The resume positions the candidate as a solution architect in both work experiences.
+- **Qualification**: systems design
+  - **Score**: `9`
+  - **Comment**: Terms like 'system design', 'backend architecture', 'distributed systems', 'modular backend REST API implementation,' and leading end-to-end solution delivery provide strong support. The experience and skills sections both reference designing and architecting complex systems.
 
-- **Qualification**: Microsoft Azure technologies
-  - **Score**: `10`
-  - **Comment**: Lists 'Microsoft Azure', 'Azure Synapse Analytics', and 'Azure Data Factory' under Cloud & Big Data skills. Demonstrates hands-on expertise.
-
-- **Qualification**: Kimball methodology
-  - **Score**: `10`
-  - **Comment**: Kimball methodology is explicitly listed in the Data Warehousing & BI section of Skills.
-
-- **Qualification**: Modern data warehousing
-  - **Score**: `10`
-  - **Comment**: Resume displays current experience with cloud data platforms (Azure, Synapse, Databricks) and modern ETL/data integration tools, signaling up-to-date data warehousing knowledge.
-
-- **Qualification**: SQL Server
-  - **Score**: `10`
-  - **Comment**: SQL Server is listed directly under Microsoft Data Platform Skills. Deep experience is implied.
-
-- **Qualification**: SSIS
-  - **Score**: `10`
-  - **Comment**: SSIS (SQL Server Integration Services) is specifically named under Microsoft Data Platform Skills.
-
-- **Qualification**: SSAS
-  - **Score**: `10`
-  - **Comment**: SSAS (SQL Server Analysis Services) is specifically listed under Microsoft Data Platform Skills.
-
-- **Qualification**: SSRS
-  - **Score**: `10`
-  - **Comment**: SSRS (SQL Server Reporting Services) is explicitly listed under Microsoft Data Platform Skills.
-
-- **Qualification**: Power BI
-  - **Score**: `10`
-  - **Comment**: Power BI is named both under Frontend & Visualization and Microsoft Data Platform Skills. Candidate also discusses delivering data analytics dashboards.
-
-- **Qualification**: Azure Synapse
-  - **Score**: `10`
-  - **Comment**: Azure Synapse Analytics is named under Cloud & Big Data Skills.
-
-- **Qualification**: Databricks
-  - **Score**: `10`
-  - **Comment**: Databricks is explicitly listed under Cloud & Big Data Skills.
-
-- **Qualification**: Azure Data Factory
-  - **Score**: `10`
-  - **Comment**: Azure Data Factory is explicitly listed as a skill under Cloud & Big Data.
-
-- **Qualification**: Data modeling
-  - **Score**: `10`
-  - **Comment**: 'Data Modeling' appears across Skills, with additional supporting examples (advanced data modeling with MySQL, normalization, Erwin Data Modeler).
-
-- **Qualification**: Design software (Erwin, Visio)
-  - **Score**: `10`
-  - **Comment**: Lists Erwin Data Modeler and Microsoft Visio explicitly under Modeling & Design Tools.
-
-- **Qualification**: Quality assurance
+- **Qualification**: DevOps
   - **Score**: `8`
-  - **Comment**: Resume references 'robust performance,' 'system scalability, security, and robust performance,' and 'query optimization.' While direct QA process or testing language is mildly implicit, the content suggests strong experience ensuring quality in deployed solutions.
+  - **Comment**: Experience section references working in a 'DevOps environment,' and leading deployment with Docker and AWS EC2, as well as 'continuous iteration.' Skills section explicitly lists 'Cloud, DevOps & Deployment,' mentioning containerization, orchestration, cloud services, and CI/CD, showing hands-on DevOps practice.
 
-- **Qualification**: Agile implementation
-  - **Score**: `10`
-  - **Comment**: Lists Agile Development and SDLC under Skills, and describes leading projects using Agile methodologies.
+- **Qualification**: CI/CD
+  - **Score**: `8`
+  - **Comment**: The skills section lists 'CI/CD (Automated Testing, Build & Deployment)', and the resume mentions efforts in continuous deployment and automated testing. Indirect evidence from DevOps/cloud deployment and system reliability improvements substantiates direct experience with CI/CD.
 
-- **Qualification**: Coaching and mentoring data teams
-  - **Score**: `10`
-  - **Comment**: Resume states 'provided technical mentorship across the team' and 'technical leadership,' showing clear experience in coaching and developing team members.
+- **Qualification**: security implementation
+  - **Score**: `7`
+  - **Comment**: The skills section refers to 'Security Implementation (Authentication, Role-based Access Control)', and in the experience section, there's mention of owning backend features, including authentication and role management. Evidence for security is specific to application-level security, not security engineering at scale, but implementation of core security elements is demonstrated.
 
-- **Qualification**: Technical leadership
+- **Qualification**: source control management
+  - **Score**: `9`
+  - **Comment**: Skills section lists 'Source Control Management (Git, Code Reviews).' Given industry standards and the candidate's repeated references to SDLC, code reviews, and Agile methodologies, there's strong evidence of direct experience managing source code using standard tools.
+
+- **Qualification**: code reviews
+  - **Score**: `8`
+  - **Comment**: Skills section says 'Code Reviews,' and source control (Git) is mentioned. While specific projects referencing performing code reviews aren’t detailed, the combination of key roles, Agile workflow, and skill listing provides strong evidence of code review participation.
+
+- **Qualification**: build processes
+  - **Score**: `8`
+  - **Comment**: Skills and experience reference CI/CD, Docker, automated build & deployment, and working with scalable deployments. These require knowledge and practice of software build processes, substantiating a strong match.
+
+- **Qualification**: testing
+  - **Score**: `8`
+  - **Comment**: Resume references 'Automated Testing' under CI/CD in the skills section, 'live user testing' during project experience, and responsibilities for ensuring reliability and robustness. Implies strong engagement with software testing, including automation and user tests.
+
+- **Qualification**: end-to-end software solution delivery
   - **Score**: `10`
-  - **Comment**: 'Technical leader' and 'Technical Leadership' are prominent in both summary and Skills, with multiple leadership roles detailed in the Experience section.
+  - **Comment**: Multiple experiences state 'managing all stages of the software development lifecycle,' 'end-to-end project delivery,' and 'oversaw the full software development lifecycle.' These are direct and repeated confirmations of this qualification.
+
+- **Qualification**: programming with at least one software programming language
+  - **Score**: `10`
+  - **Comment**: Skills section lists several languages: 'Python (PyTorch, Data Science, Scripting)', 'JavaScript (ECMAScript 6+, React.js)', 'SQL (MySQL, Relational Databases)', and 'TypeScript.' Every experience highlights programming responsibilities in Python, JavaScript, and more. This requirement is extremely well satisfied.
 
 ### Qualifications
 
-- **Qualification**: Bachelor’s degree in Computer Science, Information Systems or related field
+- **Qualification**: 3+ years of non-internship professional software development experience
+  - **Score**: `5`
+  - **Comment**: The resume details software development positions since at least April 2023 (Lead Backend Developer, Bachelor's Capstone Project), continuing through March–August 2024 (Software Development Engineer), and a further Project Manager/Developer role in May–June 2025. However, much of the experience is university project-based (capstone projects), which may be considered academic rather than full professional non-internship roles. Only the role at Shanghai Mengou Technology Co., Ltd (Mar–Aug 2024, 6 months) is a clear non-internship industry position. Given the extensive project leadership and SDLC ownership, but a lack of 3+ years in strictly non-internship, industry settings, the score is 5.
+
+- **Qualification**: 2+ years of non-internship design or architecture experience
+  - **Score**: `4`
+  - **Comment**: There is significant evidence of system design and backend architecture ('Led the design, development, and deployment...', 'Spearheaded a cross-functional team to architect...'). However, most of the direct architecture experience appears in either academic capstone projects or the single 6-month industry stint. No clear evidence of 2+ years non-internship design or architecture experience is present, but the candidate’s impact on production-grade systems and repeated mentions of system design merit a moderate score.
+
+- **Qualification**: Bachelor's degree in computer science or equivalent
   - **Score**: `10`
-  - **Comment**: The resume states: 'Bachelor of Science in Computer Science at University of British Columbia, Canada (Sep 2020 – Nov 2023) - GPA: 3.9/4.0'. This exactly matches the requirement of a Bachelor's degree in Computer Science or related field.
-
-- **Qualification**: 7+ years of progressive experience in a client-facing Data Solution Architect role
-  - **Score**: `3`
-  - **Comment**: The resume shows strong, relevant experience as a Data Solution Architect, but the documented timeframe does not meet the 7+ years requirement. The two architect roles listed span roughly Apr 2023 – Sep 2023 and Mar 2024 – Aug 2024, totaling less than two years. While the candidate demonstrates excellent alignment with the responsibilities, the duration falls significantly short. No other past roles are stated to fill in the experience gap.
-
-- **Qualification**: Experience in IT services
-  - **Score**: `7`
-  - **Comment**: There is significant and clear experience in IT services. The candidate worked as a Data & AI Solution Architect at Shanghai Mengou Technology and University of British Columbia, implementing data platforms, architecting solutions, and deploying scalable IT systems for clients and internal stakeholders. These are classic IT services activities, implying strong experience. However, the phrase 'IT services' is not literally used, so a small deduction is made.
+  - **Comment**: The candidate earned a 'Bachelor of Science in Computer Science' at the University of British Columbia (Sep 2020 – Nov 2023), which is explicitly stated on the resume and directly fulfills this requirement.
 
 ### Nice_to_haves
 
-- **Qualification**: Azure certification, Industry recognized certifications
-  - **Score**: `2`
-  - **Comment**: The resume lists extensive Azure skills (Microsoft Azure, Azure Synapse Analytics, Azure Data Factory) under 'Skills', indicating practical familiarity, but there is no direct mention of any Azure certification or other industry recognized certifications. The only credentials listed are academic degrees. Therefore, there is at most weak evidence for certifications, with a possibility that expertise could lead to certification, but none is stated.
+- **Qualification**: 3+ years of full software development life cycle experience (coding standards, code reviews, source control management, build processes, testing, and operations)
+  - **Score**: `9`
+  - **Comment**: The resume describes clear, hands-on experience with the full software development lifecycle (SDLC) across multiple roles. In the position at Shanghai Mengou Technology (Mar 2024 – Aug 2024), the candidate 'managed all stages of the software development lifecycle.' In the UBC Master's Capstone (May 2025 – Jun 2025) and Bachelor's Capstone (Apr 2023 – Sep 2023), they 'oversaw the full SDLC' and 'owned the entire SDLC for backend features,' respectively, including tasks like system design, build, deployment (Docker/AWS), code reviews, source control (Git), and CI/CD. They explicitly list 'Source Control Management (Git, Code Reviews)', 'CI/CD (Automated Testing, Build & Deployment)', and Agile as skills. However, there is a slight uncertainty about the precise cumulative duration post-2021, as some of the relevant experience is in short-duration university projects (and the total full-time SDLC experience is close to, or slightly over, 3 years depending on overlap and part-time vs full-time work). Overall, the evidence is very strong but just short of a perfect 10 due to some ambiguity around duration.
 

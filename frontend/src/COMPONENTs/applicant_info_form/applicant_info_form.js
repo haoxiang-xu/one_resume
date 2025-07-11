@@ -244,7 +244,7 @@ const ContactRow = ({
         }}
       />
       <IconButton
-        color="error"
+        color={moreOnHover? "error" : "default"}
         sx={{
           position: "absolute",
           top: "50%",

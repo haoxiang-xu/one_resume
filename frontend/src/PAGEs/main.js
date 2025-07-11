@@ -5,7 +5,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
-import LogoText from "../COMPONENTs/logo_text/logo_text";
+import LeftCorner from "../COMPONENTs/left_corner/left_corner";
 
 const Main = () => {
   const { theme } = useContext(ConfigContext);
@@ -23,7 +23,7 @@ const Main = () => {
       }}
     >
       <ApplicantInfoForm />
-      <LogoText />
+      <LeftCorner />
     </div>
   );
 };
