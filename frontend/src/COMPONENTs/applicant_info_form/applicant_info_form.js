@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { ConfigContext } from "../../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
@@ -94,6 +98,7 @@ const ContactRow = ({
   edit_contact_row_value,
   delete_contact_row,
 }) => {
+    const { theme } = useContext(ConfigContext);
   const contactTypeOptions = [
     { value: "linkedin", label: "LinkedIn", icon: "linked_in" },
     { value: "github", label: "GitHub", icon: "github" },
@@ -156,7 +161,7 @@ const ContactRow = ({
           PaperProps: {
             sx: {
               borderRadius: "10px",
-              backgroundColor: "#fefefe",
+              backgroundColor: theme?.backgroundColor || "#FFFFFF",
               boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
               maxHeight: 300,
               fontFamily: "Jost",

@@ -1,10 +1,29 @@
+import { useContext } from "react";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { ConfigContext } from "../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+
 import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
+import LogoText from "../COMPONENTs/logo_text/logo_text";
 
 const Main = () => {
+  const { theme } = useContext(ConfigContext);
+
   return (
-    <div className="main-page">
+    <div
+      className="main-page"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: theme?.backgroundColor || "#FFFFFF",
+      }}
+    >
       <ApplicantInfoForm />
-      {/* Additional components can be added here */}
+      <LogoText />
     </div>
   );
 };

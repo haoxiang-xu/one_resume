@@ -232,7 +232,7 @@ const LightSwitch = ({ style }) => {
 
   return (
     <Switch
-      style={preprocess_style(style)}
+      style={{ ...preprocess_style(style) }}
       on_icon_src="sun"
       off_icon_src="moon"
       on={onThemeMode === "light_mode"}
@@ -314,16 +314,16 @@ const Switch = ({
           position: "absolute",
           top: "50%",
           left: on
-            ? switchStyle?.width - switchStyle?.height + thumbOffset
-            : thumbOffset,
+            ? switchStyle?.width - switchStyle?.height + thumbOffset + 1
+            : thumbOffset + 1,
 
           height:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 2
+              ? switchStyle.height - thumbOffset * 3
               : undefined,
           width:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 2
+              ? switchStyle.height - thumbOffset * 3
               : undefined,
 
           borderRadius: Math.max(0, switchStyle?.borderRadius - 3) || "50%",
@@ -343,8 +343,8 @@ const Switch = ({
             typeof switchStyle?.height === "number" &&
             typeof switchStyle?.width === "number"
               ? on
-                ? 4
-                : switchStyle?.width - switchStyle?.height + 7 + 4
+                ? 6
+                : switchStyle?.width - switchStyle?.height + 7 + 2
               : undefined,
           transform: "translate(0%, -50%)",
 

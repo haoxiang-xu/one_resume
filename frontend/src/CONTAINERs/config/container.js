@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSystemTheme } from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
+import {
+  useSystemTheme,
+  MaterialUIThemeWrapper,
+} from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";
@@ -113,7 +116,11 @@ const ConfigContainer = ({ children }) => {
         isMobile,
       }}
     >
-      {children}
+      <MaterialUIThemeWrapper
+        mode={onThemeMode == "dark_mode" ? "dark" : "light"}
+      >
+        {children}
+      </MaterialUIThemeWrapper>
     </ConfigContext.Provider>
   );
 };

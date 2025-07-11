@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 const useSystemTheme = () => {
@@ -36,6 +38,20 @@ const useWindowSize = () => {
   }, []);
   return windowSize;
 };
+const MaterialUIThemeWrapper = ({ children, mode = "light" }) => {
+  const theme = createTheme({
+    palette: {
+      mode: mode,
+    },
+  });
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
+};
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 
-export { useSystemTheme, useWindowSize };
+export { useSystemTheme, useWindowSize, MaterialUIThemeWrapper };
