@@ -5,6 +5,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 const LeftCorner = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
@@ -15,56 +16,34 @@ const LeftCorner = () => {
         position: "absolute",
         top: 6,
         left: 6,
-        width: 80,
+        width: 75,
         height: 90,
-        
       }}
     >
-      <span
+      <Icon
+        src={`one_resume_logo`}
         style={{
-          transition: "all 0.2s ease-in-out",
-          position: "absolute ",
+          position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
-          fontSize: "37px",
-          lineHeight: "37px",
-          color: theme?.font?.color || "rgb(36, 36, 36)",
+          width: 73,
+          height: 73,
+          color: theme?.font?.color || "#CCCCCC",
 
           userSelect: "none",
           WebkitUserSelect: "none",
           MozUserSelect: "none",
           msUserSelect: "none",
         }}
-      >
-        ONE
-      </span>
-      <span
-        style={{
-          transition: "all 0.2s ease-in-out",
-          position: "absolute ",
-          transform: "translate(-50%, 0%)",
-          left: "50%",
-          top: 32,
-          fontSize: "22px",
-          lineHeight: "20px",
-          color: theme?.font?.color || "rgb(36, 36, 36)",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          msUserSelect: "none",
-        }}
-      >
-        resume
-      </span>
+      />
       <LightSwitch
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 54,
-          width: 77,
+          width: 70,
           height: 32,
 
           backgroundColor_on: "#CCCCCC",
