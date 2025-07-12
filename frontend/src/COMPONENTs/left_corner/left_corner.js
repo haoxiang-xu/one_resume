@@ -11,9 +11,9 @@ const LeftCorner = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   return (
     <div
-      className="logo-text"
+      className="left-corner"
       style={{
-        position: "absolute",
+        position: "fixed",
         top: 6,
         left: 6,
         width: 75,
@@ -22,6 +22,7 @@ const LeftCorner = () => {
     >
       <Icon
         src={`one_resume_logo`}
+        color={onThemeMode === "dark_mode" ? "#44464a" : "#CCCCCC"}
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
@@ -29,7 +30,6 @@ const LeftCorner = () => {
           top: 0,
           width: 73,
           height: 73,
-          color: theme?.font?.color || "#CCCCCC",
 
           userSelect: "none",
           WebkitUserSelect: "none",

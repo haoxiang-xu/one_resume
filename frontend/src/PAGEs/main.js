@@ -19,6 +19,8 @@ const Main = () => {
         left: 0,
         width: "100%",
         height: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
         backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
