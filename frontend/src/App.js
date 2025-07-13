@@ -7,6 +7,7 @@ import ConfigContainer from "./CONTAINERs/config/container";
 
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 import Main from "./PAGEs/main";
+import Form from "./PAGEs/form";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
         <Router>
           <Routes>
             <Route path="/" element={<Main />} />
+            <Route path="/form" element={<Form />} />
           </Routes>
         </Router>
       </DataContainer>

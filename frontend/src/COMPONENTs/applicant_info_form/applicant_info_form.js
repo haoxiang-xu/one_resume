@@ -4,6 +4,7 @@ import { useEffect, useState, useContext, createContext } from "react";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
+import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 import TextField from "@mui/material/TextField";
@@ -14,11 +15,15 @@ import IconButton from "@mui/material/IconButton";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
+import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
 
 const ApplicantInfoFormContext = createContext();
 
 const NameFrom = () => {
-  const { move_to_form } = useContext(ApplicantInfoFormContext);
+  const { formData, move_to_form, update_name } = useContext(
+    ApplicantInfoFormContext
+  );
   return (
     <div
       className="name-form"
@@ -50,6 +55,10 @@ const NameFrom = () => {
         id="first-name-input"
         label="First Name"
         variant="outlined"
+        value={formData.name.firstName}
+        onChange={(e) => {
+          update_name(e.target.value, formData.name.lastName);
+        }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "10px",
@@ -67,6 +76,10 @@ const NameFrom = () => {
         id="last-name-input"
         label="Last Name"
         variant="outlined"
+        value={formData.name.lastName}
+        onChange={(e) => {
+          update_name(formData.name.firstName, e.target.value);
+        }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "10px",
@@ -172,7 +185,7 @@ const ContactRow = ({
           transition: "all 0.2s ease",
           width: "20%",
           height: 56,
-          borderRadius: "10px",
+          borderRadius: "10px 0 0 10px",
         }}
         MenuProps={{
           PaperProps: {
@@ -229,7 +242,9 @@ const ContactRow = ({
       </Select>
       <TextField
         id={`${contact_value}-input`}
-        label={`${contact_type}`}
+        label={`${
+          (contactTypeOptions.find((opt) => opt.value === contact_type) || {}).label || ""
+        }`}
         variant="outlined"
         value={contact_value}
         onChange={(e) => {
@@ -237,11 +252,11 @@ const ContactRow = ({
         }}
         sx={{
           transition: "all 0.2s ease",
-          width: moreOnHover ? "calc(70% - 16px)" : "calc(70% + 12px)",
-          marginLeft: "16px",
+          width: moreOnHover ? "calc(70% - 2px)" : "calc(70% + 26px)",
+          marginLeft: "2px",
           "& .MuiOutlinedInput-root": {
             height: 56,
-            borderRadius: "10px",
+            borderRadius: "0 10px 10px 0",
             paddingRight: "14px",
             transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
           },
@@ -295,39 +310,17 @@ const ContactRow = ({
   );
 };
 const ContactFrom = () => {
-  const { move_to_form } = useContext(ApplicantInfoFormContext);
-  const [extraContact, setExtraContact] = useState([]);
-
-  const add_contact_row = () => {
-    setExtraContact((prev) => [
-      ...prev,
-      {
-        contact_type: "",
-        contact_value: "",
-      },
-    ]);
-  };
-  const edit_contact_row_type = (index, contact_type) => {
-    setExtraContact((prev) => {
-      const newContacts = [...prev];
-      newContacts[index].contact_type = contact_type;
-      return newContacts;
-    });
-  };
-  const edit_contact_row_value = (index, contact_value) => {
-    setExtraContact((prev) => {
-      const newContacts = [...prev];
-      newContacts[index].contact_value = contact_value;
-      return newContacts;
-    });
-  };
-  const delete_contact_row = (index) => {
-    setExtraContact((prev) => {
-      const newContacts = [...prev];
-      newContacts.splice(index, 1);
-      return newContacts;
-    });
-  };
+  const { theme } = useContext(ConfigContext);
+  const {
+    formData,
+    move_to_form,
+    update_cell,
+    update_email,
+    add_contact_extra_row,
+    update_contact_extra_row_type,
+    update_contact_extra_row_value,
+    delete_contact_extra_row,
+  } = useContext(ApplicantInfoFormContext);
 
   return (
     <div
@@ -355,41 +348,148 @@ const ContactFrom = () => {
       >
         How can I reach you?
       </span>
-      <TextField
-        required
-        id="cell-input"
-        label="Cell"
-        variant="outlined"
+      <Box
         sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "10px",
-          },
-          "& label": {
-            fontFamily: "Jost",
-          },
-          "& input": {
-            fontFamily: "Jost",
-          },
+          position: "relative",
+          width: "100%",
+          display: "flex",
         }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Icon
-                src="phone"
-                style={{
-                  width: 24,
-                  height: 24,
-                }}
+      >
+        <Icon
+          src="phone"
+          style={{
+            width: 24,
+            height: 24,
+            position: "absolute",
+            top: "50%",
+            left: "16px",
+            transform: "translateY(-50%)",
+          }}
+        />
+        <Autocomplete
+          id="country-code-input"
+          options={countries}
+          disableClearable
+          value={{ phone: formData.contact.cell.countryCode }}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              update_cell(newValue.phone, formData.contact.cell.number);
+            }
+          }}
+          sx={{
+            width: "140px",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px 0 0 10px",
+              background: "transparent",
+              boxShadow: "none",
+              height: 56,
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              fontSize: 16,
+            },
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                borderRadius: "10px",
+                backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                width: 256,
+                fontFamily: "Jost",
+              },
+            },
+            listbox: {
+              sx: {
+                padding: "8px",
+                fontFamily: "Jost",
+              },
+            },
+            listItem: {
+              sx: {
+                fontFamily: "Jost",
+              },
+            },
+          }}
+          autoHighlight
+          getOptionLabel={(option) => `+${option.phone}`}
+          filterOptions={(options, { inputValue }) =>
+            options.filter((option) =>
+              `${option.label} ${option.code} ${option.phone}`
+                .toLowerCase()
+                .includes(inputValue.toLowerCase())
+            )
+          }
+          renderOption={(props, option) => (
+            <Box
+              component="li"
+              sx={{ borderRadius: "6px", "& > img": { mr: 2, flexShrink: 0 } }}
+              {...props}
+            >
+              <img
+                loading="lazy"
+                width="20"
+                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                alt=""
               />
-            </InputAdornment>
-          ),
-        }}
-      />
+              {option.label} ({option.code}) +{option.phone}
+            </Box>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              required
+              label=""
+              placeholder="+1"
+              sx={{
+                "& .MuiInputBase-input": { fontFamily: "Jost" },
+              }}
+              inputProps={{
+                ...params.inputProps,
+                autoComplete: "new-password",
+                style: { fontSize: 15, textAlign: "right" },
+              }}
+            />
+          )}
+        />
+        <TextField
+          required
+          fullWidth
+          label="Cell"
+          variant="outlined"
+          value={formData.contact.cell.number}
+          onChange={(e) => {
+            update_cell(formData.contact.cell.countryCode, e.target.value);
+          }}
+          sx={{
+            width: "calc(100% - 140px - 2px)",
+            "& .MuiOutlinedInput-root": {
+              marginLeft: "2px",
+              borderRadius: "0 10px 10px 0",
+              fontFamily: "Jost",
+              background: "transparent",
+              border: "none",
+              boxShadow: "none",
+            },
+            "& label": { fontFamily: "Jost" },
+            "& input": { fontFamily: "Jost" },
+          }}
+          inputProps={{
+            style: { fontSize: 16 },
+          }}
+        />
+      </Box>
       <TextField
         required
         id="email-input"
         label="Email"
         variant="outlined"
+        value={formData.contact.email}
+        onChange={(e) => {
+          update_email(e.target.value);
+        }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "10px",
@@ -416,19 +516,19 @@ const ContactFrom = () => {
         }}
       />
 
-      {extraContact.map((contact, index) => (
+      {formData.contact.extra.map((contact, index) => (
         <div key={index}>
           <ContactRow
             contact_type={contact.contact_type}
             contact_value={contact.contact_value}
             edit_contact_row_type={(contact_type) => {
-              edit_contact_row_type(index, contact_type);
+              update_contact_extra_row_type(index, contact_type);
             }}
             edit_contact_row_value={(contact_value) => {
-              edit_contact_row_value(index, contact_value);
+              update_contact_extra_row_value(index, contact_value);
             }}
             delete_contact_row={() => {
-              delete_contact_row(index);
+              delete_contact_extra_row(index);
             }}
           />
         </div>
@@ -440,7 +540,7 @@ const ContactFrom = () => {
           borderRadius: "50%",
           alignSelf: "center",
         }}
-        onClick={add_contact_row}
+        onClick={add_contact_extra_row}
       >
         <Icon
           src="add"
@@ -865,14 +965,125 @@ const EudcationForm = () => {
 const ApplicantInfoForm = () => {
   const { windowSize } = useContext(ConfigContext);
   const [onForm, setOnForm] = useState("name");
+  const [formData, setFormData] = useState({
+    name: {
+      firstName: "",
+      lastName: "",
+    },
+    contact: {
+      cell: {
+        countryCode: "1",
+        number: "",
+      },
+      email: "",
+      extra: [],
+    },
+    education: [],
+  });
 
   const move_to_form = (form) => {
     setOnForm(form);
   };
+  const update_name = (firstName, lastName) => {
+    setFormData((prev) => ({
+      ...prev,
+      name: {
+        firstName,
+        lastName,
+      },
+    }));
+  };
+  const update_cell = (countryCode, number) => {
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        cell: {
+          countryCode,
+          number,
+        },
+      },
+    }));
+  };
+  const update_email = (email) => {
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        email,
+      },
+    }));
+  };
+  const add_contact_extra_row = () => {
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        extra: [
+          ...prev.contact.extra,
+          {
+            contact_type: "",
+            contact_value: "",
+          },
+        ],
+      },
+    }));
+  };
+  const update_contact_extra_row_type = (index, contact_type) => {
+    setFormData((prev) => {
+      const newContacts = [...prev.contact.extra];
+      newContacts[index].contact_type = contact_type;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          extra: newContacts,
+        },
+      };
+    });
+  };
+  const update_contact_extra_row_value = (index, contact_value) => {
+    setFormData((prev) => {
+      const newContacts = [...prev.contact.extra];
+      newContacts[index].contact_value = contact_value;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          extra: newContacts,
+        },
+      };
+    });
+  };
+  const delete_contact_extra_row = (index) => {
+    setFormData((prev) => {
+      const newContacts = [...prev.contact.extra];
+      newContacts.splice(index, 1);
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          extra: newContacts,
+        },
+      };
+    });
+  };
 
   return (
     <ApplicantInfoFormContext.Provider
-      value={{ onForm, setOnForm, move_to_form }}
+      value={{
+        onForm,
+        setOnForm,
+        formData,
+        move_to_form,
+        update_name,
+        update_cell,
+        update_email,
+        add_contact_extra_row,
+        update_contact_extra_row_type,
+        update_contact_extra_row_value,
+        delete_contact_extra_row,
+      }}
     >
       <div
         className="applicant-info-form"
