@@ -3,6 +3,7 @@ import {
   useSystemTheme,
   MaterialUIThemeWrapper,
 } from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
+import ScrollingSpace from "../../BUILTIN_COMPONENTs/scrolling_space/scrolling_sapce";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";
@@ -120,6 +121,7 @@ const ConfigContainer = ({ children }) => {
         mode={onThemeMode == "dark_mode" ? "dark" : "light"}
       >
         {children}
+        <ScrollingSpace />
       </MaterialUIThemeWrapper>
     </ConfigContext.Provider>
   );

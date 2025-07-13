@@ -30,7 +30,11 @@
     "font": {
       "color": "#222222"
     },
-    "backgroundColor": "#FFFFFF"
+    "backgroundColor": "#FFFFFF",
+    "scrollingSpace": {
+      "backgroundColor": "#CCCCCC",
+      "border": "1px solid #CCCCCC"
+    }
   },
   "dark_mode": {
     "icon": { "color": "#CCCCCC" },
@@ -63,6 +67,10 @@
     "font": {
       "color": "#FFFFFF"
     },
-    "backgroundColor": "#1e2228"
+    "backgroundColor": "#1e2228",
+    "scrollingSpace": {
+      "backgroundColor": "#3f3f46",
+      "border": "1px solid #bdbec0"
+    }
   }
 }

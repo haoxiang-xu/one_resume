@@ -17,23 +17,56 @@ import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const ApplicantInfoFormContext = createContext();
 
 const NameFrom = () => {
-  const { formData, move_to_form, update_name } = useContext(
+  const { onForm, formData, move_to_form, update_name } = useContext(
     ApplicantInfoFormContext
   );
+  const [style, setStyle] = useState({
+    marginTop: "36px",
+    opacity: 0,
+    height: 0,
+  });
+
+  useEffect(() => {
+    if (onForm === "name") {
+      setTimeout(() => {
+        setStyle({
+          marginTop: "0px",
+          padding: "16px",
+          opacity: 1,
+          height: "auto",
+        });
+      }, 50);
+    } else {
+      setStyle({
+        marginTop: "36px",
+        padding: "0px",
+        opacity: 0,
+        height: 0,
+      });
+    }
+  }, [onForm]);
+
   return (
     <div
       className="name-form"
       style={{
+        transition: "margin-top 0.2s ease, opacity 0.2s ease",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         padding: "16px",
         width: "400px",
-        margin: "auto",
+        height: style.height,
+        marginTop: style.marginTop,
+        opacity: style.opacity,
       }}
     >
       <span
@@ -243,7 +276,8 @@ const ContactRow = ({
       <TextField
         id={`${contact_value}-input`}
         label={`${
-          (contactTypeOptions.find((opt) => opt.value === contact_type) || {}).label || ""
+          (contactTypeOptions.find((opt) => opt.value === contact_type) || {})
+            .label || ""
         }`}
         variant="outlined"
         value={contact_value}
@@ -312,6 +346,7 @@ const ContactRow = ({
 const ContactFrom = () => {
   const { theme } = useContext(ConfigContext);
   const {
+    onForm,
     formData,
     move_to_form,
     update_cell,
@@ -321,17 +356,42 @@ const ContactFrom = () => {
     update_contact_extra_row_value,
     delete_contact_extra_row,
   } = useContext(ApplicantInfoFormContext);
+  const [style, setStyle] = useState({
+    marginTop: "36px",
+    opacity: 0,
+  });
+
+  useEffect(() => {
+    if (onForm === "contact") {
+      setTimeout(() => {
+        setStyle({
+          marginTop: "0px",
+          opacity: 1,
+          height: "auto",
+        });
+      }, 50);
+    } else {
+      setStyle({
+        marginTop: "36px",
+        opacity: 0,
+        height: 0,
+      });
+    }
+  }, [onForm]);
 
   return (
     <div
       className="contact-form"
       style={{
+        transition: "margin-top 0.2s ease, opacity 0.2s ease",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         padding: "16px",
         width: "400px",
-        margin: "auto",
+        marginTop: style.marginTop,
+        height: style.height,
+        opacity: style.opacity,
       }}
     >
       <span
@@ -392,16 +452,19 @@ const ContactFrom = () => {
           }}
           slotProps={{
             paper: {
+              className: "scrolling-space-v",
               sx: {
                 borderRadius: "10px",
                 backgroundColor: theme?.backgroundColor || "#FFFFFF",
                 boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
-                width: 256,
+                width: 512,
                 fontFamily: "Jost",
               },
             },
             listbox: {
+              className: "scrolling-space-v",
               sx: {
+                margin: "6px",
                 padding: "8px",
                 fontFamily: "Jost",
               },
@@ -414,6 +477,7 @@ const ContactFrom = () => {
           }}
           autoHighlight
           getOptionLabel={(option) => `+${option.phone}`}
+          isOptionEqualToValue={(option, value) => option.code === value.code}
           filterOptions={(options, { inputValue }) =>
             options.filter((option) =>
               `${option.label} ${option.code} ${option.phone}`
@@ -421,22 +485,32 @@ const ContactFrom = () => {
                 .includes(inputValue.toLowerCase())
             )
           }
-          renderOption={(props, option) => (
-            <Box
-              component="li"
-              sx={{ borderRadius: "6px", "& > img": { mr: 2, flexShrink: 0 } }}
-              {...props}
-            >
-              <img
-                loading="lazy"
-                width="20"
-                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                alt=""
-              />
-              {option.label} ({option.code}) +{option.phone}
-            </Box>
-          )}
+          renderOption={(props, option) => {
+            const { key, ...rest } = props;
+            return (
+              <MenuItem
+                component="li"
+                sx={{
+                  borderRadius: "6px",
+                  "& > img": { mr: 2, flexShrink: 0 },
+                  fontFamily: "Jost",
+                }}
+                key={option.code + option.phone + option.label}
+                {...rest}
+              >
+                <img
+                  loading="lazy"
+                  width="20"
+                  srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                  src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                  alt=""
+                />
+                <span style={{ flexGrow: 1 }}>
+                  {option.label} ({option.code}) + {option.phone}
+                </span>
+              </MenuItem>
+            );
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -610,6 +684,110 @@ const ContactFrom = () => {
     </div>
   );
 };
+const MonthRangePicker = ({ moreOnHover }) => {
+  const { theme } = useContext(ConfigContext);
+  const [startMonth, setStartMonth] = useState(null);
+  const [endMonth, setEndMonth] = useState(null);
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
+        sx={{
+          transition: "all 0.2s ease",
+          gap: "2px",
+        }}
+        display="flex"
+        alignItems="center"
+        mt="16px"
+        width={moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)"}
+      >
+        <DatePicker
+          views={["year", "month"]}
+          label="Start Date"
+          value={startMonth}
+          format="MM/YYYY"
+          onChange={(newValue) => {
+            setStartMonth(newValue);
+            if (
+              endMonth &&
+              newValue &&
+              dayjs(newValue).isAfter(dayjs(endMonth))
+            ) {
+              setEndMonth(null);
+            }
+          }}
+          slots={{
+            openPickerIcon: () => (
+              <Icon
+                src="calendar"
+                style={{
+                  width: 22,
+                  height: 22,
+                }}
+              />
+            ),
+          }}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              fullWidth: true,
+              InputProps: {
+                sx: { borderRadius: "10px 0 0 10px" },
+              },
+            },
+            popper: {
+              sx: {
+                borderRadius: "16px",
+              },
+            },
+            paper: {
+              sx: {
+                borderRadius: "16px",
+                backgroundColor: theme?.backgroundColor || "#FFF",
+                boxShadow: "0 6px 24px rgba(0,0,0,0.14)",
+              },
+            },
+            layout: {
+              sx: {
+                fontFamily: "Jost",
+                backgroundColor: theme?.backgroundColor || "#FFF",
+              },
+            },
+          }}
+        />
+        <DatePicker
+          views={["year", "month"]}
+          label="End Date"
+          value={endMonth}
+          format="MM/YYYY"
+          onChange={(newValue) => setEndMonth(newValue)}
+          slots={{
+            openPickerIcon: () => (
+              <Icon
+                src="calendar"
+                style={{
+                  width: 22,
+                  height: 22,
+                }}
+              />
+            ),
+          }}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              fullWidth: true,
+              InputProps: {
+                sx: { borderRadius: "0 10px 10px 0" },
+              },
+            },
+          }}
+          minDate={startMonth ? dayjs(startMonth).add(1, "month") : null}
+          disabled={!startMonth}
+        />
+      </Box>
+    </LocalizationProvider>
+  );
+};
 const EducationRow = () => {
   const { theme } = useContext(ConfigContext);
   const degreeOptions = [
@@ -738,15 +916,20 @@ const EducationRow = () => {
           MenuProps={{
             PaperProps: {
               sx: {
+                padding: "6px",
                 borderRadius: "10px",
                 backgroundColor: theme?.backgroundColor || "#FFFFFF",
                 boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
-                maxHeight: 300,
+                maxHeight: "312px",
+                overflowY: "hidden",
                 fontFamily: "Jost",
               },
             },
             MenuListProps: {
+              className: "scrolling-space-v",
               sx: {
+                maxHeight: "300px",
+                overflowY: "auto",
                 padding: "8px",
               },
             },
@@ -826,6 +1009,7 @@ const EducationRow = () => {
           },
         }}
       />
+      <MonthRangePicker moreOnHover={moreOnHover} />
       <IconButton
         color={moreOnHover ? "error" : "default"}
         sx={{
@@ -860,17 +1044,43 @@ const EducationRow = () => {
   );
 };
 const EudcationForm = () => {
-  const { move_to_form } = useContext(ApplicantInfoFormContext);
+  const { onForm, move_to_form } = useContext(ApplicantInfoFormContext);
+  const [style, setStyle] = useState({
+    marginTop: "36px",
+    opacity: 0,
+  });
+
+  useEffect(() => {
+    if (onForm === "education") {
+      setTimeout(() => {
+        setStyle({
+          marginTop: "0px",
+          opacity: 1,
+          height: "auto",
+        });
+      }, 50);
+    } else {
+      setStyle({
+        marginTop: "36px",
+        opacity: 0,
+        height: 0,
+      });
+    }
+  }, [onForm]);
+
   return (
     <div
       className="education-form"
       style={{
+        transition: "margin-top 0.2s ease, opacity 0.2s ease",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         padding: "16px",
         width: "400px",
-        margin: "auto",
+        marginTop: style.marginTop,
+        height: style.height,
+        opacity: style.opacity,
       }}
     >
       <span
