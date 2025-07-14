@@ -18,6 +18,8 @@ import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -1219,7 +1221,7 @@ const EudcationForm = () => {
           color="primary"
           sx={{
             marginLeft: "auto",
-            width: 120,
+            width: formData.education.length > 0 ? 120 : 90,
             borderRadius: "10px",
             fontFamily: "Jost",
             fontSize: "16px",
@@ -1238,49 +1240,415 @@ const EudcationForm = () => {
             move_to_form("experience");
           }}
         >
-          continue
+          {formData.education.length > 0 ? "continue" : "skip"}
         </Button>
       </div>
     </div>
   );
 };
+const ExperienceRow = ({ id, index }) => {
+  const { theme } = useContext(ConfigContext);
+  const {
+    formData,
+    update_experience_row_role,
+    update_experience_row_company,
+    update_experience_row_location,
+    update_experience_row_description,
+    update_experience_row_start_date,
+    update_experience_row_end_date,
+    delete_experience_row,
+  } = useContext(ApplicantInfoFormContext);
+  const [moreOnHover, setMoreOnHover] = useState(false);
+  const [hovering, setHovering] = useState(false);
+
+  useEffect(() => {
+    if (!hovering) {
+      const timeout = setTimeout(() => setMoreOnHover(false), 120);
+      return () => clearTimeout(timeout);
+    } else {
+      setMoreOnHover(true);
+    }
+  }, [hovering]);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        marginBottom: index === formData.experience.length - 1 ? "0px" : "64px",
+        display: "flex",
+      }}
+    >
+      <div
+        style={{
+          width: "50%",
+        }}
+      >
+        <TextField
+          id={`role-input`}
+          label={`Role / Position`}
+          variant="outlined"
+          value={formData.education.find((item) => item.id === id)?.role || ""}
+          onChange={(e) => {
+            update_experience_row_role(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: "calc(100% - 8px)",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
+          }}
+        />
+        {/* <FormControl
+        sx={{
+          width: "60%",
+          borderRadius: "10px",
+        }}
+      >
+        <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
+          Degree
+        </InputLabel>
+        <Select
+          labelId="degree-select-label"
+          id="degree-select"
+          label="Degree"
+          value={
+            formData.education.find((item) => item.id === id)?.degree || ""
+          }
+          onChange={(e) => {
+            update_education_row_degree(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            borderRadius: "10px",
+            fontFamily: "Jost",
+          }}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                padding: "6px",
+                borderRadius: "10px",
+                backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                maxHeight: "312px",
+                overflowY: "hidden",
+                fontFamily: "Jost",
+              },
+            },
+            MenuListProps: {
+              className: "scrolling-space-v",
+              sx: {
+                maxHeight: "300px",
+                overflowY: "auto",
+                padding: "8px",
+              },
+            },
+          }}
+        >
+          {degreeOptions.map((option) => (
+            <MenuItem
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+              sx={{
+                fontFamily: "Jost",
+                fontSize: "16px",
+                borderRadius: "6px",
+              }}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl> */}
+        {/* <TextField
+        id={`grade-gpa-input`}
+        label={`Grade / GPA`}
+        variant="outlined"
+        value={
+          formData.education.find((item) => item.id === id)?.gpa_grade || ""
+        }
+        onChange={(e) => {
+          update_education_row_gpa_grade(id, e.target.value);
+        }}
+        sx={{
+          transition: "all 0.2s ease",
+          width: moreOnHover ? "calc(30% - 16px)" : "calc(30% + 12px)",
+          marginLeft: "16px",
+          "& .MuiOutlinedInput-root": {
+            height: 56,
+            borderRadius: "10px",
+            paddingRight: "14px",
+            transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+          },
+          "& .MuiInputBase-input": {
+            height: "100%",
+            fontFamily: "Jost",
+            boxSizing: "border-box",
+            padding: "12px 14px",
+          },
+          "& label": {
+            fontFamily: "Jost",
+          },
+          "& input": {
+            height: "100%",
+            fontFamily: "Jost",
+          },
+        }}
+      /> */}
+        <TextField
+          id={`company-input`}
+          label={`Company / Institution`}
+          variant="outlined"
+          value={
+            formData.education.find((item) => item.id === id)?.company || ""
+          }
+          onChange={(e) => {
+            update_experience_row_company(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: "calc(100% - 8px)",
+            marginTop: "16px",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
+          }}
+        />
+        <TextField
+          id={`location-input`}
+          label={`Location`}
+          variant="outlined"
+          value={
+            formData.education.find((item) => item.id === id)?.company || ""
+          }
+          onChange={(e) => {
+            update_experience_row_company(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: "calc(100% - 8px)",
+            marginTop: "16px",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
+          }}
+        />
+        <MonthRangePicker
+          moreOnHover={false}
+          startDate={
+            formData.experience.find((item) => item.id === id)?.startDate ||
+            null
+          }
+          endDate={
+            formData.experience.find((item) => item.id === id)?.endDate || null
+          }
+          setStartDate={(date) => {
+            update_experience_row_start_date(id, date);
+          }}
+          setEndDate={(date) => {
+            update_experience_row_end_date(id, date);
+          }}
+        />
+      </div>
+      <div
+        style={{
+          width: "50%",
+          marginLeft: "8px",
+        }}
+      >
+        <TextField
+          id={`description-input`}
+          label={`Description`}
+          variant="outlined"
+          multiline
+          value={
+            formData.experience.find((item) => item.id === id)?.description ||
+            ""
+          }
+          onChange={(e) => {
+            update_experience_row_description(id, e.target.value);
+          }}
+          InputProps={{
+            sx: {
+              padding: "16px 8px 8px 16px",
+            },
+            inputProps: {
+              className: "scrolling-space-v",
+              style: {
+                fontSize: 16,
+                height: "100%",
+                overflowY: "auto",
+                boxSizing: "border-box",
+                fontFamily: "Jost",
+              },
+            },
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
+            height: 56 * 4 + 16 * 3,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+              height: "100%",
+              alignItems: "flex-start",
+            },
+            "& .MuiInputBase-input": {
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              overflow: "auto !important",
+              height: "100% !important",
+              resize: "none",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              fontFamily: "Jost",
+            },
+          }}
+        />
+      </div>
+      <IconButton
+        color={moreOnHover ? "error" : "default"}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          transform: "translateY(-50%)",
+          transition: "all 0.2s ease",
+          width: moreOnHover ? 45 : 36,
+          height: moreOnHover ? 45 : 36,
+          borderRadius: "50%",
+          right: -16,
+        }}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+        onClick={() => {
+          delete_experience_row(id);
+        }}
+      >
+        <Icon
+          src={moreOnHover ? "delete" : "more"}
+          color={null}
+          style={{
+            width: 22,
+            height: 22,
+            transition: "transform 0.15s ease",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transformOrigin: "center",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </IconButton>
+    </div>
+  );
+};
 const ExperienceForm = () => {
-  const { onForm, formData, move_to_form, add_education_row } = useContext(
+  const { scroll_to_bottom } = useContext(FormPageContext);
+  const { formData, onForm, move_to_form, add_experience_row } = useContext(
     ApplicantInfoFormContext
   );
   const [style, setStyle] = useState({
     marginTop: "36px",
     opacity: 0,
+    width: "400px",
   });
 
   useEffect(() => {
     if (onForm === "experience") {
       setTimeout(() => {
-        setStyle({
+        setStyle((prev) => ({
+          ...prev,
           marginTop: "0px",
           opacity: 1,
           height: "auto",
-        });
+        }));
       }, 50);
     } else {
-      setStyle({
+      setStyle((prev) => ({
+        ...prev,
         marginTop: "36px",
         opacity: 0,
         height: 0,
-      });
+        width: "400px",
+      }));
     }
   }, [onForm]);
+  useEffect(() => {
+    if (formData.experience.length === 0) {
+      setStyle((prev) => ({
+        ...prev,
+        width: "400px",
+      }));
+    } else {
+      setStyle((prev) => ({
+        ...prev,
+        width: "800px",
+      }));
+    }
+  }, [formData.experience]);
 
   return (
     <div
       className="experience-form"
       style={{
-        transition: "margin-top 0.2s ease, opacity 0.2s ease",
+        transition:
+          "margin-top 0.2s ease, opacity 0.2s ease, width 0.28s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         padding: "16px",
-        width: "400px",
+        width: style.width,
         marginTop: style.marginTop,
         height: style.height,
         opacity: style.opacity,
@@ -1298,8 +1666,11 @@ const ExperienceForm = () => {
           msUserSelect: "none",
         }}
       >
-        Tell me about your experience
+        Your experience
       </span>
+      {formData.experience.map((experience, index) => (
+        <ExperienceRow key={index} id={experience.id} index={index} />
+      ))}
       <IconButton
         sx={{
           width: 48,
@@ -1307,7 +1678,10 @@ const ExperienceForm = () => {
           borderRadius: "50%",
           alignSelf: "center",
         }}
-        onClick={add_education_row}
+        onClick={() => {
+          add_experience_row();
+          scroll_to_bottom();
+        }}
       >
         <Icon
           src="add"
@@ -1352,6 +1726,315 @@ const ExperienceForm = () => {
           color="primary"
           sx={{
             marginLeft: "auto",
+            width: formData.experience.length > 0 ? 120 : 90,
+            borderRadius: "10px",
+            fontFamily: "Jost",
+            fontSize: "16px",
+            textTransform: "none",
+          }}
+          endIcon={
+            <Icon
+              src="arrow_right"
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            />
+          }
+          onClick={() => {
+            move_to_form("user");
+          }}
+        >
+          {formData.experience.length > 0 ? "continue" : "skip"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+const UserForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const { theme } = useContext(ConfigContext);
+  const {
+    formData,
+    onForm,
+    move_to_form,
+    update_user_username,
+    update_user_password,
+    update_user_confirm_password,
+  } = useContext(ApplicantInfoFormContext);
+  const [style, setStyle] = useState({
+    marginTop: "36px",
+    opacity: 0,
+  });
+
+  useEffect(() => {
+    if (onForm === "user") {
+      setTimeout(() => {
+        setStyle({
+          marginTop: "0px",
+          opacity: 1,
+          height: "auto",
+        });
+      }, 50);
+    } else {
+      setStyle({
+        marginTop: "36px",
+        opacity: 0,
+        height: 0,
+      });
+    }
+  }, [onForm]);
+
+  const toggle_password_visibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  return (
+    <div
+      className="experience-form"
+      style={{
+        transition: "margin-top 0.2s ease, opacity 0.2s ease",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        padding: "16px",
+        width: "400px",
+        marginTop: style.marginTop,
+        height: style.height,
+        opacity: style.opacity,
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "Jost",
+          textAlign: "center",
+          fontSize: "36px",
+
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+        }}
+      >
+        One more step
+      </span>
+
+      <TextField
+        id="username-input"
+        label="Username"
+        variant="outlined"
+        value={formData.user?.username || ""}
+        onChange={(e) => update_user_username(e.target.value)}
+        sx={{
+          width: "100%",
+          "& .MuiOutlinedInput-root": {
+            height: 56,
+            borderRadius: "10px",
+            paddingRight: "14px",
+          },
+          "& .MuiInputBase-input": {
+            height: "100%",
+            fontFamily: "Jost",
+            boxSizing: "border-box",
+            padding: "12px 14px",
+          },
+          "& label": {
+            fontFamily: "Jost",
+          },
+        }}
+      />
+
+      <TextField
+        id="password-input"
+        label="Password"
+        type={showPassword ? "text" : "password"}
+        variant="outlined"
+        value={formData.user?.password || ""}
+        onChange={(e) => update_user_password(e.target.value)}
+        sx={{
+          width: "100%",
+          "& .MuiOutlinedInput-root": {
+            height: 56,
+            borderRadius: "10px",
+            paddingRight: "14px",
+          },
+          "& .MuiInputBase-input": {
+            height: "100%",
+            fontFamily: "Jost",
+            boxSizing: "border-box",
+            padding: "12px 14px",
+          },
+          "& label": {
+            fontFamily: "Jost",
+          },
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={toggle_password_visibility} edge="end">
+                {showPassword ? (
+                  <Icon
+                    src="eye_closed"
+                    style={{
+                      height: 24,
+                      width: 24,
+                      opacity: 0.36,
+                    }}
+                  />
+                ) : (
+                  <Icon
+                    src="eye_open"
+                    style={{
+                      height: 24,
+                      width: 24,
+                      opacity: 0.36,
+                    }}
+                  />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
+      <TextField
+        id="confirm-password-input"
+        label="Confirm Password"
+        type={showPassword ? "text" : "password"}
+        variant="outlined"
+        value={formData.user?.confirmPassword || ""}
+        onChange={(e) => update_user_confirm_password(e.target.value)}
+        sx={{
+          width: "100%",
+          "& .MuiOutlinedInput-root": {
+            height: 56,
+            borderRadius: "10px",
+            paddingRight: "14px",
+          },
+          "& .MuiInputBase-input": {
+            height: "100%",
+            fontFamily: "Jost",
+            boxSizing: "border-box",
+            padding: "12px 14px",
+          },
+          "& label": {
+            fontFamily: "Jost",
+          },
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={toggle_password_visibility} edge="end">
+                {showPassword ? (
+                  <Icon
+                    src="eye_closed"
+                    style={{
+                      height: 24,
+                      width: 24,
+                      opacity: 0.36,
+                    }}
+                  />
+                ) : (
+                  <Icon
+                    src="eye_open"
+                    style={{
+                      height: 24,
+                      width: 24,
+                      opacity: 0.36,
+                    }}
+                  />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: 36,
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox
+              sx={{
+                position: "absolute",
+                left: "4px",
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+              color="primary"
+              checked={agreedToTerms}
+              onChange={() => {
+                setAgreedToTerms((prev) => !prev);
+              }}
+            />
+          }
+          label={
+            <span
+              style={{
+                position: "absolute",
+                top: "50%",
+                transform: "translateY(-50%)",
+                left: "45px",
+                fontFamily: "Jost",
+                fontSize: "16px",
+                color: theme?.font.color || "#000000",
+
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                msUserSelect: "none",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              {"I agree to the Terms & Conditions."}
+            </span>
+          }
+          labelPlacement="end"
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+        }}
+      >
+        <Button
+          variant="text"
+          color="primary"
+          sx={{
+            marginRight: "auto",
+            width: 90,
+            borderRadius: "10px",
+            fontFamily: "Jost",
+            fontSize: "16px",
+            textTransform: "none",
+          }}
+          startIcon={
+            <Icon
+              src="arrow_left"
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            />
+          }
+          onClick={() => move_to_form("experience")}
+        >
+          back
+        </Button>
+        <Button
+          variant="text"
+          color="primary"
+          sx={{
+            marginLeft: "auto",
             width: 120,
             borderRadius: "10px",
             fontFamily: "Jost",
@@ -1369,7 +2052,7 @@ const ExperienceForm = () => {
           }
           onClick={() => {}}
         >
-          continue
+          sign up
         </Button>
       </div>
     </div>
@@ -1392,6 +2075,12 @@ const ApplicantInfoForm = () => {
       extra: [],
     },
     education: [],
+    experience: [],
+    user: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const move_to_form = (form) => {
@@ -1424,6 +2113,36 @@ const ApplicantInfoForm = () => {
       contact: {
         ...prev.contact,
         email,
+      },
+    }));
+  };
+
+  const update_user_username = (username) => {
+    setFormData((prev) => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        username,
+      },
+    }));
+  };
+
+  const update_user_password = (password) => {
+    setFormData((prev) => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        password,
+      },
+    }));
+  };
+
+  const update_user_confirm_password = (confirmPassword) => {
+    setFormData((prev) => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        confirmPassword,
       },
     }));
   };
@@ -1593,6 +2312,101 @@ const ApplicantInfoForm = () => {
   };
   /* { education } --------------------------------------------------------------------------- */
 
+  /* { experience } -------------------------------------------------------------------------- */
+  const add_experience_row = () => {
+    setFormData((prev) => ({
+      ...prev,
+      experience: [
+        ...prev.experience,
+        {
+          id: crypto.randomUUID(),
+          role: "",
+          company: "",
+          location: "",
+          startDate: null,
+          endDate: null,
+          description: "",
+        },
+      ],
+    }));
+  };
+  const update_experience_row_role = (id, role) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, role } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const update_experience_row_company = (id, company) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, company } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const update_experience_row_location = (id, location) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, location } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const update_experience_row_start_date = (id, startDate) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, startDate } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const update_experience_row_end_date = (id, endDate) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, endDate } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const update_experience_row_description = (id, description) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.map((item) =>
+        item.id === id ? { ...item, description } : item
+      );
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  const delete_experience_row = (id) => {
+    setFormData((prev) => {
+      const newExperience = prev.experience.filter((item) => item.id !== id);
+      return {
+        ...prev,
+        experience: newExperience,
+      };
+    });
+  };
+  /* { experience } -------------------------------------------------------------------------- */
+
   return (
     <ApplicantInfoFormContext.Provider
       value={{
@@ -1619,6 +2433,19 @@ const ApplicantInfoForm = () => {
         update_education_row_start_date,
         update_education_row_end_date,
         delete_education_row,
+        /* { experience } */
+        add_experience_row,
+        update_experience_row_role,
+        update_experience_row_company,
+        update_experience_row_location,
+        update_experience_row_start_date,
+        update_experience_row_end_date,
+        update_experience_row_description,
+        delete_experience_row,
+        /* { user } */
+        update_user_username,
+        update_user_password,
+        update_user_confirm_password,
       }}
     >
       <div
@@ -1634,6 +2461,7 @@ const ApplicantInfoForm = () => {
         {onForm === "contact" && <ContactFrom />}
         {onForm === "education" && <EudcationForm />}
         {onForm === "experience" && <ExperienceForm />}
+        {onForm === "user" && <UserForm />}
       </div>
     </ApplicantInfoFormContext.Provider>
   );
