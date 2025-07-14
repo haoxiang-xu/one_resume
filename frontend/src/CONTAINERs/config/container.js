@@ -3,7 +3,7 @@ import {
   useSystemTheme,
   MaterialUIThemeWrapper,
 } from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
-import ScrollingSpace from "../../BUILTIN_COMPONENTs/scrolling_space/scrolling_sapce";
+import ScrollingSpace from "../../BUILTIN_COMPONENTs/class/scrolling_sapce";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";

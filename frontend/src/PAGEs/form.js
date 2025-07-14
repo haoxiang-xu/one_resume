@@ -12,20 +12,32 @@ const Form = () => {
 
   return (
     <div
-      className="form-page"
+      id="form-page"
       style={{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
-        overflowX: "hidden",
-        overflowY: "auto",
+        overflow: "hidden",
         backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
-      <ApplicantInfoForm />
-      <LeftCorner />
+      <div
+        className="scrolling-space-v"
+        style={{
+          position: "absolute",
+          top: 4,
+          left: 4,
+          right: 4,
+          bottom: 4,
+          overflowX: "hidden",
+          overflowY: "auto",
+        }}
+      >
+        <ApplicantInfoForm />
+        <LeftCorner />
+      </div>
     </div>
   );
 };

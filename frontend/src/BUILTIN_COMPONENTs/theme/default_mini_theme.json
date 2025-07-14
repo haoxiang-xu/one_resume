@@ -33,7 +33,7 @@
     "backgroundColor": "#FFFFFF",
     "scrollingSpace": {
       "backgroundColor": "#CCCCCC",
-      "border": "1px solid #CCCCCC"
+      "border": "1px solid #CCCCCC00"
     }
   },
   "dark_mode": {
@@ -70,7 +70,7 @@
     "backgroundColor": "#1e2228",
     "scrollingSpace": {
       "backgroundColor": "#3f3f46",
-      "border": "1px solid #bdbec0"
+      "border": "1px solid #898996"
     }
   }
 }

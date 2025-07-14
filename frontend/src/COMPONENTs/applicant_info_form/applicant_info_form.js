@@ -684,10 +684,14 @@ const ContactFrom = () => {
     </div>
   );
 };
-const MonthRangePicker = ({ moreOnHover }) => {
+const MonthRangePicker = ({
+  moreOnHover,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+}) => {
   const { theme } = useContext(ConfigContext);
-  const [startMonth, setStartMonth] = useState(null);
-  const [endMonth, setEndMonth] = useState(null);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -704,16 +708,16 @@ const MonthRangePicker = ({ moreOnHover }) => {
         <DatePicker
           views={["year", "month"]}
           label="Start Date"
-          value={startMonth}
+          value={startDate}
           format="MM/YYYY"
           onChange={(newValue) => {
-            setStartMonth(newValue);
+            setStartDate(newValue);
             if (
-              endMonth &&
+              endDate &&
               newValue &&
-              dayjs(newValue).isAfter(dayjs(endMonth))
+              dayjs(newValue).isAfter(dayjs(endDate))
             ) {
-              setEndMonth(null);
+              setEndDate(null);
             }
           }}
           slots={{
@@ -758,9 +762,9 @@ const MonthRangePicker = ({ moreOnHover }) => {
         <DatePicker
           views={["year", "month"]}
           label="End Date"
-          value={endMonth}
+          value={endDate}
           format="MM/YYYY"
-          onChange={(newValue) => setEndMonth(newValue)}
+          onChange={(newValue) => setEndDate(newValue)}
           slots={{
             openPickerIcon: () => (
               <Icon
@@ -781,15 +785,25 @@ const MonthRangePicker = ({ moreOnHover }) => {
               },
             },
           }}
-          minDate={startMonth ? dayjs(startMonth).add(1, "month") : null}
-          disabled={!startMonth}
+          minDate={startDate ? dayjs(startDate).add(1, "month") : null}
+          disabled={!startDate}
         />
       </Box>
     </LocalizationProvider>
   );
 };
-const EducationRow = () => {
+const EducationRow = ({ id, index }) => {
   const { theme } = useContext(ConfigContext);
+  const {
+    formData,
+    update_education_row_institution,
+    update_education_row_degree,
+    update_education_row_gpa_grade,
+    update_education_row_specialization,
+    update_education_row_start_date,
+    update_education_row_end_date,
+    delete_education_row,
+  } = useContext(ApplicantInfoFormContext);
   const degreeOptions = [
     { value: "doctor_category", label: "Doctoral Degrees:", disabled: true },
     { value: "doctor_of_philosophy", label: "Doctor of Philosophy (Ph.D.)" },
@@ -863,13 +877,19 @@ const EducationRow = () => {
     <div
       style={{
         position: "relative",
+        marginBottom: index === formData.education.length - 1 ? "0px" : "64px",
       }}
     >
       <TextField
         id={`institution-input`}
         label={`Institution`}
         variant="outlined"
-        required
+        value={
+          formData.education.find((item) => item.id === id)?.institution || ""
+        }
+        onChange={(e) => {
+          update_education_row_institution(id, e.target.value);
+        }}
         sx={{
           transition: "all 0.2s ease",
           width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
@@ -908,6 +928,12 @@ const EducationRow = () => {
           labelId="degree-select-label"
           id="degree-select"
           label="Degree"
+          value={
+            formData.education.find((item) => item.id === id)?.degree || ""
+          }
+          onChange={(e) => {
+            update_education_row_degree(id, e.target.value);
+          }}
           sx={{
             transition: "all 0.2s ease",
             borderRadius: "10px",
@@ -955,6 +981,12 @@ const EducationRow = () => {
         id={`grade-gpa-input`}
         label={`Grade / GPA`}
         variant="outlined"
+        value={
+          formData.education.find((item) => item.id === id)?.gpa_grade || ""
+        }
+        onChange={(e) => {
+          update_education_row_gpa_grade(id, e.target.value);
+        }}
         sx={{
           transition: "all 0.2s ease",
           width: moreOnHover ? "calc(30% - 16px)" : "calc(30% + 12px)",
@@ -984,6 +1016,13 @@ const EducationRow = () => {
         id={`specialization-input`}
         label={`Specialization`}
         variant="outlined"
+        value={
+          formData.education.find((item) => item.id === id)?.specialization ||
+          ""
+        }
+        onChange={(e) => {
+          update_education_row_specialization(id, e.target.value);
+        }}
         sx={{
           transition: "all 0.2s ease",
           width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
@@ -1009,7 +1048,21 @@ const EducationRow = () => {
           },
         }}
       />
-      <MonthRangePicker moreOnHover={moreOnHover} />
+      <MonthRangePicker
+        moreOnHover={moreOnHover}
+        startDate={
+          formData.education.find((item) => item.id === id)?.startDate || null
+        }
+        endDate={
+          formData.education.find((item) => item.id === id)?.endDate || null
+        }
+        setStartDate={(date) => {
+          update_education_row_start_date(id, date);
+        }}
+        setEndDate={(date) => {
+          update_education_row_end_date(id, date);
+        }}
+      />
       <IconButton
         color={moreOnHover ? "error" : "default"}
         sx={{
@@ -1024,6 +1077,9 @@ const EducationRow = () => {
         }}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
+        onClick={() => {
+          delete_education_row(id);
+        }}
       >
         <Icon
           src={moreOnHover ? "delete" : "more"}
@@ -1044,7 +1100,9 @@ const EducationRow = () => {
   );
 };
 const EudcationForm = () => {
-  const { onForm, move_to_form } = useContext(ApplicantInfoFormContext);
+  const { onForm, formData, move_to_form, add_education_row } = useContext(
+    ApplicantInfoFormContext
+  );
   const [style, setStyle] = useState({
     marginTop: "36px",
     opacity: 0,
@@ -1097,7 +1155,9 @@ const EudcationForm = () => {
       >
         Tell me about your education
       </span>
-      <EducationRow />
+      {formData.education.map((education, index) => (
+        <EducationRow key={index} id={education.id} index={index}/>
+      ))}
       <IconButton
         sx={{
           width: 48,
@@ -1105,6 +1165,7 @@ const EudcationForm = () => {
           borderRadius: "50%",
           alignSelf: "center",
         }}
+        onClick={add_education_row}
       >
         <Icon
           src="add"
@@ -1224,6 +1285,8 @@ const ApplicantInfoForm = () => {
       },
     }));
   };
+
+  /* { contact } ----------------------------------------------------------------------------- */
   const add_contact_extra_row = () => {
     setFormData((prev) => ({
       ...prev,
@@ -1278,6 +1341,102 @@ const ApplicantInfoForm = () => {
       };
     });
   };
+  /* { contact } ----------------------------------------------------------------------------- */
+
+  /* { education } --------------------------------------------------------------------------- */
+  const add_education_row = () => {
+    setFormData((prev) => ({
+      ...prev,
+      education: [
+        ...prev.education,
+        {
+          id: crypto.randomUUID(),
+          institution: "",
+          degree: "",
+          gpa_grade: "",
+          specialization: "",
+          startDate: null,
+          endDate: null,
+        },
+      ],
+    }));
+  };
+  const update_education_row_institution = (id, institution) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].institution = institution;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const update_education_row_degree = (id, degree) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].degree = degree;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const update_education_row_gpa_grade = (id, gpa_grade) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].gpa_grade = gpa_grade;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const update_education_row_specialization = (id, specialization) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].specialization = specialization;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const update_education_row_start_date = (id, startDate) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].startDate = startDate;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const update_education_row_end_date = (id, endDate) => {
+    const index = formData.education.findIndex((item) => item.id === id);
+    setFormData((prev) => {
+      const newEducation = [...prev.education];
+      newEducation[index].endDate = endDate;
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  const delete_education_row = (id) => {
+    setFormData((prev) => {
+      const newEducation = prev.education.filter((item) => item.id !== id);
+      return {
+        ...prev,
+        education: newEducation,
+      };
+    });
+  };
+  /* { education } --------------------------------------------------------------------------- */
 
   return (
     <ApplicantInfoFormContext.Provider
@@ -1286,13 +1445,25 @@ const ApplicantInfoForm = () => {
         setOnForm,
         formData,
         move_to_form,
+        /* { name } */
         update_name,
+        /* { contact } */
         update_cell,
         update_email,
+        /* { contact extra } */
         add_contact_extra_row,
         update_contact_extra_row_type,
         update_contact_extra_row_value,
         delete_contact_extra_row,
+        /* { education } */
+        add_education_row,
+        update_education_row_institution,
+        update_education_row_degree,
+        update_education_row_gpa_grade,
+        update_education_row_specialization,
+        update_education_row_start_date,
+        update_education_row_end_date,
+        delete_education_row,
       }}
     >
       <div
