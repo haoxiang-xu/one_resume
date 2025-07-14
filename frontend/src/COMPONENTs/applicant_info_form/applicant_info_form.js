@@ -242,7 +242,6 @@ const ContactRow = ({
         }}
         sx={{
           transition: "all 0.2s ease",
-          overflow: "hidden",
           width: "20%",
           height: style.height,
           borderRadius: "10px 0 0 10px",
@@ -313,7 +312,6 @@ const ContactRow = ({
         }}
         sx={{
           transition: "all 0.2s ease",
-          overflow: "hidden",
           width: moreOnHover ? "calc(70% - 2px)" : "calc(70% + 26px)",
           marginLeft: "2px",
           "& .MuiOutlinedInput-root": {
@@ -618,7 +616,6 @@ const ContactFrom = () => {
           ),
         }}
       />
-
       {formData.contact.extra.map((contact, index) => (
         <div key={index}>
           <ContactRow
@@ -1336,7 +1333,7 @@ const ExperienceRow = ({ id, index }) => {
           position: "relative",
           display: "flex",
           width: "100%",
-          marginTop: "8px",
+          paddingTop: "8px",
           transition: "height 0.2s ease",
           height: style.height,
           overflow: "hidden",
