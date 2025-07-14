@@ -4,10 +4,11 @@ import {
   useState,
   useContext,
   createContext,
-  use,
+  useCallback,
 } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { RequestContext } from "../../CONTAINERs/request/container";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { FormPageContext } from "../../PAGEs/register";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -1397,7 +1398,7 @@ const ExperienceRow = ({ id, index }) => {
             label={`Role / Position`}
             variant="outlined"
             value={
-              formData.education.find((item) => item.id === id)?.role || ""
+              formData.experience.find((item) => item.id === id)?.role || ""
             }
             onChange={(e) => {
               update_experience_row_role(id, e.target.value);
@@ -1426,109 +1427,12 @@ const ExperienceRow = ({ id, index }) => {
               },
             }}
           />
-          {/* <FormControl
-        sx={{
-          width: "60%",
-          borderRadius: "10px",
-        }}
-      >
-        <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
-          Degree
-        </InputLabel>
-        <Select
-          labelId="degree-select-label"
-          id="degree-select"
-          label="Degree"
-          value={
-            formData.education.find((item) => item.id === id)?.degree || ""
-          }
-          onChange={(e) => {
-            update_education_row_degree(id, e.target.value);
-          }}
-          sx={{
-            transition: "all 0.2s ease",
-            borderRadius: "10px",
-            fontFamily: "Jost",
-          }}
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                padding: "6px",
-                borderRadius: "10px",
-                backgroundColor: theme?.backgroundColor || "#FFFFFF",
-                boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
-                maxHeight: "312px",
-                overflowY: "hidden",
-                fontFamily: "Jost",
-              },
-            },
-            MenuListProps: {
-              className: "scrolling-space-v",
-              sx: {
-                maxHeight: "300px",
-                overflowY: "auto",
-                padding: "8px",
-              },
-            },
-          }}
-        >
-          {degreeOptions.map((option) => (
-            <MenuItem
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-              sx={{
-                fontFamily: "Jost",
-                fontSize: "16px",
-                borderRadius: "6px",
-              }}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl> */}
-          {/* <TextField
-        id={`grade-gpa-input`}
-        label={`Grade / GPA`}
-        variant="outlined"
-        value={
-          formData.education.find((item) => item.id === id)?.gpa_grade || ""
-        }
-        onChange={(e) => {
-          update_education_row_gpa_grade(id, e.target.value);
-        }}
-        sx={{
-          transition: "all 0.2s ease",
-          width: moreOnHover ? "calc(30% - 16px)" : "calc(30% + 12px)",
-          marginLeft: "16px",
-          "& .MuiOutlinedInput-root": {
-            height: 56,
-            borderRadius: "10px",
-            paddingRight: "14px",
-            transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-          },
-          "& .MuiInputBase-input": {
-            height: "100%",
-            fontFamily: "Jost",
-            boxSizing: "border-box",
-            padding: "12px 14px",
-          },
-          "& label": {
-            fontFamily: "Jost",
-          },
-          "& input": {
-            height: "100%",
-            fontFamily: "Jost",
-          },
-        }}
-      /> */}
           <TextField
             id={`company-input`}
             label={`Company / Institution`}
             variant="outlined"
             value={
-              formData.education.find((item) => item.id === id)?.company || ""
+              formData.experience.find((item) => item.id === id)?.company || ""
             }
             onChange={(e) => {
               update_experience_row_company(id, e.target.value);
@@ -1563,10 +1467,10 @@ const ExperienceRow = ({ id, index }) => {
             label={`Location`}
             variant="outlined"
             value={
-              formData.education.find((item) => item.id === id)?.company || ""
+              formData.experience.find((item) => item.id === id)?.location || ""
             }
             onChange={(e) => {
-              update_experience_row_company(id, e.target.value);
+              update_experience_row_location(id, e.target.value);
             }}
             sx={{
               transition: "all 0.2s ease",
@@ -1997,6 +1901,7 @@ const UserForm = () => {
     update_user_username,
     update_user_password,
     update_user_confirm_password,
+    handle_form_on_submit,
   } = useContext(ApplicantInfoFormContext);
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -2272,6 +2177,8 @@ const UserForm = () => {
               formData.user.password === formData.user.confirmPassword &&
               agreedToTerms
             ) {
+              handle_form_on_submit();
+              return;
             } else {
               if (!formData.user.username) {
                 setErrors((prev) => ({
@@ -2317,6 +2224,7 @@ const UserForm = () => {
   );
 };
 const ApplicantInfoForm = () => {
+  const { register } = useContext(RequestContext);
   const { windowSize } = useContext(ConfigContext);
   const [onForm, setOnForm] = useState("name");
   const [formData, setFormData] = useState({
@@ -2665,6 +2573,10 @@ const ApplicantInfoForm = () => {
   };
   /* { experience } -------------------------------------------------------------------------- */
 
+  const handle_form_on_submit = useCallback(async () => {
+    await register(formData);
+  }, [formData, register]);
+
   return (
     <ApplicantInfoFormContext.Provider
       value={{
@@ -2704,6 +2616,7 @@ const ApplicantInfoForm = () => {
         update_user_username,
         update_user_password,
         update_user_confirm_password,
+        handle_form_on_submit,
       }}
     >
       <div
