@@ -19,7 +19,7 @@ const Form = () => {
         top: formRef.current.scrollHeight,
         behavior: "smooth",
       });
-    }, 120);
+    }, 240);
   };
 
   return (

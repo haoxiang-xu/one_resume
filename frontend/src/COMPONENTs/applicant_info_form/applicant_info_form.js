@@ -1,4 +1,11 @@
-import { useEffect, useState, useContext, createContext } from "react";
+import {
+  Fragment,
+  useEffect,
+  useState,
+  useContext,
+  createContext,
+  use,
+} from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -8,6 +15,11 @@ import { FormPageContext } from "../../PAGEs/form";
 import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -163,6 +175,10 @@ const ContactRow = ({
   delete_contact_row,
 }) => {
   const { theme } = useContext(ConfigContext);
+  const [style, setStyle] = useState({
+    width: "50%",
+    height: 0,
+  });
   const contactTypeOptions = [
     { value: "linkedin", label: "LinkedIn", icon: "linked_in" },
     { value: "github", label: "GitHub", icon: "github" },
@@ -173,6 +189,13 @@ const ContactRow = ({
   const [moreOnHover, setMoreOnHover] = useState(false);
   const [hovering, setHovering] = useState(false);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setStyle({
+        height: "56px",
+      });
+    }, 32);
+  }, []);
   useEffect(() => {
     if (!hovering) {
       const timeout = setTimeout(() => setMoreOnHover(false), 120);
@@ -219,8 +242,9 @@ const ContactRow = ({
         }}
         sx={{
           transition: "all 0.2s ease",
+          overflow: "hidden",
           width: "20%",
-          height: 56,
+          height: style.height,
           borderRadius: "10px 0 0 10px",
         }}
         MenuProps={{
@@ -289,10 +313,11 @@ const ContactRow = ({
         }}
         sx={{
           transition: "all 0.2s ease",
+          overflow: "hidden",
           width: moreOnHover ? "calc(70% - 2px)" : "calc(70% + 26px)",
           marginLeft: "2px",
           "& .MuiOutlinedInput-root": {
-            height: 56,
+            height: style.height,
             borderRadius: "0 10px 10px 0",
             paddingRight: "14px",
             transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
@@ -801,6 +826,9 @@ const MonthRangePicker = ({
 };
 const EducationRow = ({ id, index }) => {
   const { theme } = useContext(ConfigContext);
+  const [style, setStyle] = useState({
+    height: 0,
+  });
   const {
     formData,
     update_education_row_institution,
@@ -872,6 +900,13 @@ const EducationRow = ({ id, index }) => {
   const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
+    setTimeout(() => {
+      setStyle({
+        height: 56 * 4 + 16 * 3 + 8 + "px",
+      });
+    }, 32);
+  }, []);
+  useEffect(() => {
     if (!hovering) {
       const timeout = setTimeout(() => setMoreOnHover(false), 120);
       return () => clearTimeout(timeout);
@@ -884,192 +919,201 @@ const EducationRow = ({ id, index }) => {
     <div
       style={{
         position: "relative",
-        marginBottom: index === formData.education.length - 1 ? "0px" : "64px",
+        marginBottom: index === formData.education.length - 1 ? "0px" : "56px",
       }}
     >
-      <TextField
-        id={`institution-input`}
-        label={`Institution`}
-        variant="outlined"
-        value={
-          formData.education.find((item) => item.id === id)?.institution || ""
-        }
-        onChange={(e) => {
-          update_education_row_institution(id, e.target.value);
-        }}
-        sx={{
-          transition: "all 0.2s ease",
-          width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
-          marginBottom: "16px",
-          "& .MuiOutlinedInput-root": {
-            height: 56,
-            borderRadius: "10px",
-            paddingRight: "14px",
-            transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-          },
-          "& .MuiInputBase-input": {
-            height: "100%",
-            fontFamily: "Jost",
-            boxSizing: "border-box",
-            padding: "12px 14px",
-          },
-          "& label": {
-            fontFamily: "Jost",
-          },
-          "& input": {
-            height: "100%",
-            fontFamily: "Jost",
-          },
-        }}
-      />
-      <FormControl
-        sx={{
-          width: "60%",
-          borderRadius: "10px",
+      <div
+        style={{
+          paddingTop: "8px",
+          transition: "height 0.2s ease",
+          height: style.height,
+          overflow: "hidden",
         }}
       >
-        <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
-          Degree
-        </InputLabel>
-        <Select
-          labelId="degree-select-label"
-          id="degree-select"
-          label="Degree"
+        <TextField
+          id={`institution-input`}
+          label={`Institution`}
+          variant="outlined"
           value={
-            formData.education.find((item) => item.id === id)?.degree || ""
+            formData.education.find((item) => item.id === id)?.institution || ""
           }
           onChange={(e) => {
-            update_education_row_degree(id, e.target.value);
+            update_education_row_institution(id, e.target.value);
           }}
           sx={{
             transition: "all 0.2s ease",
-            borderRadius: "10px",
-            fontFamily: "Jost",
+            width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
+            marginBottom: "16px",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
           }}
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                padding: "6px",
-                borderRadius: "10px",
-                backgroundColor: theme?.backgroundColor || "#FFFFFF",
-                boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
-                maxHeight: "312px",
-                overflowY: "hidden",
-                fontFamily: "Jost",
-              },
-            },
-            MenuListProps: {
-              className: "scrolling-space-v",
-              sx: {
-                maxHeight: "300px",
-                overflowY: "auto",
-                padding: "8px",
-              },
-            },
+        />
+        <FormControl
+          sx={{
+            width: "60%",
+            borderRadius: "10px",
           }}
         >
-          {degreeOptions.map((option) => (
-            <MenuItem
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-              sx={{
-                fontFamily: "Jost",
-                fontSize: "16px",
-                borderRadius: "6px",
-              }}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TextField
-        id={`grade-gpa-input`}
-        label={`Grade / GPA`}
-        variant="outlined"
-        value={
-          formData.education.find((item) => item.id === id)?.gpa_grade || ""
-        }
-        onChange={(e) => {
-          update_education_row_gpa_grade(id, e.target.value);
-        }}
-        sx={{
-          transition: "all 0.2s ease",
-          width: moreOnHover ? "calc(30% - 16px)" : "calc(30% + 12px)",
-          marginLeft: "16px",
-          "& .MuiOutlinedInput-root": {
-            height: 56,
-            borderRadius: "10px",
-            paddingRight: "14px",
-            transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-          },
-          "& .MuiInputBase-input": {
-            height: "100%",
-            fontFamily: "Jost",
-            boxSizing: "border-box",
-            padding: "12px 14px",
-          },
-          "& label": {
-            fontFamily: "Jost",
-          },
-          "& input": {
-            height: "100%",
-            fontFamily: "Jost",
-          },
-        }}
-      />
-      <TextField
-        id={`specialization-input`}
-        label={`Specialization`}
-        variant="outlined"
-        value={
-          formData.education.find((item) => item.id === id)?.specialization ||
-          ""
-        }
-        onChange={(e) => {
-          update_education_row_specialization(id, e.target.value);
-        }}
-        sx={{
-          transition: "all 0.2s ease",
-          width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
-          marginTop: "16px",
-          "& .MuiOutlinedInput-root": {
-            height: 56,
-            borderRadius: "10px",
-            paddingRight: "14px",
-            transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-          },
-          "& .MuiInputBase-input": {
-            height: "100%",
-            fontFamily: "Jost",
-            boxSizing: "border-box",
-            padding: "12px 14px",
-          },
-          "& label": {
-            fontFamily: "Jost",
-          },
-          "& input": {
-            height: "100%",
-            fontFamily: "Jost",
-          },
-        }}
-      />
-      <MonthRangePicker
-        moreOnHover={moreOnHover}
-        startDate={
-          formData.education.find((item) => item.id === id)?.startDate || null
-        }
-        endDate={
-          formData.education.find((item) => item.id === id)?.endDate || null
-        }
-        setStartDate={(date) => {
-          update_education_row_start_date(id, date);
-        }}
-        setEndDate={(date) => {
-          update_education_row_end_date(id, date);
-        }}
-      />
+          <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
+            Degree
+          </InputLabel>
+          <Select
+            labelId="degree-select-label"
+            id="degree-select"
+            label="Degree"
+            value={
+              formData.education.find((item) => item.id === id)?.degree || ""
+            }
+            onChange={(e) => {
+              update_education_row_degree(id, e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              borderRadius: "10px",
+              fontFamily: "Jost",
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  padding: "6px",
+                  borderRadius: "10px",
+                  backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                  boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                  maxHeight: "312px",
+                  overflowY: "hidden",
+                  fontFamily: "Jost",
+                },
+              },
+              MenuListProps: {
+                className: "scrolling-space-v",
+                sx: {
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  padding: "8px",
+                },
+              },
+            }}
+          >
+            {degreeOptions.map((option) => (
+              <MenuItem
+                key={option.value}
+                value={option.value}
+                disabled={option.disabled}
+                sx={{
+                  fontFamily: "Jost",
+                  fontSize: "16px",
+                  borderRadius: "6px",
+                }}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          id={`grade-gpa-input`}
+          label={`Grade / GPA`}
+          variant="outlined"
+          value={
+            formData.education.find((item) => item.id === id)?.gpa_grade || ""
+          }
+          onChange={(e) => {
+            update_education_row_gpa_grade(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: moreOnHover ? "calc(30% - 16px)" : "calc(30% + 12px)",
+            marginLeft: "16px",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
+          }}
+        />
+        <TextField
+          id={`specialization-input`}
+          label={`Specialization`}
+          variant="outlined"
+          value={
+            formData.education.find((item) => item.id === id)?.specialization ||
+            ""
+          }
+          onChange={(e) => {
+            update_education_row_specialization(id, e.target.value);
+          }}
+          sx={{
+            transition: "all 0.2s ease",
+            width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
+            marginTop: "16px",
+            "& .MuiOutlinedInput-root": {
+              height: 56,
+              borderRadius: "10px",
+              paddingRight: "14px",
+              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            },
+            "& .MuiInputBase-input": {
+              height: "100%",
+              fontFamily: "Jost",
+              boxSizing: "border-box",
+              padding: "12px 14px",
+            },
+            "& label": {
+              fontFamily: "Jost",
+            },
+            "& input": {
+              height: "100%",
+              fontFamily: "Jost",
+            },
+          }}
+        />
+        <MonthRangePicker
+          moreOnHover={moreOnHover}
+          startDate={
+            formData.education.find((item) => item.id === id)?.startDate || null
+          }
+          endDate={
+            formData.education.find((item) => item.id === id)?.endDate || null
+          }
+          setStartDate={(date) => {
+            update_education_row_start_date(id, date);
+          }}
+          setEndDate={(date) => {
+            update_education_row_end_date(id, date);
+          }}
+        />
+      </div>
       <IconButton
         color={moreOnHover ? "error" : "default"}
         sx={{
@@ -1247,7 +1291,6 @@ const EudcationForm = () => {
   );
 };
 const ExperienceRow = ({ id, index }) => {
-  const { theme } = useContext(ConfigContext);
   const {
     formData,
     update_experience_row_role,
@@ -1258,9 +1301,19 @@ const ExperienceRow = ({ id, index }) => {
     update_experience_row_end_date,
     delete_experience_row,
   } = useContext(ApplicantInfoFormContext);
+  const [style, setStyle] = useState({
+    height: 0,
+  });
   const [moreOnHover, setMoreOnHover] = useState(false);
   const [hovering, setHovering] = useState(false);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setStyle({
+        height: 56 * 4 + 16 * 3 + 8 + "px",
+      });
+    }, 32);
+  }, []);
   useEffect(() => {
     if (!hovering) {
       const timeout = setTimeout(() => setMoreOnHover(false), 120);
@@ -1274,48 +1327,61 @@ const ExperienceRow = ({ id, index }) => {
     <div
       style={{
         position: "relative",
-        marginBottom: index === formData.experience.length - 1 ? "0px" : "64px",
+        marginBottom: index === formData.experience.length - 1 ? "0px" : "58px",
         display: "flex",
       }}
     >
       <div
         style={{
-          width: "50%",
+          position: "relative",
+          display: "flex",
+          width: "100%",
+          marginTop: "8px",
+          transition: "height 0.2s ease",
+          height: style.height,
+          overflow: "hidden",
         }}
       >
-        <TextField
-          id={`role-input`}
-          label={`Role / Position`}
-          variant="outlined"
-          value={formData.education.find((item) => item.id === id)?.role || ""}
-          onChange={(e) => {
-            update_experience_row_role(id, e.target.value);
+        <div
+          style={{
+            width: "50%",
           }}
-          sx={{
-            transition: "all 0.2s ease",
-            width: "calc(100% - 8px)",
-            "& .MuiOutlinedInput-root": {
-              height: 56,
-              borderRadius: "10px",
-              paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-            },
-            "& .MuiInputBase-input": {
-              height: "100%",
-              fontFamily: "Jost",
-              boxSizing: "border-box",
-              padding: "12px 14px",
-            },
-            "& label": {
-              fontFamily: "Jost",
-            },
-            "& input": {
-              height: "100%",
-              fontFamily: "Jost",
-            },
-          }}
-        />
-        {/* <FormControl
+        >
+          <TextField
+            id={`role-input`}
+            label={`Role / Position`}
+            variant="outlined"
+            value={
+              formData.education.find((item) => item.id === id)?.role || ""
+            }
+            onChange={(e) => {
+              update_experience_row_role(id, e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "calc(100% - 8px)",
+              "& .MuiOutlinedInput-root": {
+                height: 56,
+                borderRadius: "10px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          {/* <FormControl
         sx={{
           width: "60%",
           borderRadius: "10px",
@@ -1377,7 +1443,7 @@ const ExperienceRow = ({ id, index }) => {
           ))}
         </Select>
       </FormControl> */}
-        {/* <TextField
+          {/* <TextField
         id={`grade-gpa-input`}
         label={`Grade / GPA`}
         variant="outlined"
@@ -1412,150 +1478,152 @@ const ExperienceRow = ({ id, index }) => {
           },
         }}
       /> */}
-        <TextField
-          id={`company-input`}
-          label={`Company / Institution`}
-          variant="outlined"
-          value={
-            formData.education.find((item) => item.id === id)?.company || ""
-          }
-          onChange={(e) => {
-            update_experience_row_company(id, e.target.value);
-          }}
-          sx={{
-            transition: "all 0.2s ease",
-            width: "calc(100% - 8px)",
-            marginTop: "16px",
-            "& .MuiOutlinedInput-root": {
-              height: 56,
-              borderRadius: "10px",
-              paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-            },
-            "& .MuiInputBase-input": {
-              height: "100%",
-              fontFamily: "Jost",
-              boxSizing: "border-box",
-              padding: "12px 14px",
-            },
-            "& label": {
-              fontFamily: "Jost",
-            },
-            "& input": {
-              height: "100%",
-              fontFamily: "Jost",
-            },
-          }}
-        />
-        <TextField
-          id={`location-input`}
-          label={`Location`}
-          variant="outlined"
-          value={
-            formData.education.find((item) => item.id === id)?.company || ""
-          }
-          onChange={(e) => {
-            update_experience_row_company(id, e.target.value);
-          }}
-          sx={{
-            transition: "all 0.2s ease",
-            width: "calc(100% - 8px)",
-            marginTop: "16px",
-            "& .MuiOutlinedInput-root": {
-              height: 56,
-              borderRadius: "10px",
-              paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
-            },
-            "& .MuiInputBase-input": {
-              height: "100%",
-              fontFamily: "Jost",
-              boxSizing: "border-box",
-              padding: "12px 14px",
-            },
-            "& label": {
-              fontFamily: "Jost",
-            },
-            "& input": {
-              height: "100%",
-              fontFamily: "Jost",
-            },
-          }}
-        />
-        <MonthRangePicker
-          moreOnHover={false}
-          startDate={
-            formData.experience.find((item) => item.id === id)?.startDate ||
-            null
-          }
-          endDate={
-            formData.experience.find((item) => item.id === id)?.endDate || null
-          }
-          setStartDate={(date) => {
-            update_experience_row_start_date(id, date);
-          }}
-          setEndDate={(date) => {
-            update_experience_row_end_date(id, date);
-          }}
-        />
-      </div>
-      <div
-        style={{
-          width: "50%",
-          marginLeft: "8px",
-        }}
-      >
-        <TextField
-          id={`description-input`}
-          label={`Description`}
-          variant="outlined"
-          multiline
-          value={
-            formData.experience.find((item) => item.id === id)?.description ||
-            ""
-          }
-          onChange={(e) => {
-            update_experience_row_description(id, e.target.value);
-          }}
-          InputProps={{
-            sx: {
-              padding: "16px 8px 8px 16px",
-            },
-            inputProps: {
-              className: "scrolling-space-v",
-              style: {
-                fontSize: 16,
+          <TextField
+            id={`company-input`}
+            label={`Company / Institution`}
+            variant="outlined"
+            value={
+              formData.education.find((item) => item.id === id)?.company || ""
+            }
+            onChange={(e) => {
+              update_experience_row_company(id, e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "calc(100% - 8px)",
+              marginTop: "16px",
+              "& .MuiOutlinedInput-root": {
+                height: 56,
+                borderRadius: "10px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
                 height: "100%",
-                overflowY: "auto",
+                fontFamily: "Jost",
                 boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
                 fontFamily: "Jost",
               },
-            },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <TextField
+            id={`location-input`}
+            label={`Location`}
+            variant="outlined"
+            value={
+              formData.education.find((item) => item.id === id)?.company || ""
+            }
+            onChange={(e) => {
+              update_experience_row_company(id, e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "calc(100% - 8px)",
+              marginTop: "16px",
+              "& .MuiOutlinedInput-root": {
+                height: 56,
+                borderRadius: "10px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <MonthRangePicker
+            moreOnHover={false}
+            startDate={
+              formData.experience.find((item) => item.id === id)?.startDate ||
+              null
+            }
+            endDate={
+              formData.experience.find((item) => item.id === id)?.endDate ||
+              null
+            }
+            setStartDate={(date) => {
+              update_experience_row_start_date(id, date);
+            }}
+            setEndDate={(date) => {
+              update_experience_row_end_date(id, date);
+            }}
+          />
+        </div>
+        <div
+          style={{
+            width: "50%",
+            marginLeft: "8px",
           }}
-          sx={{
-            transition: "all 0.2s ease",
-            width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
-            height: 56 * 4 + 16 * 3,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              height: "100%",
-              alignItems: "flex-start",
-            },
-            "& .MuiInputBase-input": {
-              fontFamily: "Jost",
-              boxSizing: "border-box",
-              overflow: "auto !important",
-              height: "100% !important",
-              resize: "none",
-            },
-            "& label": {
-              fontFamily: "Jost",
-            },
-            "& input": {
-              fontFamily: "Jost",
-            },
-          }}
-        />
+        >
+          <TextField
+            id={`description-input`}
+            label={`Description`}
+            variant="outlined"
+            multiline
+            value={
+              formData.experience.find((item) => item.id === id)?.description ||
+              ""
+            }
+            onChange={(e) => {
+              update_experience_row_description(id, e.target.value);
+            }}
+            InputProps={{
+              sx: {
+                padding: "16px 8px 8px 16px",
+              },
+              inputProps: {
+                className: "scrolling-space-v",
+                style: {
+                  fontSize: 16,
+                  height: "100%",
+                  overflowY: "auto",
+                  boxSizing: "border-box",
+                  fontFamily: "Jost",
+                },
+              },
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: moreOnHover ? "calc(100% - 36px)" : "calc(100% - 8px)",
+              height: 56 * 4 + 16 * 3,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "100%",
+                alignItems: "flex-start",
+              },
+              "& .MuiInputBase-input": {
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                overflow: "auto !important",
+                height: "100% !important",
+                resize: "none",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                fontFamily: "Jost",
+              },
+            }}
+          />
+        </div>
       </div>
       <IconButton
         color={moreOnHover ? "error" : "default"}
@@ -1643,7 +1711,7 @@ const ExperienceForm = () => {
       className="experience-form"
       style={{
         transition:
-          "margin-top 0.2s ease, opacity 0.2s ease, width 0.28s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+          "margin-top 0.2s ease, opacity 0.2s ease, width 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
@@ -1751,10 +1819,111 @@ const ExperienceForm = () => {
     </div>
   );
 };
+const TermsAndConditions = () => {
+  const { theme } = useContext(ConfigContext);
+  const [open, setOpen] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  return (
+    <Fragment>
+      <FormControlLabel
+        control={
+          <Checkbox
+            sx={{
+              position: "absolute",
+              left: "4px",
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+            color="primary"
+            checked={agreedToTerms}
+            onChange={() => {
+              setAgreedToTerms((prev) => !prev);
+            }}
+          />
+        }
+        label={
+          <span
+            style={{
+              position: "absolute",
+              top: "50%",
+              transform: "translateY(-50%)",
+              left: "45px",
+              fontFamily: "Jost",
+              fontSize: "16px",
+              color: theme?.font.color || "#000000",
+
+              userSelect: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleClickOpen();
+            }}
+          >
+            {"I agree to the Terms & Conditions."}
+          </span>
+        }
+        labelPlacement="end"
+      />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          sx: {
+            borderRadius: "14px",
+            backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Terms and Conditions"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Let Google help apps determine location. This means sending
+            anonymous location data to Google, even when no apps are running.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="default"
+            onClick={() => {
+              setAgreedToTerms(false);
+              handleClose();
+            }}
+            sx={{ textTransform: "none", borderRadius: "8px" }}
+          >
+            disagree
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              setAgreedToTerms(true);
+              handleClose();
+            }}
+            autoFocus
+            sx={{ textTransform: "none", borderRadius: "8px" }}
+          >
+            agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
+  );
+};
 const UserForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const { theme } = useContext(ConfigContext);
   const {
     formData,
     onForm,
@@ -1957,48 +2126,7 @@ const UserForm = () => {
           height: 36,
         }}
       >
-        <FormControlLabel
-          control={
-            <Checkbox
-              sx={{
-                position: "absolute",
-                left: "4px",
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-              color="primary"
-              checked={agreedToTerms}
-              onChange={() => {
-                setAgreedToTerms((prev) => !prev);
-              }}
-            />
-          }
-          label={
-            <span
-              style={{
-                position: "absolute",
-                top: "50%",
-                transform: "translateY(-50%)",
-                left: "45px",
-                fontFamily: "Jost",
-                fontSize: "16px",
-                color: theme?.font.color || "#000000",
-
-                userSelect: "none",
-                WebkitUserSelect: "none",
-                MozUserSelect: "none",
-                msUserSelect: "none",
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              {"I agree to the Terms & Conditions."}
-            </span>
-          }
-          labelPlacement="end"
-        />
+        <TermsAndConditions />
       </div>
       <div
         style={{
@@ -2035,7 +2163,7 @@ const UserForm = () => {
           color="primary"
           sx={{
             marginLeft: "auto",
-            width: 120,
+            width: 110,
             borderRadius: "10px",
             fontFamily: "Jost",
             fontSize: "16px",
