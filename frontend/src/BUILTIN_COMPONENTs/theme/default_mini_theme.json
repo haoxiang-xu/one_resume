@@ -73,8 +73,8 @@
     "backgroundColor": "#1e2228",
     "scrollingSpace": {
       "backgroundColor": {
-        "default": "#3f3f46A3",
-        "active": "#3f3f46"
+        "default": "#747880A3",
+        "active": "#747880"
       },
       "border": "1px solid #89899600"
     }
