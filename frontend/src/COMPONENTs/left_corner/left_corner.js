@@ -6,30 +6,32 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import logo_light from "./logo_light.png";
+import logo_dark from "./logo_dark.png";
 
 const LeftCorner = () => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { onThemeMode } = useContext(ConfigContext);
   return (
     <div
       className="left-corner"
       style={{
         position: "fixed",
         top: 6,
-        left: 6,
-        width: 75,
-        height: 90,
+        left: 0,
+        width: 60,
+        height: 60,
       }}
     >
-      <Icon
-        src={`one_resume_logo`}
-        color={onThemeMode === "dark_mode" ? "#44464a" : "#CCCCCC"}
+      <img
+        src={onThemeMode === "dark_mode" ? logo_light : logo_dark}
+        alt="one-resume-logo"
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
-          width: 73,
-          height: 73,
+          width: 60,
+          pointerEvents: "none",
 
           userSelect: "none",
           WebkitUserSelect: "none",
@@ -37,12 +39,12 @@ const LeftCorner = () => {
           msUserSelect: "none",
         }}
       />
-      <LightSwitch
+      {/* <LightSwitch
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
-          top: 54,
+          top: 100,
           width: 70,
           height: 32,
 
@@ -52,7 +54,7 @@ const LeftCorner = () => {
           boxShadow_on: "none",
           boxShadow: "none",
         }}
-      />
+      /> */}
     </div>
   );
 };

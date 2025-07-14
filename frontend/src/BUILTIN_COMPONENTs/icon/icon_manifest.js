@@ -238,6 +238,90 @@ const OneResumeLogo = (props) => (
     />
   </svg>
 );
+const OneResumeLogoColorFilled = (props) => (
+  <svg
+    viewBox="0 0 23 30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g filter="url(#filter0_d_1_3)">
+      <path
+        d="M8.5 6H12.5C13.8807 6 15 7.11929 15 8.5V8.5C15 9.88071 13.8807 11 12.5 11H8.5V14.0076C8.5 14.3181 8.6442 14.6109 8.89029 14.8002L15 19.5"
+        stroke="white"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+    </g>
+    <g
+      clip-path="url(#paint0_angular_1_3_clip_path)"
+      data-figma-skip-parse="true"
+    >
+      <g transform="matrix(0.00799968 7.58245e-05 -7.58234e-05 0.00799968 10 12.5)">
+        <foreignObject
+          x="-1255.27"
+          y="-1255.27"
+          width="2510.54"
+          height="2510.54"
+        >
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            style={{
+              background:
+                "conic-gradient(from 90deg,rgba(172, 72, 117, 1) 0deg,rgba(211, 97, 116, 1) 211.154deg,rgba(255, 212, 183, 1) 360deg)",
+              height: "100%",
+              width: "100%",
+              opacity: 1,
+            }}
+          ></div>
+        </foreignObject>
+      </g>
+    </g>
+    <path
+      d="M8.5 4.5C7.67157 4.5 7 5.17157 7 6C7 6.82843 7.67157 7.5 8.5 7.5V4.5ZM8.5 11V9.5H7V11H8.5ZM14.0854 20.6889C14.7421 21.194 15.6838 21.0712 16.1889 20.4146C16.694 19.7579 16.5712 18.8162 15.9146 18.3111L14.0854 20.6889ZM8.89029 14.8002L7.97572 15.9892L8.89029 14.8002ZM8.5 6V7.5H12.5V6V4.5H8.5V6ZM12.5 11V9.5H8.5V11V12.5H12.5V11ZM8.5 11H7V14.0076H8.5H10V11H8.5ZM8.89029 14.8002L7.97572 15.9892L14.0854 20.6889L15 19.5L15.9146 18.3111L9.80486 13.6113L8.89029 14.8002ZM8.5 14.0076H7C7 14.7838 7.36051 15.5159 7.97572 15.9892L8.89029 14.8002L9.80486 13.6113C9.9279 13.7059 10 13.8524 10 14.0076H8.5ZM15 8.5H13.5C13.5 9.05228 13.0523 9.5 12.5 9.5V11V12.5C14.7091 12.5 16.5 10.7091 16.5 8.5H15ZM12.5 6V7.5C13.0523 7.5 13.5 7.94772 13.5 8.5H15H16.5C16.5 6.29086 14.7091 4.5 12.5 4.5V6Z"
+      data-figma-gradient-fill="{&#34;type&#34;:&#34;GRADIENT_ANGULAR&#34;,&#34;stops&#34;:[{&#34;color&#34;:{&#34;r&#34;:0.67450982332229614,&#34;g&#34;:0.28235295414924622,&#34;b&#34;:0.45882353186607361,&#34;a&#34;:1.0},&#34;position&#34;:0.0},{&#34;color&#34;:{&#34;r&#34;:0.82745099067687988,&#34;g&#34;:0.38039216399192810,&#34;b&#34;:0.45490196347236633,&#34;a&#34;:1.0},&#34;position&#34;:0.58653843402862549},{&#34;color&#34;:{&#34;r&#34;:1.0,&#34;g&#34;:0.83137255907058716,&#34;b&#34;:0.71764707565307617,&#34;a&#34;:1.0},&#34;position&#34;:1.0}],&#34;stopsVar&#34;:[{&#34;color&#34;:{&#34;r&#34;:0.67450982332229614,&#34;g&#34;:0.28235295414924622,&#34;b&#34;:0.45882353186607361,&#34;a&#34;:1.0},&#34;position&#34;:0.0},{&#34;color&#34;:{&#34;r&#34;:0.82745099067687988,&#34;g&#34;:0.38039216399192810,&#34;b&#34;:0.45490196347236633,&#34;a&#34;:1.0},&#34;position&#34;:0.58653843402862549},{&#34;color&#34;:{&#34;r&#34;:1.0,&#34;g&#34;:0.83137255907058716,&#34;b&#34;:0.71764707565307617,&#34;a&#34;:1.0},&#34;position&#34;:1.0}],&#34;transform&#34;:{&#34;m00&#34;:15.999360084533691,&#34;m01&#34;:-0.15164680778980255,&#34;m02&#34;:2.0761435031890869,&#34;m10&#34;:0.15164893865585327,&#34;m11&#34;:15.999362945556641,&#34;m12&#34;:4.4244942665100098},&#34;opacity&#34;:1.0,&#34;blendMode&#34;:&#34;NORMAL&#34;,&#34;visible&#34;:true}"
+    />
+    <defs>
+      <filter
+        id="filter0_d_1_3"
+        x="0.5"
+        y="0"
+        width="22.5001"
+        height="29.5001"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dy="2" />
+        <feGaussianBlur stdDeviation="3" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.32 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_1_3"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_1_3"
+          result="shape"
+        />
+      </filter>
+      <clipPath id="paint0_angular_1_3_clip_path">
+        <path d="M8.5 4.5C7.67157 4.5 7 5.17157 7 6C7 6.82843 7.67157 7.5 8.5 7.5V4.5ZM8.5 11V9.5H7V11H8.5ZM14.0854 20.6889C14.7421 21.194 15.6838 21.0712 16.1889 20.4146C16.694 19.7579 16.5712 18.8162 15.9146 18.3111L14.0854 20.6889ZM8.89029 14.8002L7.97572 15.9892L8.89029 14.8002ZM8.5 6V7.5H12.5V6V4.5H8.5V6ZM12.5 11V9.5H8.5V11V12.5H12.5V11ZM8.5 11H7V14.0076H8.5H10V11H8.5ZM8.89029 14.8002L7.97572 15.9892L14.0854 20.6889L15 19.5L15.9146 18.3111L9.80486 13.6113L8.89029 14.8002ZM8.5 14.0076H7C7 14.7838 7.36051 15.5159 7.97572 15.9892L8.89029 14.8002L9.80486 13.6113C9.9279 13.7059 10 13.8524 10 14.0076H8.5ZM15 8.5H13.5C13.5 9.05228 13.0523 9.5 12.5 9.5V11V12.5C14.7091 12.5 16.5 10.7091 16.5 8.5H15ZM12.5 6V7.5C13.0523 7.5 13.5 7.94772 13.5 8.5H15H16.5C16.5 6.29086 14.7091 4.5 12.5 4.5V6Z" />
+      </clipPath>
+    </defs>
+  </svg>
+);
 const Passport = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -377,6 +461,7 @@ const UISVGs = {
   notification_on: NotificationOn,
   notification_off: NotificationOff,
   one_resume_logo: OneResumeLogo,
+  one_resume_logo_color_filled: OneResumeLogoColorFilled,
   passport: Passport,
   phone: Phone,
   search: Search,
