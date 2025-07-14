@@ -1883,11 +1883,26 @@ const TermsAndConditions = () => {
           },
         }}
       >
-        <DialogTitle id="alert-dialog-title">
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            fontFamily: "Jost",
+            fontSize: "24px",
+            fontWeight: 500,
+            color: theme?.font.color || "#000000",
+          }}
+        >
           {"Terms and Conditions"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              fontFamily: "Jost",
+              fontSize: "16px",
+              color: theme?.font.color || "#000000",
+            }}
+          >
             Let Google help apps determine location. This means sending
             anonymous location data to Google, even when no apps are running.
           </DialogContentText>
@@ -1899,7 +1914,7 @@ const TermsAndConditions = () => {
               setAgreedToTerms(false);
               handleClose();
             }}
-            sx={{ textTransform: "none", borderRadius: "8px" }}
+            sx={{ textTransform: "none", borderRadius: "8px", fontFamily: "Jost" }}
           >
             disagree
           </Button>
@@ -1910,7 +1925,7 @@ const TermsAndConditions = () => {
               handleClose();
             }}
             autoFocus
-            sx={{ textTransform: "none", borderRadius: "8px" }}
+            sx={{ textTransform: "none", borderRadius: "8px", fontFamily: "Jost" }}
           >
             agree
           </Button>
