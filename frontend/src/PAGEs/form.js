@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef, createContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
@@ -7,39 +7,55 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
 import LeftCorner from "../COMPONENTs/left_corner/left_corner";
 
+const FormPageContext = createContext();
+
 const Form = () => {
   const { theme } = useContext(ConfigContext);
+  const formRef = useRef(null);
+
+  const scroll_to_bottom = () => {
+    setTimeout(() => {
+      formRef.current.scrollTo({
+        top: formRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 120);
+  };
 
   return (
-    <div
-      id="form-page"
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        backgroundColor: theme?.backgroundColor || "#FFFFFF",
-      }}
-    >
+    <FormPageContext.Provider value={{ scroll_to_bottom }}>
       <div
-        className="scrolling-space-v"
+        id="form-page"
         style={{
           position: "absolute",
-          top: 4,
-          left: 4,
-          right: 4,
-          bottom: 4,
-          overflowX: "hidden",
-          overflowY: "auto",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          backgroundColor: theme?.backgroundColor || "#FFFFFF",
         }}
       >
-        <ApplicantInfoForm />
-        <LeftCorner />
+        <div
+          ref={formRef}
+          className="scrolling-space-v"
+          style={{
+            position: "absolute",
+            top: 6,
+            left: 6,
+            right: 6,
+            bottom: 6,
+            overflowX: "hidden",
+            overflowY: "scroll",
+          }}
+        >
+          <ApplicantInfoForm />
+          <LeftCorner />
+        </div>
       </div>
-    </div>
+    </FormPageContext.Provider>
   );
 };
 
+export { FormPageContext };
 export default Form;

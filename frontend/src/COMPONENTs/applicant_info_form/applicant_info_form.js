@@ -2,6 +2,7 @@ import { useEffect, useState, useContext, createContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
+import { FormPageContext } from "../../PAGEs/form";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
@@ -345,6 +346,7 @@ const ContactRow = ({
 };
 const ContactFrom = () => {
   const { theme } = useContext(ConfigContext);
+  const { scroll_to_bottom } = useContext(FormPageContext);
   const {
     onForm,
     formData,
@@ -614,7 +616,10 @@ const ContactFrom = () => {
           borderRadius: "50%",
           alignSelf: "center",
         }}
-        onClick={add_contact_extra_row}
+        onClick={() => {
+          add_contact_extra_row();
+          scroll_to_bottom();
+        }}
       >
         <Icon
           src="add"
@@ -1103,6 +1108,7 @@ const EudcationForm = () => {
   const { onForm, formData, move_to_form, add_education_row } = useContext(
     ApplicantInfoFormContext
   );
+  const { scroll_to_bottom } = useContext(FormPageContext);
   const [style, setStyle] = useState({
     marginTop: "36px",
     opacity: 0,
@@ -1156,8 +1162,144 @@ const EudcationForm = () => {
         Tell me about your education
       </span>
       {formData.education.map((education, index) => (
-        <EducationRow key={index} id={education.id} index={index}/>
+        <EducationRow key={index} id={education.id} index={index} />
       ))}
+      <IconButton
+        sx={{
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          alignSelf: "center",
+        }}
+        onClick={() => {
+          add_education_row();
+          scroll_to_bottom();
+        }}
+      >
+        <Icon
+          src="add"
+          style={{
+            width: 24,
+            height: 24,
+          }}
+        />
+      </IconButton>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+        }}
+      >
+        <Button
+          variant="text"
+          color="primary"
+          sx={{
+            marginRight: "auto",
+            width: 90,
+            borderRadius: "10px",
+            fontFamily: "Jost",
+            fontSize: "16px",
+            textTransform: "none",
+          }}
+          startIcon={
+            <Icon
+              src="arrow_left"
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            />
+          }
+          onClick={() => move_to_form("contact")}
+        >
+          back
+        </Button>
+        <Button
+          variant="text"
+          color="primary"
+          sx={{
+            marginLeft: "auto",
+            width: 120,
+            borderRadius: "10px",
+            fontFamily: "Jost",
+            fontSize: "16px",
+            textTransform: "none",
+          }}
+          endIcon={
+            <Icon
+              src="arrow_right"
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            />
+          }
+          onClick={() => {
+            move_to_form("experience");
+          }}
+        >
+          continue
+        </Button>
+      </div>
+    </div>
+  );
+};
+const ExperienceForm = () => {
+  const { onForm, formData, move_to_form, add_education_row } = useContext(
+    ApplicantInfoFormContext
+  );
+  const [style, setStyle] = useState({
+    marginTop: "36px",
+    opacity: 0,
+  });
+
+  useEffect(() => {
+    if (onForm === "experience") {
+      setTimeout(() => {
+        setStyle({
+          marginTop: "0px",
+          opacity: 1,
+          height: "auto",
+        });
+      }, 50);
+    } else {
+      setStyle({
+        marginTop: "36px",
+        opacity: 0,
+        height: 0,
+      });
+    }
+  }, [onForm]);
+
+  return (
+    <div
+      className="experience-form"
+      style={{
+        transition: "margin-top 0.2s ease, opacity 0.2s ease",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        padding: "16px",
+        width: "400px",
+        marginTop: style.marginTop,
+        height: style.height,
+        opacity: style.opacity,
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "Jost",
+          textAlign: "center",
+          fontSize: "36px",
+
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+        }}
+      >
+        Tell me about your experience
+      </span>
       <IconButton
         sx={{
           width: 48,
@@ -1201,7 +1343,7 @@ const EudcationForm = () => {
               }}
             />
           }
-          onClick={() => move_to_form("contact")}
+          onClick={() => move_to_form("education")}
         >
           back
         </Button>
@@ -1288,6 +1430,19 @@ const ApplicantInfoForm = () => {
 
   /* { contact } ----------------------------------------------------------------------------- */
   const add_contact_extra_row = () => {
+    const contactTypeOptions = [
+      { value: "linkedin", label: "LinkedIn", icon: "linked_in" },
+      { value: "github", label: "GitHub", icon: "github" },
+      { value: "personal_website", label: "Personal Website", icon: "link" },
+      { value: "portfolio", label: "Portfolio", icon: "passport" },
+      { value: "other", label: "Other", icon: "link" },
+    ];
+    const usedTypes = (formData.contact.extra || []).map((c) => c.contact_type);
+    const availableOptions = contactTypeOptions.filter(
+      (opt) => !usedTypes.includes(opt.value)
+    );
+    const picked =
+      availableOptions.length > 0 ? availableOptions[0].value : "other";
     setFormData((prev) => ({
       ...prev,
       contact: {
@@ -1295,7 +1450,7 @@ const ApplicantInfoForm = () => {
         extra: [
           ...prev.contact.extra,
           {
-            contact_type: "",
+            contact_type: picked,
             contact_value: "",
           },
         ],
@@ -1478,6 +1633,7 @@ const ApplicantInfoForm = () => {
         {onForm === "name" && <NameFrom />}
         {onForm === "contact" && <ContactFrom />}
         {onForm === "education" && <EudcationForm />}
+        {onForm === "experience" && <ExperienceForm />}
       </div>
     </ApplicantInfoFormContext.Provider>
   );

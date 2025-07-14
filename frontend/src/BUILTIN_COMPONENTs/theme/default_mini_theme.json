@@ -32,7 +32,10 @@
     },
     "backgroundColor": "#FFFFFF",
     "scrollingSpace": {
-      "backgroundColor": "#CCCCCC",
+      "backgroundColor": {
+        "default": "#CCCCCCA3",
+        "active": "#CCCCCC"
+      },
       "border": "1px solid #CCCCCC00"
     }
   },
@@ -69,8 +72,11 @@
     },
     "backgroundColor": "#1e2228",
     "scrollingSpace": {
-      "backgroundColor": "#3f3f46",
-      "border": "1px solid #898996"
+      "backgroundColor": {
+        "default": "#3f3f46A3",
+        "active": "#3f3f46"
+      },
+      "border": "1px solid #89899600"
     }
   }
 }
