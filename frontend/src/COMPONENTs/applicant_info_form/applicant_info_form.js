@@ -9,7 +9,7 @@ import {
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
-import { FormPageContext } from "../../PAGEs/form";
+import { FormPageContext } from "../../PAGEs/register";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
@@ -47,6 +47,10 @@ const NameFrom = () => {
     marginTop: "36px",
     opacity: 0,
     height: 0,
+  });
+  const [errors, setErrors] = useState({
+    firstName: { status: false, msg: "" },
+    lastName: { status: false, msg: "" },
   });
 
   useEffect(() => {
@@ -100,6 +104,8 @@ const NameFrom = () => {
       </span>
       <TextField
         required
+        error={errors.firstName.status}
+        helperText={errors.firstName.msg}
         id="first-name-input"
         label="First Name"
         variant="outlined"
@@ -121,6 +127,8 @@ const NameFrom = () => {
       />
       <TextField
         required
+        error={errors.lastName.status}
+        helperText={errors.lastName.msg}
         id="last-name-input"
         label="Last Name"
         variant="outlined"
@@ -160,7 +168,24 @@ const NameFrom = () => {
             }}
           />
         }
-        onClick={() => move_to_form("contact")}
+        onClick={() => {
+          if (!formData.name.firstName || !formData.name.lastName) {
+            if (!formData.name.firstName) {
+              setErrors((prev) => ({
+                ...prev,
+                firstName: { status: true, msg: "First name is required" },
+              }));
+            }
+            if (!formData.name.lastName) {
+              setErrors((prev) => ({
+                ...prev,
+                lastName: { status: true, msg: "Last name is required" },
+              }));
+            }
+            return;
+          }
+          move_to_form("contact");
+        }}
       >
         continue
       </Button>
@@ -387,6 +412,10 @@ const ContactFrom = () => {
     marginTop: "36px",
     opacity: 0,
   });
+  const [errors, setErrors] = useState({
+    cell: { status: false, msg: "" },
+    email: { status: false, msg: "" },
+  });
 
   useEffect(() => {
     if (onForm === "contact") {
@@ -448,7 +477,7 @@ const ContactFrom = () => {
             width: 24,
             height: 24,
             position: "absolute",
-            top: "50%",
+            top: 56 / 2,
             left: "16px",
             transform: "translateY(-50%)",
           }}
@@ -557,6 +586,8 @@ const ContactFrom = () => {
         />
         <TextField
           required
+          error={errors.cell.status}
+          helperText={errors.cell.msg}
           fullWidth
           label="Cell"
           variant="outlined"
@@ -584,6 +615,8 @@ const ContactFrom = () => {
       </Box>
       <TextField
         required
+        error={errors.email.status}
+        helperText={errors.email.msg}
         id="email-input"
         label="Email"
         variant="outlined"
@@ -704,6 +737,21 @@ const ContactFrom = () => {
             />
           }
           onClick={() => {
+            if (!formData.contact.cell.number || !formData.contact.email) {
+              if (!formData.contact.cell.number) {
+                setErrors((prev) => ({
+                  ...prev,
+                  cell: { status: true, msg: "Phone number is required" },
+                }));
+              }
+              if (!formData.contact.email) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: true, msg: "Email is required" },
+                }));
+              }
+              return;
+            }
             move_to_form("education");
           }}
         >
@@ -1816,10 +1864,9 @@ const ExperienceForm = () => {
     </div>
   );
 };
-const TermsAndConditions = () => {
+const TermsAndConditions = ({ agreedToTerms, setAgreedToTerms }) => {
   const { theme } = useContext(ConfigContext);
   const [open, setOpen] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -1914,7 +1961,11 @@ const TermsAndConditions = () => {
               setAgreedToTerms(false);
               handleClose();
             }}
-            sx={{ textTransform: "none", borderRadius: "8px", fontFamily: "Jost" }}
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
           >
             disagree
           </Button>
@@ -1925,7 +1976,11 @@ const TermsAndConditions = () => {
               handleClose();
             }}
             autoFocus
-            sx={{ textTransform: "none", borderRadius: "8px", fontFamily: "Jost" }}
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
           >
             agree
           </Button>
@@ -1935,7 +1990,6 @@ const TermsAndConditions = () => {
   );
 };
 const UserForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const {
     formData,
     onForm,
@@ -1944,9 +1998,16 @@ const UserForm = () => {
     update_user_password,
     update_user_confirm_password,
   } = useContext(ApplicantInfoFormContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [style, setStyle] = useState({
     marginTop: "36px",
     opacity: 0,
+  });
+  const [errors, setErrors] = useState({
+    username: { state: false, msg: "" },
+    password: { state: false, msg: "" },
+    confirmPassword: { state: false, msg: "" },
   });
 
   useEffect(() => {
@@ -2000,11 +2061,13 @@ const UserForm = () => {
       >
         One more step
       </span>
-
       <TextField
         id="username-input"
         label="Username"
         variant="outlined"
+        error={errors.username.state}
+        helperText={errors.username.state ? errors.username.msg : ""}
+        required
         value={formData.user?.username || ""}
         onChange={(e) => update_user_username(e.target.value)}
         sx={{
@@ -2029,8 +2092,11 @@ const UserForm = () => {
       <TextField
         id="password-input"
         label="Password"
+        required
         type={showPassword ? "text" : "password"}
         variant="outlined"
+        error={errors.password.state}
+        helperText={errors.password.state ? errors.password.msg : ""}
         value={formData.user?.password || ""}
         onChange={(e) => update_user_password(e.target.value)}
         sx={{
@@ -2082,8 +2148,13 @@ const UserForm = () => {
       <TextField
         id="confirm-password-input"
         label="Confirm Password"
+        required
         type={showPassword ? "text" : "password"}
         variant="outlined"
+        error={errors.confirmPassword.state}
+        helperText={
+          errors.confirmPassword.state ? errors.confirmPassword.msg : ""
+        }
         value={formData.user?.confirmPassword || ""}
         onChange={(e) => update_user_confirm_password(e.target.value)}
         sx={{
@@ -2138,7 +2209,10 @@ const UserForm = () => {
           height: 36,
         }}
       >
-        <TermsAndConditions />
+        <TermsAndConditions
+          agreedToTerms={agreedToTerms}
+          setAgreedToTerms={setAgreedToTerms}
+        />
       </div>
       <div
         style={{
@@ -2190,7 +2264,51 @@ const UserForm = () => {
               }}
             />
           }
-          onClick={() => {}}
+          onClick={() => {
+            if (
+              formData.user.username &&
+              formData.user.password &&
+              formData.user.confirmPassword &&
+              formData.user.password === formData.user.confirmPassword &&
+              agreedToTerms
+            ) {
+            } else {
+              if (!formData.user.username) {
+                setErrors((prev) => ({
+                  ...prev,
+                  username: { state: true, msg: "Username is required" },
+                }));
+              }
+              if (!formData.user.password) {
+                setErrors((prev) => ({
+                  ...prev,
+                  password: { state: true, msg: "Password is required" },
+                }));
+              }
+              if (!formData.user.confirmPassword) {
+                setErrors((prev) => ({
+                  ...prev,
+                  confirmPassword: {
+                    state: true,
+                    msg: "Confirm Password is required",
+                  },
+                }));
+              }
+              if (
+                formData.user.password &&
+                formData.user.confirmPassword &&
+                formData.user.password !== formData.user.confirmPassword
+              ) {
+                setErrors((prev) => ({
+                  ...prev,
+                  confirmPassword: {
+                    state: true,
+                    msg: "Passwords do not match",
+                  },
+                }));
+              }
+            }
+          }}
         >
           sign up
         </Button>

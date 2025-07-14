@@ -5,11 +5,11 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
-import LeftCorner from "../COMPONENTs/left_corner/left_corner";
+import Logo from "../COMPONENTs/logo/logo";
 
 const FormPageContext = createContext();
 
-const Form = () => {
+const Register = () => {
   const { theme } = useContext(ConfigContext);
   const formRef = useRef(null);
 
@@ -50,7 +50,7 @@ const Form = () => {
           }}
         >
           <ApplicantInfoForm />
-          <LeftCorner />
+          <Logo />
         </div>
       </div>
     </FormPageContext.Provider>
@@ -58,4 +58,4 @@ const Form = () => {
 };
 
 export { FormPageContext };
-export default Form;
+export default Register;

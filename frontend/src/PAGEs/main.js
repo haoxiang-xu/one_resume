@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-import LeftCorner from "../COMPONENTs/left_corner/left_corner";
+import Logo from "../COMPONENTs/logo/logo";
 
 const Title1 = () => {
   return (
@@ -179,7 +179,7 @@ const Main = () => {
       >
         <Title1 />
       </div>
-      <LeftCorner />
+      <Logo />
     </div>
   );
 };

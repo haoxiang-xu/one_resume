@@ -6,8 +6,8 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
-import logo_light from "./logo_light.png";
-import logo_dark from "./logo_dark.png";
+import logo_white_outline from "../../assets/logo_192_white_outline.png";
+import logo_black_outline from "../../assets/logo_192_black_outline.png";
 
 const LeftCorner = () => {
   const { onThemeMode } = useContext(ConfigContext);
@@ -16,21 +16,21 @@ const LeftCorner = () => {
       className="left-corner"
       style={{
         position: "fixed",
-        top: 6,
-        left: 0,
-        width: 60,
-        height: 60,
+        top: 4,
+        left: 2,
+        width: 50,
+        height: 50,
       }}
     >
       <img
-        src={onThemeMode === "dark_mode" ? logo_light : logo_dark}
+        src={onThemeMode === "dark_mode" ? logo_white_outline : logo_black_outline}
         alt="one-resume-logo"
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
-          width: 60,
+          width: 50,
           pointerEvents: "none",
 
           userSelect: "none",
