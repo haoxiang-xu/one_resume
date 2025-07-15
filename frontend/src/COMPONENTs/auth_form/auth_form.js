@@ -1,4 +1,5 @@
-import { useEffect, useState, useContext, createContext } from "react";
+import { useEffect, useState, useContext, createContext, useRef } from "react";
+import { Navigate } from "react-router-dom";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { RequestContext } from "../../CONTAINERs/request/container";
@@ -8,27 +9,10 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import Footer from "../footer/footer";
 
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
-import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
 
 const AuthFormContext = createContext();
 
@@ -37,6 +21,9 @@ const UserFrom = () => {
   const { auth } = useContext(RequestContext);
   const { formData, update_email, update_password } =
     useContext(AuthFormContext);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const [navigateTo, setNavigateTo] = useState(null);
   const [style, setStyle] = useState({
     marginTop: "36px",
     opacity: 0,
@@ -92,6 +79,7 @@ const UserFrom = () => {
         Wellcome back!
       </span>
       <TextField
+        inputRef={emailRef}
         required
         error={errors.email.status}
         helperText={errors.email.msg}
@@ -101,6 +89,37 @@ const UserFrom = () => {
         value={formData.email}
         onChange={(e) => {
           update_email(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            if (!formData.email || !formData.password) {
+              if (!formData.email) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: true, msg: "Email is required" },
+                }));
+              } else {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: false, msg: "" },
+                }));
+              }
+              if (!formData.password) {
+                passwordRef.current.focus();
+              } else {
+                setErrors((prev) => ({
+                  ...prev,
+                  password: { status: false, msg: "" },
+                }));
+              }
+              return;
+            }
+            auth(formData);
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            passwordRef.current.focus();
+          }
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
@@ -115,6 +134,7 @@ const UserFrom = () => {
         }}
       />
       <TextField
+        inputRef={passwordRef}
         required
         error={errors.password.status}
         helperText={errors.password.msg}
@@ -125,6 +145,40 @@ const UserFrom = () => {
         value={formData.password}
         onChange={(e) => {
           update_password(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            if (!formData.email || !formData.password) {
+              if (!formData.email) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: true, msg: "Email is required" },
+                }));
+              } else {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: false, msg: "" },
+                }));
+              }
+              if (!formData.password) {
+                setErrors((prev) => ({
+                  ...prev,
+                  password: { status: true, msg: "Password is required" },
+                }));
+              } else {
+                setErrors((prev) => ({
+                  ...prev,
+                  password: { status: false, msg: "" },
+                }));
+              }
+              return;
+            }
+            auth(formData);
+          }
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            emailRef.current.focus();
+          }
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
@@ -187,7 +241,7 @@ const UserFrom = () => {
             fontWeight: 500,
           }}
           onClick={() => {
-            alert("sign up clicked!");
+            setNavigateTo("/register");
           }}
         >
           Sign up
@@ -256,11 +310,12 @@ const UserFrom = () => {
             }
             return;
           }
-          auth(formData)
+          auth(formData);
         }}
       >
         login
       </Button>
+      {navigateTo && <Navigate to={navigateTo} />}
     </div>
   );
 };
