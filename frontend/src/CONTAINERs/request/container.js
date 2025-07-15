@@ -7,7 +7,7 @@ const RequestContext = createContext();
 
 const root_url = "http://localhost:8888/";
 
-const AuthAlert = ({ open, vertical, horizontal, type, message, setState }) => {
+const RequestAlert = ({ open, vertical, horizontal, type, message, setState }) => {
   const handleClose = () => {
     setState((prev) => ({
       ...prev,
@@ -77,16 +77,43 @@ const RequestContainer = ({ children }) => {
       return null;
     }
   };
+  const auth = async (data) => {
+    try {
+      const { email, password } = data;
+      const response = await fetch(`${root_url}api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(
+          "error",
+          result.message || "Login failed due to server error"
+        );
+        return;
+      }
+      alert("success", "Login successful!");
+    } catch (err) {
+      alert("error", "Login failed due to network error");
+      return;
+    }
+  };
 
   return (
     <RequestContext.Provider
       value={{
         alert,
         register,
+         auth,
       }}
     >
       {children}
-      <AuthAlert
+      <RequestAlert
         open={alertState.open}
         vertical={alertState.vertical}
         horizontal={alertState.horizontal}

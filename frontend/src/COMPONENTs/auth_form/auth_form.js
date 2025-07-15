@@ -3,7 +3,6 @@ import { useEffect, useState, useContext, createContext } from "react";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { RequestContext } from "../../CONTAINERs/request/container";
 import { ConfigContext } from "../../CONTAINERs/config/context";
-import { FormPageContext } from "../../PAGEs/register";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
@@ -35,6 +34,7 @@ const AuthFormContext = createContext();
 
 const UserFrom = () => {
   const { theme } = useContext(ConfigContext);
+  const { auth } = useContext(RequestContext);
   const { formData, update_email, update_password } =
     useContext(AuthFormContext);
   const [style, setStyle] = useState({
@@ -256,6 +256,7 @@ const UserFrom = () => {
             }
             return;
           }
+          auth(formData)
         }}
       >
         login
@@ -264,7 +265,7 @@ const UserFrom = () => {
   );
 };
 const AuthForm = () => {
-  const { theme, windowSize } = useContext(ConfigContext);
+  const { windowSize } = useContext(ConfigContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",

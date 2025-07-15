@@ -1,4 +1,6 @@
 import os
+import jwt
+from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -8,6 +10,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
+
+# JWT configuration
+app.config['JWT_SECRET_KEY'] = 'LMdcjmsgY-ABxvGd1EBvq4jGQGAg-lqeSylnPrdQu_DM-3Z6dDHeiiLFROjc5u6Y'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=48)
 
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 # check if username is already exists
@@ -46,7 +52,7 @@ def register_user():
             return jsonify({'message': 'phone number already exists!'}), 400
         
         new_user_auth = {
-            "_id": data['user']['username'],
+            "_id": data['contact']['email'],
             "role": "user",
             "email": data['contact']['email'],
             "phone_number": data['contact']['cell']['countryCode'] + data['contact']['cell']['number'],
@@ -56,7 +62,7 @@ def register_user():
             "password": generate_password_hash(data['user']['password']),
         }
         new_user_info = {
-            "_id": data['user']['username'],
+            "_id": data['contact']['email'],
             "contact": data['contact'],
             "education": data['education'],
             "experience": data['experience'],
@@ -68,13 +74,51 @@ def register_user():
         
         return jsonify({
             'message': 'user created successfully!',
-            'user_id': data['user']['username'],
+            'user_id': data['contact']['email'],
         })
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+# authenticate user
+@app.route('/api/auth/login', methods=['POST'])
+def login_user():
+    try:
+        data = request.get_json()
+        if (not data or
+            not data.get('email') or
+            not data.get('password')):
+            return jsonify({'message': 'email and password are required!'}), 400
+
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_auth_collection = database["user_auth"]
+
+        user = user_auth_collection.find_one({"email": data['email']})
+        if not user:
+            return jsonify({'message': 'invalid email or password!'}), 401
+
+        if not check_password_hash(user['password'], data['password']):
+            return jsonify({'message': 'invalid email or password!'}), 401
+        
+        payload = {
+            'user_id': str(user['_id']),
+            'role': user['role'],
+            'exp': datetime.utcnow() + app.config['JWT_ACCESS_TOKEN_EXPIRES']
+        }
+        token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
+
+        client.close()
+
+        return jsonify({
+            'message': 'Login successful!',
+            'token': token,
+            'user_id': user['_id'],
+            'role': user['role'],
+        })
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
 
 @app.route('/')

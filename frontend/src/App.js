@@ -15,8 +15,8 @@ import Auth from "./PAGEs/auth";
 const App = () => {
   return (
     <ConfigContainer>
-      <RequestContainer>
-        <DataContainer>
+      <DataContainer>
+        <RequestContainer>
           <Router>
             <Routes>
               <Route path="/" element={<Landing />} />
@@ -24,8 +24,8 @@ const App = () => {
               <Route path="/auth" element={<Auth />} />
             </Routes>
           </Router>
-        </DataContainer>
-      </RequestContainer>
+        </RequestContainer>
+      </DataContainer>
     </ConfigContainer>
   );
 };
