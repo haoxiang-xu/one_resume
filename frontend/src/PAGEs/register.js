@@ -6,6 +6,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 
 import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
 import Logo from "../COMPONENTs/logo/logo";
+import TopMenu from "../COMPONENTs/top_menu/top_menu";
 
 const FormPageContext = createContext();
 
@@ -33,7 +34,7 @@ const Register = () => {
           width: "100%",
           height: "100%",
           overflow: "hidden",
-          backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          // backgroundColor: theme?.backgroundColor || "#FFFFFF",
         }}
       >
         <div
@@ -50,8 +51,8 @@ const Register = () => {
           }}
         >
           <ApplicantInfoForm />
-          <Logo />
         </div>
+        <TopMenu items={["login"]} /> <Logo />
       </div>
     </FormPageContext.Provider>
   );

@@ -7,25 +7,24 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 
-const Landing = () => {
+const Auth = () => {
   const { theme } = useContext(ConfigContext);
   return (
     <div
-      className="landing-page"
+      id="auth-page"
       style={{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
-        overflowX: "hidden",
-        overflowY: "auto",
+        overflow: "hidden",
         // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
-      <TopMenu items={["sign up", "login"]} /> <Logo />
+      <TopMenu items={["sign up"]} /> <Logo />
     </div>
   );
 };
 
-export default Landing;
+export default Auth;

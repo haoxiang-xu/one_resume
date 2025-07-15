@@ -25,18 +25,21 @@ const LeftCorner = () => {
       <img
         src={onThemeMode === "dark_mode" ? logo_white_outline : logo_black_outline}
         alt="one-resume-logo"
+        draggable="false"
         style={{
           position: "absolute",
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
           width: 50,
-          pointerEvents: "none",
 
           userSelect: "none",
           WebkitUserSelect: "none",
           MozUserSelect: "none",
           msUserSelect: "none",
+        }}
+        onClick={() => {
+          window.location.href = "/";
         }}
       />
       {/* <LightSwitch

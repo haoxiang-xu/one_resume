@@ -9,6 +9,7 @@ import ConfigContainer from "./CONTAINERs/config/container";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 import Landing from "./PAGEs/landing";
 import Register from "./PAGEs/register";
+import Auth from "./PAGEs/auth";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth" element={<Auth />} />
             </Routes>
           </Router>
         </DataContainer>
