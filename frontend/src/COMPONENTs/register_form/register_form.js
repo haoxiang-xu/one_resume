@@ -2223,7 +2223,7 @@ const UserForm = () => {
     </div>
   );
 };
-const ApplicantInfoForm = () => {
+const RegisterForm = () => {
   const { register } = useContext(RequestContext);
   const { windowSize } = useContext(ConfigContext);
   const [onForm, setOnForm] = useState("name");
@@ -2620,7 +2620,7 @@ const ApplicantInfoForm = () => {
       }}
     >
       <div
-        className="applicant-info-form"
+        className="register-form"
         style={{
           position: "absolute",
           top: windowSize.height / 2 - 200,
@@ -2638,4 +2638,4 @@ const ApplicantInfoForm = () => {
   );
 };
 
-export default ApplicantInfoForm;
+export default RegisterForm;

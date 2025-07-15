@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
+import AuthForm from "../COMPONENTs/auth_form/auth_form";
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 
@@ -22,6 +23,7 @@ const Auth = () => {
         // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
+      <AuthForm />
       <TopMenu items={["sign up"]} /> <Logo />
     </div>
   );

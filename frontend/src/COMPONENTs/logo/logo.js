@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { Navigate } from "react-router-dom";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -11,6 +12,8 @@ import logo_black_outline from "../../assets/logo_192_black_outline.png";
 
 const LeftCorner = () => {
   const { onThemeMode } = useContext(ConfigContext);
+  const [navigateTo, setNavigateTo] = useState(null);
+
   return (
     <div
       className="left-corner"
@@ -23,7 +26,9 @@ const LeftCorner = () => {
       }}
     >
       <img
-        src={onThemeMode === "dark_mode" ? logo_white_outline : logo_black_outline}
+        src={
+          onThemeMode === "dark_mode" ? logo_white_outline : logo_black_outline
+        }
         alt="one-resume-logo"
         draggable="false"
         style={{
@@ -39,7 +44,7 @@ const LeftCorner = () => {
           msUserSelect: "none",
         }}
         onClick={() => {
-          window.location.href = "/";
+          setNavigateTo("/");
         }}
       />
       {/* <LightSwitch
@@ -58,6 +63,7 @@ const LeftCorner = () => {
           boxShadow: "none",
         }}
       /> */}
+      {navigateTo && <Navigate to={navigateTo} />}
     </div>
   );
 };

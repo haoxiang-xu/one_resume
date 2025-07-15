@@ -4,7 +4,7 @@ import { useContext, useRef, createContext } from "react";
 import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-import ApplicantInfoForm from "../COMPONENTs/applicant_info_form/applicant_info_form";
+import RegisterForm from "../COMPONENTs/register_form/register_form";
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 
@@ -50,7 +50,7 @@ const Register = () => {
             overflowY: "scroll",
           }}
         >
-          <ApplicantInfoForm />
+          <RegisterForm />
         </div>
         <TopMenu items={["login"]} /> <Logo />
       </div>

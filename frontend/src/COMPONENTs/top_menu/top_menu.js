@@ -1,5 +1,9 @@
-import { useContext, useRef, createRef, useState, useEffect, use } from "react";
+import { useContext, useRef, createRef, useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const default_margin = 30;
 const highlighter_margin_top = 4;
@@ -17,9 +21,13 @@ const HoverHighlightor = ({ hoveredItem, position, size }) => {
         left: position.left,
         width: size.width,
         height: size.height,
-        backgroundColor:
-          onThemeMode === "dark_mode" ? "#ffffffff" : "#ffffffff",
-        opacity: hoveredItem === null || hoveredItem === undefined ? 0 : 0.08,
+        backgroundColor: onThemeMode === "dark_mode" ? "#ffffff" : "#000000",
+        opacity:
+          hoveredItem === null || hoveredItem === undefined
+            ? 0
+            : onThemeMode === "dark_mode"
+            ? 0.08
+            : 0.12,
         borderRadius: "8px",
         pointerEvents: "none",
       }}
@@ -31,6 +39,7 @@ const TopMenu = ({ items = [] }) => {
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
 
+  const [navigateTo, setNavigateTo] = useState(null);
   const [itemPositions, setItemPositions] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
   const [highlightPosition, setHighlightPosition] = useState({
@@ -60,7 +69,10 @@ const TopMenu = ({ items = [] }) => {
           rect.top -
           highlighter_margin_top +
           (rect.height + highlighter_margin_top * 2) / 2,
-        left: rect.left - highlighter_margin_left + (rect.width + highlighter_margin_left * 2) / 2,
+        left:
+          rect.left -
+          highlighter_margin_left +
+          (rect.width + highlighter_margin_left * 2) / 2,
       });
       setHighlightSize({
         width: rect.width + highlighter_margin_left * 2,
@@ -105,9 +117,9 @@ const TopMenu = ({ items = [] }) => {
             }}
             onClick={() => {
               if (item === "sign up") {
-                window.location.href = "/register";
+                setNavigateTo("/register");
               } else if (item === "login") {
-                window.location.href = "/auth";
+                setNavigateTo("/auth");
               }
             }}
             onMouseEnter={() => setHoveredItem(index)}
@@ -121,6 +133,7 @@ const TopMenu = ({ items = [] }) => {
         position={highlightPosition}
         size={highlightSize}
       />
+      {navigateTo && <Navigate to={navigateTo} />}
     </div>
   );
 };
