@@ -1,11 +1,4 @@
-import {
-  Fragment,
-  useEffect,
-  useState,
-  useContext,
-  createContext,
-  useCallback,
-} from "react";
+import { useEffect, useState, useContext, createContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { RequestContext } from "../../CONTAINERs/request/container";
@@ -14,6 +7,7 @@ import { FormPageContext } from "../../PAGEs/register";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import Footer from "../footer/footer";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -196,7 +190,34 @@ const UserFrom = () => {
             alert("sign up clicked!");
           }}
         >
-          sign up
+          Sign up
+        </span>
+      </span>
+      <span
+        style={{
+          fontFamily: "Jost",
+          textAlign: "center",
+          fontSize: "16px",
+          color: theme?.font.color || "#000000",
+
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+        }}
+      >
+        <span
+          style={{
+            color: "#1976d2",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontWeight: 500,
+          }}
+          onClick={() => {
+            alert("Forgot password clicked!");
+          }}
+        >
+          Forgot password?
         </span>
       </span>
       <Button
@@ -243,7 +264,7 @@ const UserFrom = () => {
   );
 };
 const AuthForm = () => {
-  const { windowSize } = useContext(ConfigContext);
+  const { theme, windowSize } = useContext(ConfigContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -281,6 +302,7 @@ const AuthForm = () => {
       >
         <UserFrom />
       </div>
+      <Footer />
     </AuthFormContext.Provider>
   );
 };
