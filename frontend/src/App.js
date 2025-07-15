@@ -7,7 +7,7 @@ import ConfigContainer from "./CONTAINERs/config/container";
 /* Containers -------------------------------------------------------------------------------------------------------------- */
 
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
-import Main from "./PAGEs/main";
+import Landing from "./PAGEs/landing";
 import Register from "./PAGEs/register";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 
@@ -18,8 +18,8 @@ const App = () => {
         <DataContainer>
           <Router>
             <Routes>
-              <Route path="/" element={<Main />} />
-              <Route path="/form" element={<Register />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/register" element={<Register />} />
             </Routes>
           </Router>
         </DataContainer>
