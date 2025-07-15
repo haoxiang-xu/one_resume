@@ -1,4 +1,11 @@
-import { useEffect, useState, useContext, createContext, useRef } from "react";
+import {
+  Fragment,
+  useEffect,
+  useState,
+  useContext,
+  createContext,
+  useRef,
+} from "react";
 import { Navigate } from "react-router-dom";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -13,9 +20,280 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import OTPInput from "react-otp-input";
 
 const AuthFormContext = createContext();
 
+const ForgotPasswordDialog = ({
+  resetPasswordOnStep,
+  setResetPasswordOnStep,
+}) => {
+  const { forgot_password } = useContext(RequestContext);
+  const { theme, DialogTransition } = useContext(ConfigContext);
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [errors, setErrors] = useState({
+    email: { status: false, msg: "" },
+    password: { status: false, msg: "" },
+  });
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  return (
+    <Fragment>
+      <span
+        style={{
+          fontFamily: "Jost",
+          textAlign: "center",
+          fontSize: "16px",
+          color: theme?.font.color || "#000000",
+
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+        }}
+      >
+        <span
+          style={{
+            color: "#1976d2",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontWeight: 500,
+          }}
+          onClick={() => {
+            handleClickOpen();
+          }}
+        >
+          Forgot password?
+        </span>
+      </span>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        slots={{
+          transition: DialogTransition,
+        }}
+        PaperProps={{
+          sx: {
+            width: "500px",
+            borderRadius: "14px",
+            backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          },
+        }}
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            fontFamily: "Jost",
+            fontSize: "24px",
+            fontWeight: 500,
+            color: theme?.font.color || "#000000",
+          }}
+        >
+          {"Forgot password?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              fontFamily: "Jost",
+              fontSize: "16px",
+              color: theme?.font.color || "#000000",
+            }}
+          >
+            Enter your email and we'll send you a validation code to reset your
+            password.
+          </DialogContentText>
+          <div
+            style={{
+              marginTop: "32px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+            }}
+          >
+            {resetPasswordOnStep === "input email" ? (
+              <TextField
+                required
+                error={errors.email.status}
+                helperText={errors.email.msg}
+                id="email-input"
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (!email) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        email: { status: true, msg: "Email is required" },
+                      }));
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        email: { status: false, msg: "" },
+                      }));
+                    }
+                    return;
+                  }
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                  "& label": {
+                    fontFamily: "Jost",
+                  },
+                  "& input": {
+                    fontFamily: "Jost",
+                  },
+                }}
+              />
+            ) : resetPasswordOnStep === "input code" ? (
+              <OTPInput
+                value={otp}
+                onChange={(val) => {
+                  setOtp(val);
+                }}
+                numInputs={6}
+                shouldAutoFocus
+                renderInput={(props) => (
+                  <input
+                    {...props}
+                    style={{
+                      width: 48,
+                      height: 50,
+                      margin: 4,
+                      fontSize: 24,
+                      borderRadius: 8,
+                      border: "1px solid #bbb",
+                      backgroundColor: "transparent",
+                      color: theme?.font.color || "#000000",
+                      textAlign: "center",
+                      fontFamily: "Jost",
+                      overflow: "hidden",
+                    }}
+                  />
+                )}
+              />
+            ) : (
+              <TextField
+                required
+                error={errors.password.status}
+                helperText={errors.password.msg}
+                type="password"
+                id="password-input"
+                label="New Password"
+                variant="outlined"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (!email) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: { status: true, msg: "Password is required" },
+                      }));
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: { status: false, msg: "" },
+                      }));
+                    }
+                    return;
+                  }
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                  "& label": {
+                    fontFamily: "Jost",
+                  },
+                  "& input": {
+                    fontFamily: "Jost",
+                  },
+                }}
+              />
+            )}
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="default"
+            onClick={() => {
+              handleClose();
+            }}
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
+          >
+            cancel
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              if (!email) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: { status: true, msg: "Email is required" },
+                }));
+                return;
+              }
+              forgot_password(email)
+                .then(() => {
+                  if (resetPasswordOnStep === "input email") {
+                    setResetPasswordOnStep("input code");
+                  } else if (resetPasswordOnStep === "input code") {
+                    setResetPasswordOnStep("reset password");
+                  } else {
+                    handleClose();
+                  }
+                })
+                .catch((err) => {
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: { status: true, msg: err.message },
+                  }));
+                });
+            }}
+            autoFocus
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
+          >
+            {resetPasswordOnStep === "input email"
+              ? "send email"
+              : resetPasswordOnStep === "input code"
+              ? "verify code"
+              : "reset password"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
+  );
+};
 const UserFrom = () => {
   const { theme } = useContext(ConfigContext);
   const { auth } = useContext(RequestContext);
@@ -23,6 +301,7 @@ const UserFrom = () => {
     useContext(AuthFormContext);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+  const [resetPasswordOnStep, setResetPasswordOnStep] = useState("input email");
   const [navigateTo, setNavigateTo] = useState(null);
   const [style, setStyle] = useState({
     marginTop: "36px",
@@ -247,33 +526,10 @@ const UserFrom = () => {
           Sign up
         </span>
       </span>
-      <span
-        style={{
-          fontFamily: "Jost",
-          textAlign: "center",
-          fontSize: "16px",
-          color: theme?.font.color || "#000000",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          msUserSelect: "none",
-        }}
-      >
-        <span
-          style={{
-            color: "#1976d2",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontWeight: 500,
-          }}
-          onClick={() => {
-            alert("Forgot password clicked!");
-          }}
-        >
-          Forgot password?
-        </span>
-      </span>
+      <ForgotPasswordDialog
+        resetPasswordOnStep={resetPasswordOnStep}
+        setResetPasswordOnStep={setResetPasswordOnStep}
+      />
       <Button
         variant="text"
         color="primary"

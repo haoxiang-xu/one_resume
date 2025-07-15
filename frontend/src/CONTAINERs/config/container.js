@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, forwardRef } from "react";
 import {
   useSystemTheme,
   MaterialUIThemeWrapper,
 } from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
+import Slide from "@mui/material/Slide";
 import ScrollingSpace from "../../BUILTIN_COMPONENTs/class/scrolling_sapce";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -12,6 +13,10 @@ import { ConfigContext } from "./context";
 /* { Data } ------------------------------------------------------------------------------------------------------------------ */
 import available_themes from "../../BUILTIN_COMPONENTs/theme/theme_manifest";
 /* { Data } ------------------------------------------------------------------------------------------------------------------ */
+
+const DialogTransition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const ConfigContainer = ({ children }) => {
   /* { STYLE } =========================================================================================================== */
@@ -103,6 +108,7 @@ const ConfigContainer = ({ children }) => {
   return (
     <ConfigContext.Provider
       value={{
+        DialogTransition,
         /* { STYLE } ========================================== */
         syncWithSystemTheme,
         setSyncWithSystemTheme,

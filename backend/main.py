@@ -1,15 +1,34 @@
 import os
+import re
 import jwt
+import math
+import random
 from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_limiter.errors import RateLimitExceeded
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
+import smtplib
+import mimetypes
+from email.message import EmailMessage
 
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["100 per hour"]  # 全局限流
+)
+
+# Email configuration
+app.config['SMTP_EMAIL'] = "lance924852785@gmail.com"
+app.config['SMTP_PASSWORD'] = "gwflwteesyburspz"
 
 # JWT configuration
 app.config['JWT_SECRET_KEY'] = 'LMdcjmsgY-ABxvGd1EBvq4jGQGAg-lqeSylnPrdQu_DM-3Z6dDHeiiLFROjc5u6Y'
@@ -30,6 +49,7 @@ def register_check_phone_number_exists(phone_number):
     pass
 # register a new user
 @app.route('/api/register', methods=['POST'])
+@limiter.limit("5 per minute")
 def register_user():
     try:
         data = request.get_json()
@@ -83,7 +103,7 @@ def register_user():
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
 # authenticate user
 @app.route('/api/auth/login', methods=['POST'])
-def login_user():
+def auth_login():
     try:
         data = request.get_json()
         if (not data or
@@ -119,7 +139,189 @@ def login_user():
         })
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+@app.route('/api/auth/forgot_password', methods=['POST'])
+@limiter.limit("3 per 15 minutes")
+def auth_forgot_password():
+    def send_validation_email(receiver_email, code):
+        EMAIL_ADDRESS = app.config["SMTP_EMAIL"]
+        EMAIL_PASSWORD = app.config["SMTP_PASSWORD"]
+
+        msg = EmailMessage()
+        msg['Subject'] = "Your One Resume Password Reset Code"
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = receiver_email
+
+        # 你可以用本地图片，也可以用网络图片（建议放cdn或外链，省事）
+        # 假设你有一个 logo.png 和你代码同级目录
+        image_path = "./assets/logos/logo_512_white_outline.png"
+        cid = "one-resume-logo"  # Content-ID
+
+        # 构造 HTML 内容，嵌入图片并加简单样式
+        html_content = f"""
+        <html>
+        <head>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body {{
+            font-family: Jost;
+            background: #fff;
+            padding: 0;
+            margin: 0;
+            }}
+            .container {{
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 32px 32px 28px 32px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+            }}
+            .logo {{
+            width: 120px;
+            display: block;
+            margin-bottom: 20px;
+            }}
+            .title {{
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            text-align: left;
+            color: #000;
+            }}
+            .info {{
+            font-size: 16px;
+            color: #000;
+            margin: 0 0 20px 0;
+            text-align: left;
+            }}
+            .code {{
+            font-size: 32px;
+            letter-spacing: 6px;
+            font-weight: bold;
+            color: #000;
+            text-align: left;
+            margin: 0 0 16px 0;
+            }}
+            .expire {{
+            font-size: 13px;
+            color: #888;
+            margin-top: 20px;
+            text-align: left;
+            }}
+        </style>
+        </head>
+        <body>
+        <div class="container">
+            <img src="cid:{cid}" alt="Logo" class="logo" />
+            <h2 class="title">One Resume</h2>
+            <p class="info">Your password reset code is:</p>
+            <div class="code">{code}</div>
+            <p class="expire">This code will expire in 10 minutes.</p>
+        </div>
+        </body>
+        </html>
+        """
+
+        # 添加 HTML 内容
+        msg.add_alternative(html_content, subtype="html")
+        # 添加本地图片 (嵌入，非附件)
+        with open(image_path, "rb") as img:
+            maintype, subtype = mimetypes.guess_type(image_path)[0].split("/")
+            msg.get_payload()[0].add_related(
+                img.read(),
+                maintype=maintype,
+                subtype=subtype,
+                cid=f"<{cid}>"
+            )
+        # 发送
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            smtp.send_message(msg)
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        if not email:
+            return jsonify({'message': 'email is required!'}), 400
+
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_auth_collection = database["user_auth"]
+        user = user_auth_collection.find_one({"email": email})
+        if not user:
+            return jsonify({'message': 'email not found!'}), 404
+
+        # 生成6位数字验证码
+        code = str(random.randint(100000, 999999))
+        expire_time = datetime.utcnow() + timedelta(minutes=10)
+
+        # 保存验证码和过期时间到用户数据（可以用单独collection更安全）
+        user_auth_collection.update_one(
+            {"email": email},
+            {"$set": {
+                "reset_code": code,
+                "reset_code_expires": expire_time
+            }}
+        )
+
+        # 发送邮件
+        send_validation_email(email, code)
+
+        return jsonify({'message': 'validation code sent to your email!'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'message': str(e)}), 500
+def auth_reset_password():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        code = data.get('code')
+        new_password = data.get('new_password')
+
+        if not email or not code or not new_password:
+            return jsonify({'message': 'email, code and new password are required!'}), 400
+
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_auth_collection = database["user_auth"]
+        user = user_auth_collection.find_one({"email": email})
+
+        if not user:
+            return jsonify({'message': 'email not found!'}), 404
+
+        if (user.get('reset_code') != code or
+            datetime.utcnow() > user.get('reset_code_expires')):
+            return jsonify({'message': 'invalid or expired reset code!'}), 400
+
+        hashed_password = generate_password_hash(new_password)
+        user_auth_collection.update_one(
+            {"email": email},
+            {"$set": {"password": hashed_password, "reset_code": None, "reset_code_expires": None}}
+        )
+
+        client.close()
+
+        return jsonify({'message': 'Password reset successfully!'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #
+@app.errorhandler(RateLimitExceeded)
+def ratelimit_handler(e):
+    retry_after = None
+    match = re.search(r"reset in (\d+) seconds", str(e.description))
+    if match:
+        retry_after = int(match.group(1))
+    if retry_after is not None:
+        minutes = math.ceil(retry_after / 60)
+        msg = f"Too many requests, please try again later. You can try again in {minutes} minute(s)."
+    else:
+        msg = "Too many requests, please try again later."
+    return jsonify({
+        "message": msg,
+        "detail": str(e)
+    }), 429
+# { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #
 
 @app.route('/')
 def home():

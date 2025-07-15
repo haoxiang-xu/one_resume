@@ -103,6 +103,30 @@ const RequestContainer = ({ children }) => {
       return;
     }
   };
+  const forgot_password = async (email) => {
+    try {
+      const response = await fetch(`${root_url}api/auth/forgot_password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(
+          "error",
+          result.message || "Failed to send validation code due to server error"
+        );
+        return;
+      }
+      alert("success", "Validation code sent to your email!");
+    } catch (err) {
+      alert("error", "Failed to send validation code due to network error");
+    }
+  };
 
   return (
     <RequestContext.Provider
@@ -110,6 +134,7 @@ const RequestContainer = ({ children }) => {
         alert,
         register,
          auth,
+         forgot_password,
       }}
     >
       {children}

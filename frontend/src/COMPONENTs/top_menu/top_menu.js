@@ -114,6 +114,11 @@ const TopMenu = ({ items = [] }) => {
               cursor: "pointer",
               fontFamily: "Jost",
               color: theme?.font.color || "#000000",
+
+              userSelect: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
             }}
             onClick={() => {
               if (item === "sign up") {
