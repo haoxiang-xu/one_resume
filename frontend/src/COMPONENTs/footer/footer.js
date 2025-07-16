@@ -97,7 +97,6 @@ const RegisterFooter = () => {
   );
 };
 const Footer = ({ onPage }) => {
-  const { theme } = useContext(ConfigContext);
   return (
     <div
       className="footer"

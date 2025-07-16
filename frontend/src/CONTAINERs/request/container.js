@@ -1,4 +1,8 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useContext } from "react";
+
+/* Contexts -------------------------------------------------------------------------------------------------------------- */
+import { DataContext } from "../data/context";
+/* Contexts -------------------------------------------------------------------------------------------------------------- */
 
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
@@ -41,6 +45,7 @@ const RequestAlert = ({
   );
 };
 const RequestContainer = ({ children }) => {
+  const { setJwtToken } = useContext(DataContext);
   const [alertState, setAlertState] = useState({
     open: false,
     vertical: "top",
@@ -101,6 +106,8 @@ const RequestContainer = ({ children }) => {
         alert("error", result.message || "Login failed due to server error");
         return;
       }
+      const token = result.token;
+      setJwtToken(token);
       alert("success", "Login successful!");
     } catch (err) {
       alert("error", "Login failed due to network error");
