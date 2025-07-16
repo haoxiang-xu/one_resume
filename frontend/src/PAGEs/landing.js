@@ -23,6 +23,18 @@ const Landing = () => {
         // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
+      <span
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontFamily: "Jost",
+          fontSize: "40px",
+        }}
+      >
+        Landing Page in Construction...
+      </span>
       <TopMenu items={["light switch", "sign up", "login"]} /> <Logo />
     </div>
   );
