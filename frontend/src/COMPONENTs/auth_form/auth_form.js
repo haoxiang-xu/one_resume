@@ -113,8 +113,11 @@ const ForgotPasswordDialog = ({
               color: theme?.font.color || "#000000",
             }}
           >
-            Enter your email and we'll send you a validation code to reset your
-            password.
+            {resetPasswordOnStep === "input email"
+              ? "Enter your email and we'll send you a validation code to reset your password."
+              : resetPasswordOnStep === "input code"
+              ? "Enter the validation code sent to your email to reset your password."
+              : "Enter your new password to reset your password."}
           </DialogContentText>
           <div
             style={{
@@ -153,6 +156,7 @@ const ForgotPasswordDialog = ({
                   }
                 }}
                 sx={{
+                  width: "75%",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",
                   },
