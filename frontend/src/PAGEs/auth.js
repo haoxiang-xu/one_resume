@@ -25,7 +25,7 @@ const Auth = () => {
       }}
     >
       <AuthForm />
-      <TopMenu items={["sign up"]} /> <Logo /> <Footer onPage={"auth"}/>
+      <TopMenu items={["light switch", "sign up"]} /> <Logo /> <Footer onPage={"auth"}/>
     </div>
   );
 };

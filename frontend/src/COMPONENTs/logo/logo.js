@@ -5,8 +5,6 @@ import { Navigate } from "react-router-dom";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import logo_white_outline from "../../assets/logo_192_white_outline.png";
 import logo_black_outline from "../../assets/logo_192_black_outline.png";
 
@@ -47,22 +45,6 @@ const LeftCorner = () => {
           setNavigateTo("/");
         }}
       />
-      {/* <LightSwitch
-        style={{
-          position: "absolute",
-          transform: "translate(-50%, 0%)",
-          left: "50%",
-          top: 100,
-          width: 70,
-          height: 32,
-
-          backgroundColor_on: "#CCCCCC",
-          backgroundColor: "#44464a",
-          color: onThemeMode === "dark_mode" ? "#21252b" : "rgb(255, 255, 255)",
-          boxShadow_on: "none",
-          boxShadow: "none",
-        }}
-      /> */}
       {navigateTo && <Navigate to={navigateTo} />}
     </div>
   );

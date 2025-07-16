@@ -23,7 +23,7 @@ const Landing = () => {
         // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
-      <TopMenu items={["sign up", "login"]} /> <Logo />
+      <TopMenu items={["light switch", "sign up", "login"]} /> <Logo />
     </div>
   );
 };

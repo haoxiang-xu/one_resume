@@ -53,7 +53,8 @@ const Register = () => {
         >
           <RegisterForm />
         </div>
-        <TopMenu items={["login"]} /> <Logo /> <Footer onPage={"register"} />
+        <TopMenu items={["light switch", "login"]} /> <Logo />{" "}
+        <Footer onPage={"register"} />
       </div>
     </FormPageContext.Provider>
   );

@@ -5,11 +5,13 @@ import { Navigate } from "react-router-dom";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
+import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
+
 const default_margin = 30;
 const highlighter_margin_top = 4;
 const highlighter_margin_left = 12;
 
-const HoverHighlightor = ({ hoveredItem, position, size }) => {
+const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
   const { onThemeMode } = useContext(ConfigContext);
   return (
     <div
@@ -19,29 +21,29 @@ const HoverHighlightor = ({ hoveredItem, position, size }) => {
         position: "absolute",
         top: position.top,
         left: position.left,
-        width: size.width,
-        height: size.height,
+        width: hoveredItem === "light switch" ? size.width - 18 : size.width,
+        height: hoveredItem === "light switch" ? size.height - 4 : size.height,
         backgroundColor: onThemeMode === "dark_mode" ? "#ffffff" : "#000000",
         opacity:
-          hoveredItem === null || hoveredItem === undefined
+          hoveredIndex === null || hoveredIndex === undefined
             ? 0
             : onThemeMode === "dark_mode"
-            ? 0.08
+            ? hoveredItem === "light switch" ? 0.12 : 0.08
             : 0.12,
-        borderRadius: "8px",
+        borderRadius: hoveredItem === "light switch" ? "32px" : "8px",
         pointerEvents: "none",
       }}
     ></div>
   );
 };
 const TopMenu = ({ items = [] }) => {
-  const { theme, windowSize } = useContext(ConfigContext);
+  const { theme, onThemeMode, windowSize } = useContext(ConfigContext);
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
 
   const [navigateTo, setNavigateTo] = useState(null);
   const [itemPositions, setItemPositions] = useState({});
-  const [hoveredItem, setHoveredItem] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [highlightPosition, setHighlightPosition] = useState({
     top: 0,
     left: windowSize.width,
@@ -61,9 +63,9 @@ const TopMenu = ({ items = [] }) => {
     setItemPositions(positions);
   }, [items]);
   useEffect(() => {
-    if (hoveredItem !== null && itemRefs.current[hoveredItem]) {
+    if (hoveredIndex !== null && itemRefs.current[hoveredIndex]) {
       const rect =
-        itemRefs.current[hoveredItem].current.getBoundingClientRect();
+        itemRefs.current[hoveredIndex].current.getBoundingClientRect();
       setHighlightPosition({
         top:
           rect.top -
@@ -79,7 +81,7 @@ const TopMenu = ({ items = [] }) => {
         height: rect.height + highlighter_margin_top * 2,
       });
     }
-  }, [hoveredItem]);
+  }, [hoveredIndex]);
 
   return (
     <div
@@ -103,7 +105,7 @@ const TopMenu = ({ items = [] }) => {
           height: "100%",
           paddingLeft: `${default_margin}px`,
         }}
-        onMouseLeave={() => setHoveredItem(null)}
+        onMouseLeave={() => setHoveredIndex(null)}
       >
         {items.map((item, index) => (
           <div
@@ -127,14 +129,30 @@ const TopMenu = ({ items = [] }) => {
                 setNavigateTo("/auth");
               }
             }}
-            onMouseEnter={() => setHoveredItem(index)}
+            onMouseEnter={() => setHoveredIndex(index)}
           >
-            {item}
+            {item === "light switch" ? (
+              <LightSwitch
+                style={{
+                  width: 70,
+                  height: 32,
+
+                  backgroundColor_on: "#CCCCCC00",
+                  backgroundColor: "#44464a00",
+                  color: theme?.font.color || "#21252b",
+                  boxShadow_on: "none",
+                  boxShadow: "none",
+                }}
+              />
+            ) : (
+              item
+            )}
           </div>
         ))}
       </div>
       <HoverHighlightor
-        hoveredItem={hoveredItem}
+        hoveredItem={items[hoveredIndex]}
+        hoveredIndex={hoveredIndex}
         position={highlightPosition}
         size={highlightSize}
       />
