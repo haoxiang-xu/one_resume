@@ -37,16 +37,24 @@ const ForgotPasswordDialog = ({
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({
     email: { status: false, msg: "" },
     password: { status: false, msg: "" },
+    confirm_password: { status: false, msg: "" },
     otp: { status: false, msg: "" },
   });
+
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+  };
+  const toggle_password_visibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -196,46 +204,154 @@ const ForgotPasswordDialog = ({
                 )}
               />
             ) : (
-              <TextField
-                required
-                error={errors.password.status}
-                helperText={errors.password.msg}
-                type="password"
-                id="password-input"
-                label="New Password"
-                variant="outlined"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (!email) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: { status: true, msg: "Password is required" },
-                      }));
-                    } else {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: { status: false, msg: "" },
-                      }));
+              <>
+                <TextField
+                  required
+                  error={errors.password.status}
+                  helperText={errors.password.msg}
+                  type={showPassword ? "text" : "password"}
+                  id="password-input"
+                  label="New Password"
+                  variant="outlined"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (!password) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          password: {
+                            status: true,
+                            msg: "Password is required",
+                          },
+                        }));
+                      } else {
+                        setErrors((prev) => ({
+                          ...prev,
+                          password: { status: false, msg: "" },
+                        }));
+                      }
+                      return;
                     }
-                    return;
-                  }
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                  "& label": {
-                    fontFamily: "Jost",
-                  },
-                  "& input": {
-                    fontFamily: "Jost",
-                  },
-                }}
-              />
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                    "& label": {
+                      fontFamily: "Jost",
+                    },
+                    "& input": {
+                      fontFamily: "Jost",
+                    },
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggle_password_visibility}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <Icon
+                              src="eye_closed"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                opacity: 0.36,
+                              }}
+                            />
+                          ) : (
+                            <Icon
+                              src="eye_open"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                opacity: 0.36,
+                              }}
+                            />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  required
+                  error={errors.confirm_password.status}
+                  helperText={errors.confirm_password.msg}
+                  type={showPassword ? "text" : "password"}
+                  id="confirm-password-input"
+                  label="Enter Password Again"
+                  variant="outlined"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (!password) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          password: {
+                            status: true,
+                            msg: "Password is required",
+                          },
+                        }));
+                      } else {
+                        setErrors((prev) => ({
+                          ...prev,
+                          password: { status: false, msg: "" },
+                        }));
+                      }
+                      return;
+                    }
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                    "& label": {
+                      fontFamily: "Jost",
+                    },
+                    "& input": {
+                      fontFamily: "Jost",
+                    },
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggle_password_visibility}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <Icon
+                              src="eye_closed"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                opacity: 0.36,
+                              }}
+                            />
+                          ) : (
+                            <Icon
+                              src="eye_open"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                opacity: 0.36,
+                              }}
+                            />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </>
             )}
           </div>
         </DialogContent>
@@ -321,6 +437,51 @@ const ForgotPasswordDialog = ({
                     setErrors((prev) => ({
                       ...prev,
                       otp: {
+                        status: true,
+                        msg: err?.message || "An error occurred.",
+                      },
+                    }));
+                  });
+              } else {
+                if (!password) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: { status: true, msg: "Password is required" },
+                  }));
+                  return;
+                }
+                if (password !== confirmPassword) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    confirm_password: {
+                      status: true,
+                      msg: "Passwords do not match",
+                    },
+                  }));
+                  return;
+                }
+                forgot_password("reset password", {
+                  email: email,
+                  code: otp,
+                  new_password: password,
+                })
+                  .then((res) => {
+                    if (res && res.status === "success") {
+                      handleClose();
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: {
+                          status: true,
+                          msg: res?.message || "An error occurred.",
+                        },
+                      }));
+                    }
+                  })
+                  .catch((err) => {
+                    setErrors((prev) => ({
+                      ...prev,
+                      password: {
                         status: true,
                         msg: err?.message || "An error occurred.",
                       },

@@ -303,6 +303,50 @@ def auth_forgot_password_validate_code():
         return jsonify({'success': True}), 200
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+# forgot password -> reset password
+@app.route('/api/auth/forgot_password/reset_password', methods=['POST'])
+@limiter.limit("5 per 15 minutes")
+def auth_forgot_password_reset_password():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        new_password = data.get('new_password')
+        code = data.get('code')
+        if not email or not new_password or not code:
+            return jsonify({'success': False, 'message': 'email, code, and new password are required!'}), 400
+
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_auth_collection = database["user_auth"]
+        user = user_auth_collection.find_one({"email": email})
+        if not user:
+            client.close()
+            return jsonify({'success': False, 'message': 'email not found!'}), 404
+
+        # 再次校验验证码和过期时间
+        reset_code_expires = user.get('reset_code_expires')
+        if reset_code_expires is not None and reset_code_expires.tzinfo is None:
+            reset_code_expires = reset_code_expires.replace(tzinfo=timezone.utc)
+        if (user.get('reset_code') != code or
+            datetime.now(timezone.utc) > reset_code_expires):
+            client.close()
+            return jsonify({'success': False, 'message': 'invalid or expired code!'}), 400
+
+        # 更新密码
+        hashed_password = generate_password_hash(new_password)
+        user_auth_collection.update_one(
+            {"email": email},
+            {"$set": {
+                "password": hashed_password,
+                "reset_code": None,
+                "reset_code_expires": None
+            }}
+        )
+
+        client.close()
+        return jsonify({'success': True, 'message': 'password reset successfully!'}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #

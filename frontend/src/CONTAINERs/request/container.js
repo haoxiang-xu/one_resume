@@ -166,6 +166,35 @@ const RequestContainer = ({ children }) => {
       } catch (err) {
         alert("error", "Failed to validate code due to network error");
       }
+    } else if (onStep === "reset password") {
+      try {
+        const response = await fetch(
+          `${root_url}api/auth/forgot_password/reset_password`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          alert(
+            "error",
+            result.message || "Failed to reset password due to server error"
+          );
+          result.status = "error";
+          return result;
+        }
+        alert("success", "Password reset successful!");
+        result.status = "success";
+        return result;
+      } catch (err) {
+        alert("error", "Failed to reset password due to network error");
+      }
     }
   };
 
