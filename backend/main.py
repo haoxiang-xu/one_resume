@@ -3,7 +3,7 @@ import re
 import jwt
 import math
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -139,9 +139,10 @@ def auth_login():
         })
     except Exception as e:
         return jsonify({'message': str(e)}), 500
-@app.route('/api/auth/forgot_password', methods=['POST'])
-@limiter.limit("3 per 15 minutes")
-def auth_forgot_password():
+# forgot password -> send validation code to email
+@app.route('/api/auth/forgot_password/send_validation_code', methods=['POST'])
+@limiter.limit("5 per 15 minutes")
+def auth_forgot_password_send_validation_code():
     def send_validation_email(receiver_email, code):
         EMAIL_ADDRESS = app.config["SMTP_EMAIL"]
         EMAIL_PASSWORD = app.config["SMTP_PASSWORD"]
@@ -241,18 +242,18 @@ def auth_forgot_password():
         data = request.get_json()
         email = data.get('email')
         if not email:
-            return jsonify({'message': 'email is required!'}), 400
+            return jsonify({'success': False, 'message': 'email and code are required!'}), 400
 
         client = MongoClient(os.getenv("MONGODB_URL"))
         database = client["one_resume_db"]
         user_auth_collection = database["user_auth"]
         user = user_auth_collection.find_one({"email": email})
         if not user:
-            return jsonify({'message': 'email not found!'}), 404
+            return jsonify({'success': False, 'message': 'email not found!'}), 404
 
         # 生成6位数字验证码
         code = str(random.randint(100000, 999999))
-        expire_time = datetime.utcnow() + timedelta(minutes=10)
+        expire_time = datetime.now(timezone.utc) + timedelta(minutes=10)
 
         # 保存验证码和过期时间到用户数据（可以用单独collection更安全）
         user_auth_collection.update_one(
@@ -270,39 +271,38 @@ def auth_forgot_password():
     except Exception as e:
         print(e)
         return jsonify({'message': str(e)}), 500
-def auth_reset_password():
+# forgot password -> validate code
+@app.route('/api/auth/forgot_password/validate_code', methods=['POST'])
+@limiter.limit("5 per 15 minutes")
+def auth_forgot_password_validate_code():
     try:
         data = request.get_json()
         email = data.get('email')
         code = data.get('code')
-        new_password = data.get('new_password')
-
-        if not email or not code or not new_password:
-            return jsonify({'message': 'email, code and new password are required!'}), 400
+        if not email or not code:
+            return jsonify({'success': False, 'message': 'email and code are required!'}), 400
 
         client = MongoClient(os.getenv("MONGODB_URL"))
         database = client["one_resume_db"]
         user_auth_collection = database["user_auth"]
         user = user_auth_collection.find_one({"email": email})
-
         if not user:
-            return jsonify({'message': 'email not found!'}), 404
+            client.close()
+            return jsonify({'success': False, 'message': 'email not found!'}), 404
 
+        # 检查验证码和过期时间
+        reset_code_expires = user.get('reset_code_expires')
+        if reset_code_expires is not None and reset_code_expires.tzinfo is None:
+            reset_code_expires = reset_code_expires.replace(tzinfo=timezone.utc)
         if (user.get('reset_code') != code or
-            datetime.utcnow() > user.get('reset_code_expires')):
-            return jsonify({'message': 'invalid or expired reset code!'}), 400
-
-        hashed_password = generate_password_hash(new_password)
-        user_auth_collection.update_one(
-            {"email": email},
-            {"$set": {"password": hashed_password, "reset_code": None, "reset_code_expires": None}}
-        )
+            datetime.now(timezone.utc) > reset_code_expires):
+            client.close()
+            return jsonify({'success': False, 'message': 'invalid or expired code!'}), 400
 
         client.close()
-
-        return jsonify({'message': 'Password reset successfully!'}), 200
+        return jsonify({'success': True}), 200
     except Exception as e:
-        return jsonify({'message': str(e)}), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #

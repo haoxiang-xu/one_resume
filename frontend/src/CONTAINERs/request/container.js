@@ -7,7 +7,14 @@ const RequestContext = createContext();
 
 const root_url = "http://localhost:8888/";
 
-const RequestAlert = ({ open, vertical, horizontal, type, message, setState }) => {
+const RequestAlert = ({
+  open,
+  vertical,
+  horizontal,
+  type,
+  message,
+  setState,
+}) => {
   const handleClose = () => {
     setState((prev) => ({
       ...prev,
@@ -91,10 +98,7 @@ const RequestContainer = ({ children }) => {
       const result = await response.json();
 
       if (!response.ok) {
-        alert(
-          "error",
-          result.message || "Login failed due to server error"
-        );
+        alert("error", result.message || "Login failed due to server error");
         return;
       }
       alert("success", "Login successful!");
@@ -103,28 +107,65 @@ const RequestContainer = ({ children }) => {
       return;
     }
   };
-  const forgot_password = async (email) => {
-    try {
-      const response = await fetch(`${root_url}api/auth/forgot_password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(
-          "error",
-          result.message || "Failed to send validation code due to server error"
+  const forgot_password = async (onStep, data) => {
+    if (onStep === "input email") {
+      try {
+        const response = await fetch(
+          `${root_url}api/auth/forgot_password/send_validation_code`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: data }),
+          }
         );
-        return;
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          alert(
+            "error",
+            result.message ||
+              "Failed to send validation code due to server error"
+          );
+          result.status = "error";
+          return result;
+        }
+        alert("success", "Validation code sent to your email!");
+        result.status = "success";
+        return result;
+      } catch (err) {
+        alert("error", "Failed to send validation code due to network error");
       }
-      alert("success", "Validation code sent to your email!");
-    } catch (err) {
-      alert("error", "Failed to send validation code due to network error");
+    } else if (onStep === "input code") {
+      try {
+        const response = await fetch(
+          `${root_url}api/auth/forgot_password/validate_code`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          alert(
+            "error",
+            result.message || "Failed to validate code due to server error"
+          );
+          result.status = "error";
+          return result;
+        }
+        result.status = "success";
+        return result;
+      } catch (err) {
+        alert("error", "Failed to validate code due to network error");
+      }
     }
   };
 
@@ -133,8 +174,8 @@ const RequestContainer = ({ children }) => {
       value={{
         alert,
         register,
-         auth,
-         forgot_password,
+        auth,
+        forgot_password,
       }}
     >
       {children}

@@ -40,6 +40,7 @@ const ForgotPasswordDialog = ({
   const [errors, setErrors] = useState({
     email: { status: false, msg: "" },
     password: { status: false, msg: "" },
+    otp: { status: false, msg: "" },
   });
   const handleClickOpen = () => {
     setOpen(true);
@@ -47,6 +48,7 @@ const ForgotPasswordDialog = ({
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
     <Fragment>
       <span
@@ -254,29 +256,77 @@ const ForgotPasswordDialog = ({
           <Button
             color="primary"
             onClick={() => {
-              if (!email) {
-                setErrors((prev) => ({
-                  ...prev,
-                  email: { status: true, msg: "Email is required" },
-                }));
-                return;
-              }
-              forgot_password(email)
-                .then(() => {
-                  if (resetPasswordOnStep === "input email") {
-                    setResetPasswordOnStep("input code");
-                  } else if (resetPasswordOnStep === "input code") {
-                    setResetPasswordOnStep("reset password");
-                  } else {
-                    handleClose();
-                  }
-                })
-                .catch((err) => {
+              if (resetPasswordOnStep === "input email") {
+                if (!email) {
                   setErrors((prev) => ({
                     ...prev,
-                    email: { status: true, msg: err.message },
+                    email: { status: true, msg: "Email is required" },
                   }));
-                });
+                  return;
+                }
+                forgot_password("input email", email)
+                  .then((res) => {
+                    if (res && res.status === "success") {
+                      if (resetPasswordOnStep === "input email") {
+                        setResetPasswordOnStep("input code");
+                      } else if (resetPasswordOnStep === "input code") {
+                        setResetPasswordOnStep("reset password");
+                      } else {
+                        handleClose();
+                      }
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        email: {
+                          status: true,
+                          msg: res?.message || "An error occurred.",
+                        },
+                      }));
+                    }
+                  })
+                  .catch((err) => {
+                    setErrors((prev) => {
+                      return {
+                        ...prev,
+                        email: {
+                          status: true,
+                          msg: err?.message || "An error occurred.",
+                        },
+                      };
+                    });
+                  });
+              } else if (resetPasswordOnStep === "input code") {
+                if (!otp) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    otp: { status: true, msg: "OTP is required" },
+                  }));
+                  return;
+                }
+                forgot_password("input code", { email: email, code: otp })
+                  .then((res) => {
+                    if (res && res.status === "success") {
+                      setResetPasswordOnStep("reset password");
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        otp: {
+                          status: true,
+                          msg: res?.message || "An error occurred.",
+                        },
+                      }));
+                    }
+                  })
+                  .catch((err) => {
+                    setErrors((prev) => ({
+                      ...prev,
+                      otp: {
+                        status: true,
+                        msg: err?.message || "An error occurred.",
+                      },
+                    }));
+                  });
+              }
             }}
             autoFocus
             sx={{
