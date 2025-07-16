@@ -6,6 +6,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import ClosedStringSpinner from "../BUILTIN_COMPONENTs/spinner/string_spinner";
 
 const Landing = () => {
   const { theme } = useContext(ConfigContext);
@@ -35,6 +36,7 @@ const Landing = () => {
       >
         Landing Page in Construction...
       </span>
+      <ClosedStringSpinner n={5} />
       <TopMenu items={["light switch", "sign up", "login"]} /> <Logo />
     </div>
   );
