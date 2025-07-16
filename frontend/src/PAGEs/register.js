@@ -7,6 +7,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 import RegisterForm from "../COMPONENTs/register_form/register_form";
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Footer from "../COMPONENTs/footer/footer";
 
 const FormPageContext = createContext();
 
@@ -52,7 +53,7 @@ const Register = () => {
         >
           <RegisterForm />
         </div>
-        <TopMenu items={["login"]} /> <Logo />
+        <TopMenu items={["login"]} /> <Logo /> <Footer onPage={"register"} />
       </div>
     </FormPageContext.Provider>
   );

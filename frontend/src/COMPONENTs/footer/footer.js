@@ -4,7 +4,99 @@ import { useContext } from "react";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-const Footer = () => {
+const AuthFooter = () => {
+  const { theme } = useContext(ConfigContext);
+  return (
+    <span
+      style={{
+        fontFamily: "Jost",
+        textAlign: "center",
+        fontSize: "14px",
+        color: theme?.font.color || "#000000",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+      }}
+    >
+      By loging in, you agree to our{" "}
+      <span
+        style={{
+          color: "#1976d2",
+          cursor: "pointer",
+          textDecoration: "underline",
+          fontWeight: 500,
+        }}
+        onClick={() => {
+          alert("terms of service clicked!");
+        }}
+      >
+        Terms of Service
+      </span>{" "}
+      and{" "}
+      <span
+        style={{
+          color: "#1976d2",
+          cursor: "pointer",
+          textDecoration: "underline",
+          fontWeight: 500,
+        }}
+        onClick={() => {
+          alert("privacy policy clicked!");
+        }}
+      >
+        Privacy Policy
+      </span>
+    </span>
+  );
+};
+const RegisterFooter = () => {
+  const { theme } = useContext(ConfigContext);
+  return (
+    <span
+      style={{
+        fontFamily: "Jost",
+        textAlign: "center",
+        fontSize: "14px",
+        color: theme?.font.color || "#000000",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+      }}
+    >
+      By registering, you agree to our{" "}
+      <span
+        style={{
+          color: "#1976d2",
+          cursor: "pointer",
+          textDecoration: "underline",
+          fontWeight: 500,
+        }}
+        onClick={() => {
+          alert("terms of service clicked!");
+        }}
+      >
+        Terms of Service
+      </span>{" "}
+      and{" "}
+      <span
+        style={{
+          color: "#1976d2",
+          cursor: "pointer",
+          textDecoration: "underline",
+          fontWeight: 500,
+        }}
+        onClick={() => {
+          alert("privacy policy clicked!");
+        }}
+      >
+        Privacy Policy
+      </span>
+    </span>
+  );
+};
+const Footer = ({ onPage }) => {
   const { theme } = useContext(ConfigContext);
   return (
     <div
@@ -20,47 +112,8 @@ const Footer = () => {
         justifyContent: "center",
       }}
     >
-      <span
-        style={{
-          fontFamily: "Jost",
-          textAlign: "center",
-          fontSize: "14px",
-          color: theme?.font.color || "#000000",
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          msUserSelect: "none",
-        }}
-      >
-        By loging in, you agree to our{" "}
-        <span
-          style={{
-            color: "#1976d2",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontWeight: 500,
-          }}
-          onClick={() => {
-            alert("terms of service clicked!");
-          }}
-        >
-          Terms of Service
-        </span>{" "}
-        and{" "}
-        <span
-          style={{
-            color: "#1976d2",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontWeight: 500,
-          }}
-          onClick={() => {
-            alert("privacy policy clicked!");
-          }}
-        >
-          Privacy Policy
-        </span>
-      </span>
+      {onPage === "auth" ? <AuthFooter /> : null}
+      {onPage === "register" ? <RegisterFooter /> : null}
     </div>
   );
 };

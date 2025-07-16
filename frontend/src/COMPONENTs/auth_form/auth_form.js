@@ -14,7 +14,6 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
-import Footer from "../footer/footer";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -156,7 +155,6 @@ const ForgotPasswordDialog = ({
                   }
                 }}
                 sx={{
-                  width: "75%",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",
                   },
@@ -618,7 +616,6 @@ const AuthForm = () => {
       >
         <UserFrom />
       </div>
-      <Footer />
     </AuthFormContext.Provider>
   );
 };
