@@ -1,4 +1,5 @@
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Logo from "../COMPONENTs/logo/logo";
 
 const Resume = () => {
   return (
@@ -14,7 +15,7 @@ const Resume = () => {
         overflowY: "auto",
       }}
     >
-      <TopMenu items={["light switch", "user"]} />
+      <TopMenu items={["light switch", "user"]} /> <Logo style={"stroke"}/>
     </div>
   );
 };

@@ -5,10 +5,12 @@ import { Navigate } from "react-router-dom";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-import logo_white_outline from "../../assets/logo_192_white_outline.png";
-import logo_black_outline from "../../assets/logo_192_black_outline.png";
+import logo_white_outline from "../../assets/logos/logo_192_white_outline.png";
+import logo_black_outline from "../../assets/logos/logo_192_black_outline.png";
+import logo_white_stroke from "../../assets/logos/logo_64_white_stroke.png";
+import logo_black_stroke from "../../assets/logos/logo_64_black_stroke.png";
 
-const LeftCorner = () => {
+const Logo = ({ style = "colored" }) => {
   const { onThemeMode } = useContext(ConfigContext);
   const [navigateTo, setNavigateTo] = useState(null);
 
@@ -17,7 +19,7 @@ const LeftCorner = () => {
       className="left-corner"
       style={{
         position: "fixed",
-        top: 4,
+        top: style === "colored" ? 4 : 16,
         left: 2,
         width: 50,
         height: 50,
@@ -25,7 +27,13 @@ const LeftCorner = () => {
     >
       <img
         src={
-          onThemeMode === "dark_mode" ? logo_white_outline : logo_black_outline
+          style === "colored"
+            ? onThemeMode === "dark_mode"
+              ? logo_white_outline
+              : logo_black_outline
+            : onThemeMode === "dark_mode"
+            ? logo_white_stroke
+            : logo_black_stroke
         }
         alt="one-resume-logo"
         draggable="false"
@@ -34,7 +42,7 @@ const LeftCorner = () => {
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
-          width: 50,
+          width: style === "colored" ? 50 : 26,
 
           userSelect: "none",
           WebkitUserSelect: "none",
@@ -50,4 +58,4 @@ const LeftCorner = () => {
   );
 };
 
-export default LeftCorner;
+export default Logo;

@@ -16,7 +16,6 @@ const Landing = () => {
         overflowY: "auto",
       }}
     >
-      {" "}
       <div
         style={{
           position: "absolute",
