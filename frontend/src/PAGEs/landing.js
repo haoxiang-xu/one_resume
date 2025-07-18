@@ -16,6 +16,19 @@ const Landing = () => {
         overflowY: "auto",
       }}
     >
+      {" "}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "50px",
+          height: "50px",
+        }}
+      >
+        <ClosedStringSpinner size={36} />
+      </div>
       <span
         style={{
           position: "absolute",
@@ -28,8 +41,8 @@ const Landing = () => {
       >
         Landing Page in Construction...
       </span>
-      <ClosedStringSpinner n={5} />
-      <TopMenu items={["light switch", "sign up", "login"]} /> <Logo />
+      <TopMenu items={["light switch", "sign up", "login"]} />
+      <Logo />
     </div>
   );
 };

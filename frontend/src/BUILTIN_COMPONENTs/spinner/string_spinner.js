@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
-import { useSpring, animated } from 'react-spring';
+import React, { useState, useContext, useEffect } from "react";
+import { useSpring, animated } from "react-spring";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { ConfigContext } from "../../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 // 生成振动弦的 SVG 路径
 function generatePath(n, t, options) {
-  const { R = 50, A0 = 10, omega = 1, cx = 100, cy = 100, points = 100 } = options;
+  const {
+    R = 50,
+    A0 = 10,
+    omega = 1,
+    cx = 100,
+    cy = 100,
+    points = 100,
+  } = options;
   const A = A0 * Math.sin(omega * t);
   let path = `M `;
   for (let i = 0; i <= points; i++) {
@@ -18,64 +29,67 @@ function generatePath(n, t, options) {
   return path;
 }
 
-function StringSpinner() {
-  const [n, setN] = useState(0); // 默认 n=0
-  const [amplitude, setAmplitude] = useState(10); // 可调整的幅度参数
+function StringSpinner({ n = 5, amplitude = 2, size = 26, color = "default" }) {
+  const { theme } = useContext(ConfigContext);
+  const padding = 10;
+  const svgSize = size * 2 + padding * 2;
+  const center = svgSize / 2;
+  const [strokeColor, setStrokeColor] = useState(color);
+  useEffect(() => {
+    if (theme && color === "default") {
+      setStrokeColor(theme.spinner.color);
+    } else {
+      setStrokeColor(color);
+    }
+  }, [theme, color]);
 
-  // 动画 t 从 0 到 2π 循环
   const props = useSpring({
     from: { t: 0 },
     to: { t: 2 * Math.PI },
     loop: true,
-    config: { duration: 1000 }, // 每秒一个循环
+    config: { duration: 1000 },
   });
-
-  // 计算动画路径
-  const d = props.t.to((t) => generatePath(n, t, { R: 50, A0: amplitude, omega: 1, cx: 100, cy: 100, points: 100 }));
+  const d = props.t.to((t) =>
+    generatePath(n, t, {
+      R: size,
+      A0: amplitude,
+      omega: 1,
+      cx: center,
+      cy: center,
+      points: 100,
+    })
+  );
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <label>
-        调整 n (0-5):
-        <input
-          type="range"
-          min="0"
-          max="5"
-          step="1"
-          value={n}
-          onChange={(e) => setN(parseInt(e.target.value))}
-        />
-      </label>
-      <label>
-        调整幅度 (5-20):
-        <input
-          type="range"
-          min="5"
-          max="20"
-          value={amplitude}
-          onChange={(e) => setAmplitude(parseInt(e.target.value))}
-        />
-      </label>
-      <svg width="200" height="200">
-        <defs>
-          {/* 发光效果滤镜 */}
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <animated.path
-          d={d}
-          fill="none" // 移除填充
-          stroke="white"
-          strokeWidth="2"
-          filter="url(#glow)"
-        />
-      </svg>
-    </div>
+    <svg
+      width={svgSize}
+      height={svgSize}
+      viewBox={`0 0 ${svgSize} ${svgSize}`}
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        margin: "0 auto",
+      }}
+    >
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <animated.path
+        d={d}
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="2"
+        filter="url(#glow)"
+      />
+    </svg>
   );
 }
 

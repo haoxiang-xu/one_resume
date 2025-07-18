@@ -30,6 +30,9 @@
     "font": {
       "color": "#222222"
     },
+    "spinner": {
+      "color": "#F4B6A6"
+    },
     "backgroundColor": "#FFFFFF",
     "scrollingSpace": {
       "backgroundColor": {
@@ -69,6 +72,9 @@
     },
     "font": {
       "color": "#FFFFFF"
+    },
+    "spinner": {
+      "color": "#F4B6A6"
     },
     "backgroundColor": "#1E1E1E",
     "scrollingSpace": {
