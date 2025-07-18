@@ -12,7 +12,6 @@ const Resume = () => {
         height: "100%",
         overflowX: "hidden",
         overflowY: "auto",
-        // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
       <TopMenu items={["light switch", "user"]} />
