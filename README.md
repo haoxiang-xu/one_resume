@@ -123,7 +123,9 @@
     - **direct.js**: <span style="opacity: 0.32">The direct page for applicants.</span>
     - **register.js**: <span style="opacity: 0.32">The registration page for applicants.</span>
     - **auth.js**: <span style="opacity: 0.32">The authentication page for users.</span>
-    - **user.js**: <span style="opacity: 0.32">The user profile page.</span>
+    - **pricing.js**: <span style="opacity: 0.32">The pricing page for the application.</span>
+    - **user.js**: <span style="opacity: 0.32">The user profile & dashboard page.</span>
       - **resume.js**: <span style="opacity: 0.32">The resume page for users.</span>
+      - **coverletter.js**: <span style="opacity: 0.32">The cover letter page for users.</span>
+      - **settings.js**: <span style="opacity: 0.32">The settings page for users.</span>
     - **admin.js**: <span style="opacity: 0.32">The admin dashboard page.</span>
-  - **assets**: Contains static assets like images and icons.
