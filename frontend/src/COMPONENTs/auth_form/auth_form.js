@@ -5,6 +5,8 @@ import {
   useContext,
   createContext,
   useRef,
+  useCallback,
+  use,
 } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -37,7 +39,9 @@ const ForgotPasswordDialog = ({
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const passwordRef = useRef(null);
   const [password, setPassword] = useState("");
+  const confirmPasswordRef = useRef(null);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({
@@ -47,15 +51,143 @@ const ForgotPasswordDialog = ({
     otp: { status: false, msg: "" },
   });
 
-  const handleClickOpen = () => {
+  const handle_dialog_open = () => {
     setOpen(true);
   };
-  const handleClose = () => {
+  const handle_dialog_close = () => {
     setOpen(false);
   };
   const toggle_password_visibility = () => {
     setShowPassword((prev) => !prev);
   };
+  const handle_submit = useCallback(() => {
+    if (resetPasswordOnStep === "input email") {
+      if (!email) {
+        setErrors((prev) => ({
+          ...prev,
+          email: { status: true, msg: "Email is required" },
+        }));
+        return;
+      }
+      forgot_password("input email", email)
+        .then((res) => {
+          if (res && res.status === "success") {
+            if (resetPasswordOnStep === "input email") {
+              setResetPasswordOnStep("input code");
+            } else if (resetPasswordOnStep === "input code") {
+              setResetPasswordOnStep("reset password");
+            } else {
+              handle_dialog_close();
+            }
+          } else {
+            setErrors((prev) => ({
+              ...prev,
+              email: {
+                status: true,
+                msg: res?.message || "An error occurred.",
+              },
+            }));
+          }
+        })
+        .catch((err) => {
+          setErrors((prev) => {
+            return {
+              ...prev,
+              email: {
+                status: true,
+                msg: err?.message || "An error occurred.",
+              },
+            };
+          });
+        });
+    } else if (resetPasswordOnStep === "input code") {
+      if (!otp) {
+        setErrors((prev) => ({
+          ...prev,
+          otp: { status: true, msg: "OTP is required" },
+        }));
+        return;
+      }
+      forgot_password("input code", { email: email, code: otp })
+        .then((res) => {
+          if (res && res.status === "success") {
+            setResetPasswordOnStep("reset password");
+          } else {
+            setOtp("");
+            setErrors((prev) => ({
+              ...prev,
+              otp: {
+                status: true,
+                msg: res?.message || "An error occurred.",
+              },
+            }));
+          }
+        })
+        .catch((err) => {
+          setErrors((prev) => ({
+            ...prev,
+            otp: {
+              status: true,
+              msg: err?.message || "An error occurred.",
+            },
+          }));
+        });
+    } else {
+      if (!password) {
+        setErrors((prev) => ({
+          ...prev,
+          password: { status: true, msg: "Password is required" },
+        }));
+        return;
+      }
+      if (password !== confirmPassword) {
+        setErrors((prev) => ({
+          ...prev,
+          confirm_password: {
+            status: true,
+            msg: "Passwords do not match",
+          },
+        }));
+        return;
+      }
+      forgot_password("reset password", {
+        email: email,
+        code: otp,
+        new_password: password,
+      })
+        .then((res) => {
+          if (res && res.status === "success") {
+            handle_dialog_close();
+          } else {
+            setErrors((prev) => ({
+              ...prev,
+              password: {
+                status: true,
+                msg: res?.message || "An error occurred.",
+              },
+            }));
+          }
+        })
+        .catch((err) => {
+          setErrors((prev) => ({
+            ...prev,
+            password: {
+              status: true,
+              msg: err?.message || "An error occurred.",
+            },
+          }));
+        });
+    }
+  }, [
+    resetPasswordOnStep,
+    email,
+    otp,
+    setOtp,
+    password,
+    confirmPassword,
+    forgot_password,
+    setResetPasswordOnStep,
+  ]);
 
   return (
     <Fragment>
@@ -80,7 +212,7 @@ const ForgotPasswordDialog = ({
             fontWeight: 500,
           }}
           onClick={() => {
-            handleClickOpen();
+            handle_dialog_open();
           }}
         >
           Forgot password?
@@ -88,7 +220,7 @@ const ForgotPasswordDialog = ({
       </span>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={handle_dialog_close}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         slots={{
@@ -160,6 +292,7 @@ const ForgotPasswordDialog = ({
                         ...prev,
                         email: { status: false, msg: "" },
                       }));
+                      handle_submit();
                     }
                     return;
                   }
@@ -206,6 +339,7 @@ const ForgotPasswordDialog = ({
             ) : (
               <>
                 <TextField
+                  inputRef={passwordRef}
                   required
                   error={errors.password.status}
                   helperText={errors.password.msg}
@@ -232,8 +366,17 @@ const ForgotPasswordDialog = ({
                           ...prev,
                           password: { status: false, msg: "" },
                         }));
+                        if (!confirmPassword) {
+                          confirmPasswordRef.current.focus();
+                        } else {
+                          handle_submit();
+                        }
                       }
                       return;
+                    }
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      confirmPasswordRef.current.focus();
                     }
                   }}
                   sx={{
@@ -279,6 +422,7 @@ const ForgotPasswordDialog = ({
                   }}
                 />
                 <TextField
+                  inputRef={confirmPasswordRef}
                   required
                   error={errors.confirm_password.status}
                   helperText={errors.confirm_password.msg}
@@ -292,7 +436,7 @@ const ForgotPasswordDialog = ({
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      if (!password) {
+                      if (!confirmPassword) {
                         setErrors((prev) => ({
                           ...prev,
                           password: {
@@ -300,13 +444,37 @@ const ForgotPasswordDialog = ({
                             msg: "Password is required",
                           },
                         }));
+                      } else if (!password) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          confirm_password: {
+                            status: true,
+                            msg: "Password is required",
+                          },
+                        }));
+                      } else if (confirmPassword !== password) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          confirm_password: {
+                            status: true,
+                            msg: "Passwords do not match",
+                          },
+                        }));
                       } else {
                         setErrors((prev) => ({
                           ...prev,
                           password: { status: false, msg: "" },
                         }));
+                        setErrors((prev) => ({
+                          ...prev,
+                          confirm_password: { status: false, msg: "" },
+                        }));
+                        handle_submit();
                       }
                       return;
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      passwordRef.current.focus();
                     }
                   }}
                   sx={{
@@ -359,7 +527,7 @@ const ForgotPasswordDialog = ({
           <Button
             color="default"
             onClick={() => {
-              handleClose();
+              handle_dialog_close();
             }}
             sx={{
               textTransform: "none",
@@ -372,122 +540,7 @@ const ForgotPasswordDialog = ({
           <Button
             color="primary"
             onClick={() => {
-              if (resetPasswordOnStep === "input email") {
-                if (!email) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    email: { status: true, msg: "Email is required" },
-                  }));
-                  return;
-                }
-                forgot_password("input email", email)
-                  .then((res) => {
-                    if (res && res.status === "success") {
-                      if (resetPasswordOnStep === "input email") {
-                        setResetPasswordOnStep("input code");
-                      } else if (resetPasswordOnStep === "input code") {
-                        setResetPasswordOnStep("reset password");
-                      } else {
-                        handleClose();
-                      }
-                    } else {
-                      setErrors((prev) => ({
-                        ...prev,
-                        email: {
-                          status: true,
-                          msg: res?.message || "An error occurred.",
-                        },
-                      }));
-                    }
-                  })
-                  .catch((err) => {
-                    setErrors((prev) => {
-                      return {
-                        ...prev,
-                        email: {
-                          status: true,
-                          msg: err?.message || "An error occurred.",
-                        },
-                      };
-                    });
-                  });
-              } else if (resetPasswordOnStep === "input code") {
-                if (!otp) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    otp: { status: true, msg: "OTP is required" },
-                  }));
-                  return;
-                }
-                forgot_password("input code", { email: email, code: otp })
-                  .then((res) => {
-                    if (res && res.status === "success") {
-                      setResetPasswordOnStep("reset password");
-                    } else {
-                      setErrors((prev) => ({
-                        ...prev,
-                        otp: {
-                          status: true,
-                          msg: res?.message || "An error occurred.",
-                        },
-                      }));
-                    }
-                  })
-                  .catch((err) => {
-                    setErrors((prev) => ({
-                      ...prev,
-                      otp: {
-                        status: true,
-                        msg: err?.message || "An error occurred.",
-                      },
-                    }));
-                  });
-              } else {
-                if (!password) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    password: { status: true, msg: "Password is required" },
-                  }));
-                  return;
-                }
-                if (password !== confirmPassword) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    confirm_password: {
-                      status: true,
-                      msg: "Passwords do not match",
-                    },
-                  }));
-                  return;
-                }
-                forgot_password("reset password", {
-                  email: email,
-                  code: otp,
-                  new_password: password,
-                })
-                  .then((res) => {
-                    if (res && res.status === "success") {
-                      handleClose();
-                    } else {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: {
-                          status: true,
-                          msg: res?.message || "An error occurred.",
-                        },
-                      }));
-                    }
-                  })
-                  .catch((err) => {
-                    setErrors((prev) => ({
-                      ...prev,
-                      password: {
-                        status: true,
-                        msg: err?.message || "An error occurred.",
-                      },
-                    }));
-                  });
-              }
+              handle_submit();
             }}
             autoFocus
             sx={{
