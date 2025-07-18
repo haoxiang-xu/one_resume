@@ -1,4 +1,4 @@
-import { useContext, useRef, createRef, useState, useEffect } from "react";
+import { useContext, useRef, createRef, useState, useEffect, use } from "react";
 import { Navigate } from "react-router-dom";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -6,6 +6,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 const default_margin = 30;
 const highlighter_margin_top = 4;
@@ -13,6 +14,38 @@ const highlighter_margin_left = 12;
 
 const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
   const { onThemeMode } = useContext(ConfigContext);
+  const [style, setStyle] = useState({
+    width: 0,
+    height: 0,
+    opacity: 0,
+    borderRadius: "8px",
+  });
+
+  useEffect(() => {
+    if (hoveredItem === "light switch") {
+      setStyle({
+        width: size.width - 18,
+        height: size.height - 4,
+        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        borderRadius: "32px",
+      });
+    } else if (hoveredItem === "user") {
+      setStyle({
+        width: size.width - 8,
+        height: size.height + 8,
+        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        borderRadius: "32px",
+      });
+    } else {
+      setStyle({
+        width: size.width,
+        height: size.height,
+        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        borderRadius: "8px",
+      });
+    }
+  }, [hoveredItem, hoveredIndex, onThemeMode, size]);
+
   return (
     <div
       style={{
@@ -21,16 +54,14 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
         position: "absolute",
         top: position.top,
         left: position.left,
-        width: hoveredItem === "light switch" ? size.width - 18 : size.width,
-        height: hoveredItem === "light switch" ? size.height - 4 : size.height,
+        width: style.width,
+        height: style.height,
         backgroundColor: onThemeMode === "dark_mode" ? "#ffffff" : "#000000",
         opacity:
           hoveredIndex === null || hoveredIndex === undefined
             ? 0
-            : onThemeMode === "dark_mode"
-            ? hoveredItem === "light switch" ? 0.12 : 0.08
-            : 0.12,
-        borderRadius: hoveredItem === "light switch" ? "32px" : "8px",
+            : style.opacity,
+        borderRadius: style.borderRadius,
         pointerEvents: "none",
       }}
     ></div>
@@ -69,6 +100,34 @@ const TopMenu = ({ items = [] }) => {
       });
     }
   }, [hoveredIndex]);
+
+  const render_item_componet = (item) => {
+    if (item === "light switch") {
+      return (
+        <LightSwitch
+          style={{
+            width: 70,
+            height: 32,
+            backgroundColor_on: "#CCCCCC00",
+            backgroundColor: "#44464a00",
+            color: theme?.font.color || "#21252b",
+            boxShadow_on: "none",
+            boxShadow: "none",
+          }}
+        />
+      );
+    }
+    if (item === "user") {
+      return (
+        <Icon
+          src="user"
+          color={theme?.font.color || "#21252b"}
+          style={{ width: 18, height: 18 }}
+        />
+      );
+    }
+    return item;
+  };
 
   return (
     <div
@@ -118,22 +177,7 @@ const TopMenu = ({ items = [] }) => {
             }}
             onMouseEnter={() => setHoveredIndex(index)}
           >
-            {item === "light switch" ? (
-              <LightSwitch
-                style={{
-                  width: 70,
-                  height: 32,
-
-                  backgroundColor_on: "#CCCCCC00",
-                  backgroundColor: "#44464a00",
-                  color: theme?.font.color || "#21252b",
-                  boxShadow_on: "none",
-                  boxShadow: "none",
-                }}
-              />
-            ) : (
-              item
-            )}
+            {render_item_componet(item)}
           </div>
         ))}
       </div>

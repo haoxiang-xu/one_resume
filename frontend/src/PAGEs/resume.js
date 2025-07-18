@@ -15,7 +15,7 @@ const Resume = () => {
         // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
-      <TopMenu items={["light switch", "logout"]} />
+      <TopMenu items={["light switch", "user"]} />
     </div>
   );
 };
