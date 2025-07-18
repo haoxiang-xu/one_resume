@@ -1,15 +1,8 @@
-import { useContext } from "react";
-
-/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../CONTAINERs/config/context";
-/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-
 import Logo from "../COMPONENTs/logo/logo";
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 import ClosedStringSpinner from "../BUILTIN_COMPONENTs/spinner/string_spinner";
 
 const Landing = () => {
-  const { theme } = useContext(ConfigContext);
   return (
     <div
       className="landing-page"
@@ -21,7 +14,6 @@ const Landing = () => {
         height: "100%",
         overflowX: "hidden",
         overflowY: "auto",
-        // backgroundColor: theme?.backgroundColor || "#FFFFFF",
       }}
     >
       <span

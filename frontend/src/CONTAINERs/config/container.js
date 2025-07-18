@@ -36,7 +36,7 @@ const ConfigContainer = ({ children }) => {
   }, [system_theme]);
   useEffect(() => {
     initialize_theme();
-  }, []);
+  }, [initialize_theme]);
   useEffect(() => {
     if (
       available_themes &&
@@ -124,7 +124,7 @@ const ConfigContainer = ({ children }) => {
       }}
     >
       <MaterialUIThemeWrapper
-        mode={onThemeMode == "dark_mode" ? "dark" : "light"}
+        mode={onThemeMode === "dark_mode" ? "dark" : "light"}
       >
         {children}
         <ScrollingSpace />

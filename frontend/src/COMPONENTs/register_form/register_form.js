@@ -2223,10 +2223,9 @@ const UserForm = () => {
     </div>
   );
 };
-const RegisterForm = () => {
+const RegisterForm = ({ onForm, setOnForm }) => {
   const { register } = useContext(RequestContext);
   const { windowSize } = useContext(ConfigContext);
-  const [onForm, setOnForm] = useState("name");
   const [formData, setFormData] = useState({
     name: {
       firstName: "",

@@ -37,12 +37,11 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
   );
 };
 const TopMenu = ({ items = [] }) => {
-  const { theme, onThemeMode, windowSize } = useContext(ConfigContext);
+  const { theme, windowSize } = useContext(ConfigContext);
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
 
   const [navigateTo, setNavigateTo] = useState(null);
-  const [itemPositions, setItemPositions] = useState({});
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [highlightPosition, setHighlightPosition] = useState({
     top: 0,
@@ -50,18 +49,6 @@ const TopMenu = ({ items = [] }) => {
   });
   const [highlightSize, setHighlightSize] = useState({ width: 50, height: 50 });
 
-  useEffect(() => {
-    const positions = {};
-    itemRefs.current.forEach((ref, index) => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        positions[items[index]] = {
-          right: rect.right + default_margin,
-        };
-      }
-    });
-    setItemPositions(positions);
-  }, [items]);
   useEffect(() => {
     if (hoveredIndex !== null && itemRefs.current[hoveredIndex]) {
       const rect =

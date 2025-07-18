@@ -1,8 +1,4 @@
-import { useContext, useRef, createContext } from "react";
-
-/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../CONTAINERs/config/context";
-/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { useState, useRef, createContext } from "react";
 
 import RegisterForm from "../COMPONENTs/register_form/register_form";
 import Logo from "../COMPONENTs/logo/logo";
@@ -12,8 +8,8 @@ import Footer from "../COMPONENTs/footer/footer";
 const FormPageContext = createContext();
 
 const Register = () => {
-  const { theme } = useContext(ConfigContext);
   const formRef = useRef(null);
+  const [onForm, setOnForm] = useState("name");
 
   const scroll_to_bottom = () => {
     setTimeout(() => {
@@ -51,10 +47,10 @@ const Register = () => {
             overflowY: "scroll",
           }}
         >
-          <RegisterForm />
+          <RegisterForm onForm={onForm} setOnForm={setOnForm} />
         </div>
         <TopMenu items={["light switch", "login"]} /> <Logo />{" "}
-        <Footer onPage={"register"} />
+        {onForm === "user" ? <Footer onPage={"register"} /> : null}
       </div>
     </FormPageContext.Provider>
   );
