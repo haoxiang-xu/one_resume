@@ -13,6 +13,7 @@ import StepContent from "@mui/material/StepContent";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 
 const steps = [
   {
@@ -35,18 +36,53 @@ const steps = [
 const FormStepper = () => {
   const { theme } = React.useContext(ConfigContext);
   const [activeStep, setActiveStep] = React.useState(0);
+  const [stepContent, setStepContent] = React.useState(null);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
-
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  React.useEffect(() => {
+    if (activeStep === 1) {
+      setTimeout(() => {
+        setStepContent(
+          <TextField
+            id={`job-description-input`}
+            label="Job Description"
+            variant="outlined"
+            multiline
+            rows={7}
+            fullWidth
+            sx={{
+              position: "absolute",
+              inset: 0,
+              height: "100%",
+              "& .MuiOutlinedInput-root": {
+                height: "100%",
+                borderRadius: 2,
+                "& fieldset": {
+                  borderRadius: 2,
+                },
+                "& textarea": {
+                  height: "100%",
+                  boxSizing: "border-box",
+                  resize: "none",
+                },
+              },
+            }}
+          />
+        );
+      }, 160);
+    } else {
+      setStepContent(null);
+    }
+  }, [activeStep]);
 
   return (
     <Box
@@ -66,13 +102,23 @@ const FormStepper = () => {
               sx={{
                 opacity: activeStep === index ? 1 : 0.5,
                 transition: "all .25s ease",
+                cursor: "pointer",
 
                 "& .MuiStepLabel-label": {
                   fontFamily: "Jost",
                   fontSize: activeStep === index ? "20px" : "14px",
                   color: theme ? theme.font.color : "#000",
                   letterSpacing: "0.5px",
+
+                  userSelect: "none",
+                  webkitUserSelect: "none",
+                  mozUserSelect: "none",
+                  msUserSelect: "none",
+                  cursor: "pointer",
                 },
+              }}
+              onClick={() => {
+                setActiveStep(index);
               }}
             >
               {step.label}
@@ -97,14 +143,15 @@ const FormStepper = () => {
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: 200,
+                  height: activeStep === 2 ? 0 : 200,
                   marginTop: 16,
                   marginBottom: 16,
-                  border: "1px solid #ccc",
                   borderRadius: "8px",
                   padding: "16px",
                 }}
-              ></div>
+              >
+                {stepContent || null}
+              </div>
               <Box sx={{ mb: 2, display: "flex", justifyContent: "flex-end" }}>
                 <Button
                   disabled={index === 0}
@@ -149,9 +196,21 @@ const FormStepper = () => {
         ))}
       </Stepper>
       {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+        <Paper
+          square
+          elevation={0}
+          sx={{
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontFamily: "Jost", fontSize: 20 }}>
+            All steps completed — your resume is ready!
+          </Typography>
+
+          <Button onClick={handleReset} sx={{ mt: 2 }}>
             Reset
           </Button>
         </Paper>
