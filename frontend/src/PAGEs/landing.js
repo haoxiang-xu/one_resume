@@ -41,7 +41,7 @@ const Landing = () => {
         Landing Page in Construction...
       </span>
       <TopMenu items={["light switch", "sign up", "login"]} />
-      <Logo />
+      <Logo style={"stroke"} />
     </div>
   );
 };

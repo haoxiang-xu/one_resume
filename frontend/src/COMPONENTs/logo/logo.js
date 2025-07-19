@@ -16,13 +16,14 @@ const Logo = ({ style = "colored" }) => {
 
   return (
     <div
-      className="left-corner"
+      className="logo"
       style={{
         position: "fixed",
         top: style === "colored" ? 4 : 16,
         left: 2,
-        width: 50,
+        width: style === "colored" ? 50 : 50,
         height: 50,
+        cursor: "pointer",
       }}
     >
       <img

@@ -50,6 +50,7 @@ const FormStepper = () => {
 
   React.useEffect(() => {
     if (activeStep === 1) {
+      setStepContent(null);
       setTimeout(() => {
         setStepContent(
           <TextField
@@ -63,9 +64,19 @@ const FormStepper = () => {
               position: "absolute",
               inset: 0,
               height: "100%",
+              fontFamily: "Jost",
+
+              "& .MuiInputBase-input": {
+                fontFamily: "inherit",
+              },
+              "& .MuiFormLabel-root": {
+                fontFamily: "inherit",
+              },
               "& .MuiOutlinedInput-root": {
                 height: "100%",
                 borderRadius: 2,
+                fontFamily: "inherit",
+
                 "& fieldset": {
                   borderRadius: 2,
                 },
@@ -73,6 +84,7 @@ const FormStepper = () => {
                   height: "100%",
                   boxSizing: "border-box",
                   resize: "none",
+                  fontFamily: "Jost",
                 },
               },
             }}
