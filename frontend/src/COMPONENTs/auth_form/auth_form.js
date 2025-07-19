@@ -15,6 +15,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import OAuthButtons from "../oauth_buttons/oauth_buttons";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -25,6 +26,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import OTPInput from "react-otp-input";
 
 const AuthFormContext = createContext();
@@ -622,6 +625,27 @@ const UserFrom = () => {
       >
         Wellcome back!
       </span>
+
+      {/* OAuth Login Buttons */}
+      <OAuthButtons />
+
+      {/* Divider */}
+      <div style={{ display: "flex", alignItems: "center", margin: "8px 0" }}>
+        <Divider sx={{ flex: 1 }} />
+        <Typography
+          variant="body2"
+          sx={{
+            px: 2,
+            color: theme?.font.color || "#000000",
+            fontFamily: "Jost",
+            fontSize: "14px",
+          }}
+        >
+          or
+        </Typography>
+        <Divider sx={{ flex: 1 }} />
+      </div>
+
       <TextField
         inputRef={emailRef}
         required

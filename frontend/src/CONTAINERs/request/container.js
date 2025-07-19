@@ -114,6 +114,31 @@ const RequestContainer = ({ children }) => {
       return;
     }
   };
+
+  const auth_oauth = async (provider, data) => {
+    try {
+      const response = await fetch(`${root_url}api/auth/oauth/${provider}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert("error", result.message || `${provider} login failed due to server error`);
+        return;
+      }
+      const token = result.token;
+      setJwtToken(token);
+      alert("success", `${provider} login successful!`);
+    } catch (err) {
+      alert("error", `${provider} login failed due to network error`);
+      return;
+    }
+  };
   const forgot_password = async (onStep, data) => {
     if (onStep === "input email") {
       try {
@@ -211,6 +236,7 @@ const RequestContainer = ({ children }) => {
         alert,
         register,
         auth,
+        auth_oauth,
         forgot_password,
       }}
     >
