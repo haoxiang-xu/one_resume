@@ -216,6 +216,7 @@ const FormStepper = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
+            backgroundColor: "transparent",
           }}
         >
           <Typography variant="h6" sx={{ fontFamily: "Jost", fontSize: 20 }}>
@@ -244,6 +245,8 @@ const ResumeForm = () => {
         width: "100%",
         maxWidth: "1300px",
         overflow: "hidden",
+
+        border: "1px solid #E0E0E0",
       }}
     >
       <span

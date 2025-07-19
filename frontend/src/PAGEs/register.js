@@ -1,4 +1,8 @@
-import { useState, useRef, createContext } from "react";
+import { useState, useRef, createContext, useContext } from "react";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { ConfigContext } from "../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import RegisterForm from "../COMPONENTs/register_form/register_form";
 import Logo from "../COMPONENTs/logo/logo";
@@ -8,6 +12,7 @@ import Footer from "../COMPONENTs/footer/footer";
 const FormPageContext = createContext();
 
 const Register = () => {
+  const { theme } = useContext(ConfigContext);
   const formRef = useRef(null);
   const [onForm, setOnForm] = useState("name");
 
@@ -31,7 +36,7 @@ const Register = () => {
           width: "100%",
           height: "100%",
           overflow: "hidden",
-          // backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          backgroundColor: theme?.backgroundColor || "#FFFFFF",
         }}
       >
         <div
