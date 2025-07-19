@@ -1,5 +1,6 @@
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 import Logo from "../COMPONENTs/logo/logo";
+import FormStepper from "../COMPONENTs/resume_form/resume_form";
 
 const Resume = () => {
   return (
@@ -15,7 +16,8 @@ const Resume = () => {
         overflowY: "auto",
       }}
     >
-      <TopMenu items={["light switch", "user"]} /> <Logo style={"stroke"}/>
+      <FormStepper />
+      <TopMenu items={["light switch", "user"]} /> <Logo style={"stroke"} />
     </div>
   );
 };

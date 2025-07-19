@@ -796,7 +796,7 @@ const UserFrom = () => {
         setResetPasswordOnStep={setResetPasswordOnStep}
       />
       <Button
-        variant="text"
+        variant="contained"
         color="primary"
         sx={{
           marginLeft: "auto",

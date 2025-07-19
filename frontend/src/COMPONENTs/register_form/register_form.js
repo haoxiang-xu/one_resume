@@ -150,7 +150,7 @@ const NameFrom = () => {
         }}
       />
       <Button
-        variant="text"
+        variant="contained"
         color="primary"
         sx={{
           marginLeft: "auto",
@@ -718,7 +718,7 @@ const ContactFrom = () => {
           back
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           color="primary"
           sx={{
             marginLeft: "auto",
@@ -1307,7 +1307,7 @@ const EudcationForm = () => {
           back
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           color="primary"
           sx={{
             marginLeft: "auto",
@@ -1739,7 +1739,7 @@ const ExperienceForm = () => {
           back
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           color="primary"
           sx={{
             marginLeft: "auto",
@@ -2150,11 +2150,11 @@ const UserForm = () => {
           back
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           color="primary"
           sx={{
             marginLeft: "auto",
-            width: 110,
+            width: 120,
             borderRadius: "10px",
             fontFamily: "Jost",
             fontSize: "16px",
