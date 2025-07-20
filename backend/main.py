@@ -85,6 +85,8 @@ def register_user():
         }
         new_user_info = {
             "_id": data['contact']['email'],
+            "first_name": data['name']['firstName'],
+            "last_name": data['name']['lastName'],
             "contact": data['contact'],
             "education": data['education'],
             "experience": data['experience'],

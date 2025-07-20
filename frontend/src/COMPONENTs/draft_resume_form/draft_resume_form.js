@@ -5,8 +5,8 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import { RequestContext } from "../../CONTAINERs/request/container";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
-import Resume from "../resume/resume";
-import NameCard from "../name_card/name_card";
+import Resume from "./resume";
+import NameCard from "./name_card";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
@@ -35,6 +35,8 @@ const steps = [
       "Review the tailored draft, tweak wording or layout, and download a polished, application-ready PDF.",
   },
 ];
+
+const DraftResumeFormContext = React.createContext();
 
 const ResumeContainer = ({
   containerWidth,
@@ -337,7 +339,7 @@ const FormStepper = ({ containerWidth }) => {
 const DraftResumeForm = () => {
   const { theme, windowSize } = React.useContext(ConfigContext);
   const { get_user_info } = React.useContext(RequestContext);
-  
+
   const [formData, setFormData] = React.useState(null);
   const [style, setStyle] = React.useState({
     header_left: 6,
@@ -350,6 +352,7 @@ const DraftResumeForm = () => {
     get_user_info()
       .then((data) => {
         setFormData(data);
+        console.log("User info fetched:", data);
       })
       .catch((error) => {
         console.error("Error fetching user info:", error);
@@ -373,43 +376,48 @@ const DraftResumeForm = () => {
   }, [windowSize]);
 
   return (
-    <div
-      className="draft-resume-form-container"
-      style={{
-        transition: "all 0.36s ease",
-        position: "absolute",
-        top: 60,
-        left: "50%",
-        transform: "translateX(-50%)",
-        height: style.container_height,
-        width: style.container_width,
-      }}
+    <DraftResumeFormContext.Provider
+      value={{ formData, resumeOnFocus, setResumeOnFocus }}
     >
-      <span
+      <div
+        className="draft-resume-form-container"
         style={{
+          transition: "all 0.36s ease",
           position: "absolute",
-          top: 30,
-          left: style.header_left,
-          fontFamily: "Jost",
-          fontSize: "36px",
-          color: theme ? theme.font.color : "#000",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          MsUserSelect: "none",
+          top: 60,
+          left: "50%",
+          transform: "translateX(-50%)",
+          height: style.container_height,
+          width: style.container_width,
         }}
       >
-        Quick Draft
-      </span>
-      <FormStepper containerWidth={style.container_width} />
-      <ResumeContainer
-        containerWidth={style.container_width}
-        resumeOnFocus={resumeOnFocus}
-        setResumeOnFocus={setResumeOnFocus}
-      />
-    </div>
+        <span
+          style={{
+            position: "absolute",
+            top: 30,
+            left: style.header_left,
+            fontFamily: "Jost",
+            fontSize: "36px",
+            color: theme ? theme.font.color : "#000",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          Quick Draft
+        </span>
+        <FormStepper containerWidth={style.container_width} />
+        <ResumeContainer
+          containerWidth={style.container_width}
+          resumeOnFocus={resumeOnFocus}
+          setResumeOnFocus={setResumeOnFocus}
+        />
+      </div>
+    </DraftResumeFormContext.Provider>
   );
 };
 
 export default DraftResumeForm;
+export { DraftResumeFormContext };
