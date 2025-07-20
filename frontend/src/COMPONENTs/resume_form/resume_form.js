@@ -33,10 +33,95 @@ const steps = [
   },
 ];
 
-const FormStepper = () => {
+const Resume = ({ containerWidth, resumeOnFocus, setResumeOnFocus }) => {
+  const paperRef = React.useRef(null);
+  const [style, setStyle] = React.useState({
+    left: "60%",
+    width: 470,
+    height: 470 * 1.414,
+  });
+
+  React.useEffect(() => {
+    if (containerWidth >= 1200) {
+      setStyle({
+        left: "50%",
+        width: 517,
+        height: 517 * 1.414,
+      });
+    } else {
+      if (resumeOnFocus) {
+        setStyle({
+          left: "0%",
+          width: 490,
+          height: 490 * 1.414,
+        });
+      } else {
+        setStyle({
+          left: "90%",
+          width: 490,
+          height: 490 * 1.414,
+        });
+      }
+    }
+  }, [containerWidth, resumeOnFocus]);
+
+  return (
+    <div
+      className="resume"
+      style={{
+        transition: "all 0.36s ease",
+        position: "absolute",
+        top: 40,
+        left: style.left,
+        width: style.width,
+        height: style.height,
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        className="resume-A4-paper"
+        ref={paperRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0 0px 32px rgba(0, 0, 0, 0.16)",
+          borderRadius: "8px",
+          boxSizing: "border-box",
+        }}
+      ></div>
+      {!resumeOnFocus ? (
+        <div
+          className="on-focus-listener"
+          ref={paperRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            borderRadius: "8px",
+            boxSizing: "border-box",
+          }}
+          onClick={() => {
+            setResumeOnFocus(true);
+          }}
+        ></div>
+      ) : null}
+    </div>
+  );
+};
+const FormStepper = ({ containerWidth }) => {
   const { theme } = React.useContext(ConfigContext);
   const [activeStep, setActiveStep] = React.useState(0);
   const [stepContent, setStepContent] = React.useState(null);
+  const [style, setStyle] = React.useState({
+    left: -16,
+    width: `calc(90% - 12px)`,
+  });
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -95,16 +180,26 @@ const FormStepper = () => {
       setStepContent(null);
     }
   }, [activeStep]);
+  React.useEffect(() => {
+    if (containerWidth === 1200) {
+      setStyle({ left: 60, width: `calc(50% - 120px)` });
+    } else if (containerWidth < 1200) {
+      setStyle({ left: 6, width: `calc(90% - 12px)` });
+    }
+  }, [containerWidth]);
 
   return (
     <Box
+      className="scrolling-space-v"
       sx={{
+        transition: "all 0.36s ease",
         position: "absolute",
         top: 120,
-        left: 60,
-        width: `calc(50% - 120px)`,
-        bottom: 0,
-        padding: 2,
+        left: style.left,
+        width: style.width,
+        bottom: 12,
+        padding: "0px 8px",
+        overflowY: "scroll",
       }}
     >
       <Stepper activeStep={activeStep} orientation="vertical">
@@ -232,36 +327,67 @@ const FormStepper = () => {
   );
 };
 const ResumeForm = () => {
-  const { theme } = React.useContext(ConfigContext);
+  const { theme, windowSize } = React.useContext(ConfigContext);
+  const [style, setStyle] = React.useState({
+    header_left: 6,
+    container_width: 490,
+    container_height: 811,
+  });
+  const [resumeOnFocus, setResumeOnFocus] = React.useState(false);
+
+  React.useEffect(() => {
+    if (windowSize.width >= 1200) {
+      setStyle({
+        header_left: 30,
+        container_width: 1200,
+        container_height: 811,
+      });
+    } else {
+      setStyle({ header_left: 6, container_width: 490, container_height: 811 });
+    }
+  }, [windowSize]);
+  React.useEffect(() => {
+    if (windowSize.width >= 1200) {
+      setResumeOnFocus(false);
+    }
+  }, [windowSize]);
+
   return (
     <div
       className="resume-form"
       style={{
+        transition: "all 0.36s ease",
         position: "absolute",
         top: 60,
         left: "50%",
         transform: "translateX(-50%)",
-        bottom: 0,
-        width: "100%",
-        maxWidth: "1300px",
-        overflow: "hidden",
-
-        border: "1px solid #E0E0E0",
+        height: style.container_height,
+        width: style.container_width,
       }}
     >
       <span
         style={{
           position: "absolute",
-          top: "30px",
-          left: "30px",
+          top: 30,
+          left: style.header_left,
           fontFamily: "Jost",
           fontSize: "36px",
           color: theme ? theme.font.color : "#000",
+
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          MsUserSelect: "none",
         }}
       >
         Quick Draft
       </span>
-      <FormStepper />
+      <FormStepper containerWidth={style.container_width} />
+      <Resume
+        containerWidth={style.container_width}
+        resumeOnFocus={resumeOnFocus}
+        setResumeOnFocus={setResumeOnFocus}
+      />
     </div>
   );
 };
