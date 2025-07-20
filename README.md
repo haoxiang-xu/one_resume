@@ -120,7 +120,7 @@
   - **CONTAINERs**: Contains context providers and other container components.
   - **PAGES**: Contains the main pages of the application.
     - **landing.js**: <span style="opacity: 0.32">The landing page of the application.</span>
-    - **direct.js**: <span style="opacity: 0.32">The direct page for applicants.</span>
+    - **router.js**: <span style="opacity: 0.32">The main router for the application.</span>
     - **register.js**: <span style="opacity: 0.32">The registration page for applicants.</span>
     - **auth.js**: <span style="opacity: 0.32">The authentication page for users.</span>
     - **pricing.js**: <span style="opacity: 0.32">The pricing page for the application.</span>

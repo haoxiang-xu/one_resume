@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useCallback } from "react";
 
 /* Contexts -------------------------------------------------------------------------------------------------------------- */
 import { DataContext } from "../data/context";
@@ -45,7 +45,7 @@ const RequestAlert = ({
   );
 };
 const RequestContainer = ({ children }) => {
-  const { setJwtToken } = useContext(DataContext);
+  const { jwtToken, setJwtToken, userId, setUserId } = useContext(DataContext);
   const [alertState, setAlertState] = useState({
     open: false,
     vertical: "top",
@@ -107,7 +107,12 @@ const RequestContainer = ({ children }) => {
         return;
       }
       const token = result.token;
+      const id = result.user_id;
+
       setJwtToken(token);
+      localStorage.setItem("jwtToken", token);
+      setUserId(id);
+      localStorage.setItem("userId", id);
       alert("success", "Login successful!");
     } catch (err) {
       alert("error", "Login failed due to network error");
@@ -204,6 +209,32 @@ const RequestContainer = ({ children }) => {
       }
     }
   };
+  const get_user_info = useCallback(async () => {
+    const token = jwtToken || localStorage.getItem("jwtToken");
+    const id = userId || localStorage.getItem("userId");
+    if (!token) {
+      throw new Error("No auth token found – please log in again.");
+    }
+    if (!id) {
+      throw new Error("No user ID found – please log in again.");
+    }
+
+    const res = await fetch(`${root_url}api/user/get_user_info/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(payload.message || "Unknown server error");
+    }
+
+    return payload;
+  }, [jwtToken, userId]);
 
   return (
     <RequestContext.Provider
@@ -212,6 +243,7 @@ const RequestContainer = ({ children }) => {
         register,
         auth,
         forgot_password,
+        get_user_info,
       }}
     >
       {children}

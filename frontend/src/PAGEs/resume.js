@@ -25,7 +25,7 @@ const Resume = () => {
       }}
     >
       <FormStepper />
-      <TopMenu items={["light switch", "user"]} /> <Logo style={"stroke"} />
+      <TopMenu items={["light switch", "user"]} /> <Logo format={"stroke"} />
     </div>
   );
 };

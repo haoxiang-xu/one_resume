@@ -1,4 +1,4 @@
-import { useState, useRef, createContext, useContext } from "react";
+import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
@@ -25,7 +25,7 @@ const Auth = () => {
       }}
     >
       <AuthForm />
-      <TopMenu items={["light switch", "sign up"]} /> <Logo style={"stroke"} />{" "}
+      <TopMenu items={["light switch", "sign up"]} /> <Logo format={"stroke"} />{" "}
       <Footer onPage={"auth"} />
     </div>
   );

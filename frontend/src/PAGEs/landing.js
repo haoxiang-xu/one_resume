@@ -1,4 +1,4 @@
-import { useState, useRef, createContext, useContext } from "react";
+import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
@@ -49,7 +49,7 @@ const Landing = () => {
         Landing Page in Construction...
       </span>
       <TopMenu items={["light switch", "sign up", "login"]} />
-      <Logo style={"stroke"} />
+      <Logo format={"stroke"} />
     </div>
   );
 };

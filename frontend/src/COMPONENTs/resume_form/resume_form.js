@@ -2,8 +2,11 @@ import * as React from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
+import { RequestContext } from "../../CONTAINERs/request/container";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
+import Resume from "../resume/resume";
+import NameCard from "../name_card/name_card";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
@@ -19,7 +22,7 @@ const steps = [
   {
     label: "Verify Your Details",
     description:
-      "Confirm your contact info, employment dates, and key achievements so we start with perfectly accurate data.",
+      "Edit as you like — your saved profile won't be changed. We'll use these updates to generate the draft you’re about to create.",
   },
   {
     label: "Share the Job Posting",
@@ -33,8 +36,11 @@ const steps = [
   },
 ];
 
-const Resume = ({ containerWidth, resumeOnFocus, setResumeOnFocus }) => {
-  const paperRef = React.useRef(null);
+const ResumeContainer = ({
+  containerWidth,
+  resumeOnFocus,
+  setResumeOnFocus,
+}) => {
   const [style, setStyle] = React.useState({
     left: "60%",
     width: 470,
@@ -67,7 +73,7 @@ const Resume = ({ containerWidth, resumeOnFocus, setResumeOnFocus }) => {
 
   return (
     <div
-      className="resume"
+      className="resume-container"
       style={{
         transition: "all 0.36s ease",
         position: "absolute",
@@ -79,25 +85,10 @@ const Resume = ({ containerWidth, resumeOnFocus, setResumeOnFocus }) => {
         zIndex: 1,
       }}
     >
-      <div
-        className="resume-A4-paper"
-        ref={paperRef}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#FFFFFF",
-          boxShadow: "0 0px 32px rgba(0, 0, 0, 0.16)",
-          borderRadius: "8px",
-          boxSizing: "border-box",
-        }}
-      ></div>
+      <Resume />
       {!resumeOnFocus ? (
         <div
           className="on-focus-listener"
-          ref={paperRef}
           style={{
             position: "absolute",
             top: 0,
@@ -135,7 +126,24 @@ const FormStepper = ({ containerWidth }) => {
   };
 
   React.useEffect(() => {
-    if (activeStep === 1) {
+    if (activeStep === 0) {
+      setStepContent(null);
+      setTimeout(() => {
+        setStepContent(
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 6,
+              width: "calc(100% - 12px)",
+              height: "100%",
+            }}
+          >
+            <NameCard />
+          </div>
+        );
+      }, 160);
+    } else if (activeStep === 1) {
       setStepContent(null);
       setTimeout(() => {
         setStepContent(
@@ -198,7 +206,6 @@ const FormStepper = ({ containerWidth }) => {
         top: 120,
         left: style.left,
         width: style.width,
-        bottom: 12,
         padding: "0px 8px",
         overflowY: "scroll",
       }}
@@ -251,7 +258,7 @@ const FormStepper = ({ containerWidth }) => {
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: activeStep === 2 ? 0 : 200,
+                  height: activeStep === 2 ? 0 : activeStep === 0 ? 300 : 200,
                   marginTop: 16,
                   marginBottom: 16,
                   borderRadius: "8px",
@@ -329,6 +336,9 @@ const FormStepper = ({ containerWidth }) => {
 };
 const ResumeForm = () => {
   const { theme, windowSize } = React.useContext(ConfigContext);
+  const { get_user_info } = React.useContext(RequestContext);
+  
+  const [formData, setFormData] = React.useState(null);
   const [style, setStyle] = React.useState({
     header_left: 6,
     container_width: 490,
@@ -336,6 +346,15 @@ const ResumeForm = () => {
   });
   const [resumeOnFocus, setResumeOnFocus] = React.useState(false);
 
+  React.useEffect(() => {
+    get_user_info()
+      .then((data) => {
+        setFormData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching user info:", error);
+      });
+  }, [get_user_info]);
   React.useEffect(() => {
     if (windowSize.width >= 1200) {
       setStyle({
@@ -355,7 +374,7 @@ const ResumeForm = () => {
 
   return (
     <div
-      className="resume-form"
+      className="resume-form-container"
       style={{
         transition: "all 0.36s ease",
         position: "absolute",
@@ -384,7 +403,7 @@ const ResumeForm = () => {
         Quick Draft
       </span>
       <FormStepper containerWidth={style.container_width} />
-      <Resume
+      <ResumeContainer
         containerWidth={style.container_width}
         resumeOnFocus={resumeOnFocus}
         setResumeOnFocus={setResumeOnFocus}

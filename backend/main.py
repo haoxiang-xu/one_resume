@@ -3,6 +3,7 @@ import re
 import jwt
 import math
 import random
+from bson import ObjectId
 from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -15,6 +16,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
 import mimetypes
 from email.message import EmailMessage
+from functools import wraps
 
 app = Flask(__name__)
 CORS(app)
@@ -348,6 +350,51 @@ def auth_forgot_password_reset_password():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 # { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+        try:
+            data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+            request.user = data
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired!'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'Invalid token!'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/api/user/get_user_info/<user_id>', methods=['GET'])
+@limiter.limit("60 per minute")
+@token_required
+def get_user_info(user_id):
+    try:
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_info_collection = database["user_info"]
+
+        user_info = user_info_collection.find_one({"_id": user_id})
+
+        if not user_info:
+            client.close()
+            return jsonify({'message': 'User not found!'}), 404
+        
+        user_info["_id"] = str(user_info["_id"])
+        user_info.pop('password', None)
+        
+        client.close()
+        return jsonify(user_info), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+# { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
 
 # { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #
 @app.errorhandler(RateLimitExceeded)

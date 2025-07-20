@@ -311,7 +311,7 @@ const Switch = ({
       <div
         className="mini-ui-switch-thumb"
         style={{
-          transition: "left 0.2s ease, " + "background-color 0.12s ease",
+          transition: "left 0.2s ease, background-color 0.12s ease",
           position: "absolute",
           top: "50%",
           left: on

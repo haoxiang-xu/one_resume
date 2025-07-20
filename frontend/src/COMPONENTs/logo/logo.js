@@ -10,7 +10,7 @@ import logo_black_outline from "../../assets/logos/logo_192_black_outline.png";
 import logo_white_stroke from "../../assets/logos/logo_64_white_stroke.png";
 import logo_black_stroke from "../../assets/logos/logo_64_black_stroke.png";
 
-const Logo = ({ style = "colored" }) => {
+const Logo = ({ format = "colored" }) => {
   const { onThemeMode } = useContext(ConfigContext);
   const [navigateTo, setNavigateTo] = useState(null);
 
@@ -19,16 +19,16 @@ const Logo = ({ style = "colored" }) => {
       className="logo"
       style={{
         position: "fixed",
-        top: style === "colored" ? 4 : 16,
+        top: format === "colored" ? 4 : 16,
         left: 2,
-        width: style === "colored" ? 50 : 50,
+        width: format === "colored" ? 50 : 50,
         height: 50,
         cursor: "pointer",
       }}
     >
       <img
         src={
-          style === "colored"
+          format === "colored"
             ? onThemeMode === "dark_mode"
               ? logo_white_outline
               : logo_black_outline
@@ -43,7 +43,7 @@ const Logo = ({ style = "colored" }) => {
           transform: "translate(-50%, 0%)",
           left: "50%",
           top: 0,
-          width: style === "colored" ? 50 : 26,
+          width: format === "colored" ? 50 : 26,
 
           userSelect: "none",
           WebkitUserSelect: "none",

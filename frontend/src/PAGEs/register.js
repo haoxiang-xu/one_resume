@@ -54,7 +54,7 @@ const Register = () => {
         >
           <RegisterForm onForm={onForm} setOnForm={setOnForm} />
         </div>
-        <TopMenu items={["light switch", "login"]} /> <Logo style={"stroke"} />{" "}
+        <TopMenu items={["light switch", "login"]} /> <Logo format={"stroke"} />{" "}
         {onForm === "user" ? <Footer onPage={"register"} /> : null}
       </div>
     </FormPageContext.Provider>
