@@ -2,7 +2,7 @@ import React from "react";
 
 import TopMenu from "../COMPONENTs/top_menu/top_menu";
 import Logo from "../COMPONENTs/logo/logo";
-import FormStepper from "../COMPONENTs/resume_form/resume_form";
+import DraftResumeForm from "../COMPONENTs/draft_resume_form/draft_resume_form";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
@@ -24,7 +24,7 @@ const Resume = () => {
         backgroundColor: onThemeMode === "light_mode" ? "#F4F4F4" : theme?.backgroundColor,
       }}
     >
-      <FormStepper />
+      <DraftResumeForm />
       <TopMenu items={["light switch", "user"]} /> <Logo format={"stroke"} />
     </div>
   );

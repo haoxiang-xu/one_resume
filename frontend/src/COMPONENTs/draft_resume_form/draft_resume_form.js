@@ -334,7 +334,7 @@ const FormStepper = ({ containerWidth }) => {
     </Box>
   );
 };
-const ResumeForm = () => {
+const DraftResumeForm = () => {
   const { theme, windowSize } = React.useContext(ConfigContext);
   const { get_user_info } = React.useContext(RequestContext);
   
@@ -374,7 +374,7 @@ const ResumeForm = () => {
 
   return (
     <div
-      className="resume-form-container"
+      className="draft-resume-form-container"
       style={{
         transition: "all 0.36s ease",
         position: "absolute",
@@ -412,4 +412,4 @@ const ResumeForm = () => {
   );
 };
 
-export default ResumeForm;
+export default DraftResumeForm;
