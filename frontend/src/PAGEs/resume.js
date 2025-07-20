@@ -21,7 +21,7 @@ const Resume = () => {
         height: "100%",
         overflowX: "hidden",
         overflowY: "auto",
-        backgroundColor: onThemeMode === "light_mode" ? "#F4F4F4" : theme.backgroundColor,
+        backgroundColor: onThemeMode === "light_mode" ? "#F4F4F4" : theme?.backgroundColor,
       }}
     >
       <FormStepper />

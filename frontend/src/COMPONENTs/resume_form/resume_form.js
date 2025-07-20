@@ -24,7 +24,7 @@ const steps = [
   {
     label: "Share the Job Posting",
     description:
-      "Paste the role title and full description; we’ll pull out keywords and align your resume to the employer’s needs.",
+      "Paste the role title and full description; we'll pull out keywords and align your resume to the employer's needs.",
   },
   {
     label: "Finalize Your Resume",
@@ -76,6 +76,7 @@ const Resume = ({ containerWidth, resumeOnFocus, setResumeOnFocus }) => {
         width: style.width,
         height: style.height,
         boxSizing: "border-box",
+        zIndex: 1,
       }}
     >
       <div
