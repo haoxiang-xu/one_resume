@@ -645,6 +645,7 @@ const ContactFrom = () => {
                   width: 24,
                   height: 24,
                 }}
+                color={theme?.font?.color || "#000000"}
               />
             </InputAdornment>
           ),

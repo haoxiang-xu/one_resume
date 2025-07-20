@@ -1,6 +1,7 @@
 import { useContext } from "react";
 
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import satisfied_dark from "./satisfied_dark.png";
+import satisfied_light from "./satisfied_light.png";
 import { styled } from "@mui/material/styles";
 import MuiAccordion from "@mui/material/Accordion";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
@@ -110,7 +111,10 @@ const NameCard = () => {
         overflow: "hidden",
 
         backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
-        border: onThemeMode === "dark_mode" ? "1px solid rgba(255, 255, 255, 0.16)" : "none",
+        border:
+          onThemeMode === "dark_mode"
+            ? "1px solid rgba(255, 255, 255, 0.16)"
+            : "none",
         borderRadius: "8px",
         boxShadow: "0 0px 8px rgba(0, 0, 0, 0.16)",
       }}
@@ -126,15 +130,17 @@ const NameCard = () => {
           overflowX: "hidden",
           overflowY: "scroll",
         }}
-      ><Icon
-          src="smile"
+      >
+        <img
+          src={onThemeMode === "dark_mode" ? satisfied_light : satisfied_dark}
+          alt="satisfied"
           style={{
             position: "absolute",
             top: "6px",
             left: "6px",
             width: "36px",
             height: "36px",
-            color: theme ? theme.font.color : "#000000",
+            borderRadius: "50%",
           }}
         />
         <span
