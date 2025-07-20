@@ -206,7 +206,7 @@ const ContactRow = ({
     height: 0,
   });
   const contactTypeOptions = [
-    { value: "linkedin", label: "LinkedIn", icon: "linked_in" },
+    { value: "linkedin", label: "LinkedIn", icon: "linkedin" },
     { value: "github", label: "GitHub", icon: "github" },
     { value: "personal_website", label: "Personal Website", icon: "link" },
     { value: "portfolio", label: "Portfolio", icon: "passport" },
