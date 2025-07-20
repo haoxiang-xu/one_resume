@@ -267,7 +267,7 @@ const FormStepper = ({ containerWidth }) => {
                   sx={{
                     mt: 1,
                     mr: 1,
-                    borderRadius: "10px",
+                    borderRadius: "8px",
                     textTransform: "none",
                   }}
                   startIcon={
@@ -285,7 +285,7 @@ const FormStepper = ({ containerWidth }) => {
                 <Button
                   variant="contained"
                   onClick={handleNext}
-                  sx={{ mt: 1, borderRadius: "10px", textTransform: "none" }}
+                  sx={{ mt: 1, borderRadius: "8px", textTransform: "none" }}
                   endIcon={
                     <Icon
                       src="arrow_right"
