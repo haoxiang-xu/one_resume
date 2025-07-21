@@ -7,31 +7,31 @@
 - **💻 github**: https://github.com/haoxiang-xu
 
 ## Summary
-Versatile full stack developer experienced in building and maintaining responsive web applications using HTML, CSS, JavaScript, React, and backend technologies like PHP, Python (Flask, FastAPI), and MySQL. Proven success in designing RESTful APIs, optimizing database performance, implementing secure infrastructure, and collaborating with cross-functional teams under tight deadlines. Skilled in problem-solving, version control, and delivering client-focused web solutions.
+Machine Learning Engineer skilled in designing and deploying production-grade ML and AI systems, with expertise in LLMs, prompt engineering, MLOps, RESTful APIs (FastAPI), and scalable backend architecture. Proven track record optimizing model reliability with RAG pipelines, anomaly detection, and data-driven iteration. Experienced in end-to-end workflow ownership, cross-functional collaboration, and integrating AI features into real-world products.
 
 ## Education
 - **Master of Data Science** at University of British Columbia, Canada (Sep 2024 – Jun 2025) - Grade: A
 - **Bachelor of Science in Computer Science** at University of British Columbia, Canada (Sep 2020 – Nov 2023) - GPA: 3.9/4.0
 
 ## Experience
-- **Full Stack Web Developer | Lead Backend Developer** at University of British Columbia, Canada (Apr 2023 – Sep 2023)
-  - Developed and maintained a scalable peer evaluation web platform, utilizing HTML5, CSS3, JavaScript (with jQuery), and a modular RESTful API with Express.js for hundreds of users across multiple departments.
-  - Designed a robust MySQL database with over 20 relational tables and implemented optimized SQL queries, ensuring efficient data management and fast batch operations.
-  - Deployed the application on AWS EC2 with Docker containerization, used NGINX as a reverse proxy, and managed site backups and security best practices.
-  - Collaborated with end-users (students and instructors) to address urgent support needs, enhance UX/UI, and deliver a resilient system praised for its usability and performance.
+- **Machine Learning Engineer | AI Solutions Developer** at Shanghai Mengou Technology Co., Ltd (Startup Environment), Shanghai, China (Mar 2024 – Aug 2024)
+  - Led end-to-end development and deployment of a production-grade LLM-powered customer service system, handling data ingestion, model fine-tuning, REST API integration (FastAPI, Python), and user-facing internal tooling.
+  - Engineered a layered retrieval-augmented generation (RAG) workflow using FAISS vector search and multi-agent verification, reducing pricing errors by 60% and improving model reliability in real-time deployments.
+  - Implemented automated monitoring dashboards and logging systems to track model performance, API latency, and customer behavior; used EDA and anomaly detection to iterate on model quality and operational metrics.
+  - Collaborated closely with cross-functional teams to align AI solutions with business goals, continuously optimizing model inference speed and cost for scalable production use.
 
-- **Full Stack Developer | Project Manager** at University of British Columbia (Master's Capstone Project), Canada (May 2025 – Jun 2025)
-  - Led a team to design and deliver a web dashboard for curriculum change tracking, using React.js (frontend), Flask (backend), and MongoDB with Git version control and agile sprints.
-  - Automated the extraction and analysis of HTML-based academic data, collaborating with stakeholders to implement client-specified features and respond to feedback in real time.
-  - Ensured responsive design and cross-browser compatibility, applying modern UX/UI principles for clarity and intuitiveness.
-  - Handled deployment on Ubuntu with Docker, overseeing security, backup protocols, and troubleshooting technical issues as they arose.
+- **Lead Full Stack & ML Engineer** at University of British Columbia (Master's Capstone Project), Canada (May 2025 – Jun 2025)
+  - Architected and delivered an automated curriculum tracking platform integrating OpenAI LLMs, enabling accurate extraction and comparison of unstructured academic data across years.
+  - Designed and implemented modular data pipelines and model-serving APIs (React.js, Flask, MongoDB, Docker), accelerating feature delivery and supporting scalable online inference.
+  - Directed project delivery with agile methodologies and frequent stakeholder collaboration, ensuring alignment of technical development with evolving business requirements.
+  - Established reproducible workflows covering prompt engineering, pipeline testing, and project CI/CD, delivering a maintainable, high-impact ML-driven product under tight deadlines.
 
 
 ## Skills
-- **Programming & Scripting Languages**: Python (advanced, production-level usage), JavaScript (ES6+, jQuery), PHP (Laravel, CodeIgniter), SQL (MySQL, relational databases)
-- **Web Development & Frameworks**: React (frontend, SPA), Flask, FastAPI (Python backend APIs), Express.js (Node.js API development), HTML5, CSS3, Responsive & Cross-Browser Design
-- **DevOps, Cloud & Infrastructure**: Docker (containerization, deployment), AWS (EC2, RDS), NGINX (reverse proxy), Git (version control, CI/CD basics), Website Performance, Backups & Security Best Practices
-- **Data, AI & CMS Platforms**: Large Language Models (LLMs), NLP & Prompt Engineering, MySQL/MongoDB (database design/integration), WordPress, Shopify, CMS Integration, Analytics & Reporting (EDA, anomaly detection, SEO fundamentals)
+- **Programming & Scripting Languages**: Python (NumPy, Pandas, scikit-learn, PyTorch, TensorFlow, HuggingFace Transformers, FastAPI), JavaScript (React.js, Node.js, Express.js), SQL (MySQL, AWS RDS), Bash & Shell Scripting
+- **Machine Learning & AI Technologies**: End-to-End Machine Learning (model development, training, deployment, validation, MLOps), Large Language Models (LLMs, OpenAI API, embeddings, generative AI, prompt engineering, LangChain, RAG, FAISS), Deep Learning (CNNs, transfer learning, PyTorch, TensorFlow, automated inference pipelines), Feature Engineering, Model Monitoring & Observability (anomaly detection, EDA, custom metrics)
+- **Cloud, DevOps & Deployment**: Docker (containerization, orchestration, deployment), AWS (EC2, Lambda, Sagemaker, RDS, infrastructure management), NGINX (reverse proxy, production deployment, HTTPS), CI/CD (automated testing, delivery, deployment for ML/AI)
+- **Databases & Data Engineering**: Relational & NoSQL Databases (MySQL, MongoDB, data modeling, optimization), Data Pipeline Design (batch/real-time ETL, automated ingestion, transformation), APIs & Microservices (RESTful API design, backend architecture, modular web services), Data Analytics & Visualization (EDA, internal dashboards, business intelligence)
 
 
 
