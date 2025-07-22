@@ -1770,7 +1770,7 @@ const ExperienceForm = () => {
   );
 };
 const TermsAndConditions = ({ agreedToTerms, setAgreedToTerms }) => {
-  const { theme } = useContext(ConfigContext);
+  const { theme, DialogTransition } = useContext(ConfigContext);
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -1828,6 +1828,9 @@ const TermsAndConditions = ({ agreedToTerms, setAgreedToTerms }) => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        slots={{
+          transition: DialogTransition,
+        }}
         PaperProps={{
           sx: {
             borderRadius: "14px",

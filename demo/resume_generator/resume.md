@@ -7,31 +7,37 @@
 - **💻 github**: https://github.com/haoxiang-xu
 
 ## Summary
-Machine Learning Engineer with hands-on experience designing and deploying production AI agent systems utilizing LLMs, prompt engineering, and RAG pipelines. Proficient in Python, RESTful APIs, AWS (EC2, RDS), and backend system architecture, with proven strengths in model fine-tuning, scalable API development, and full SDLC. Adept at collaborating across teams, automating workflows, and enhancing ML model reliability in fast-paced, client-driven environments.
+Innovative software engineer with hands-on experience in designing and deploying scalable, distributed systems, RESTful APIs, and full stack solutions in both startup and academic environments. Proven skills in Python, JavaScript, SQL, backend architecture, LLM/NLP integration, anomaly detection, and cloud deployment (AWS, Docker). Excels at tackling ambiguity, leading cross-functional teams, and delivering high-impact, production-grade technology.
 
 ## Education
 - **Master of Data Science** at University of British Columbia, Canada (Sep 2024 – Jun 2025) - Grade: A
 - **Bachelor of Science in Computer Science** at University of British Columbia, Canada (Sep 2020 – Nov 2023) - GPA: 3.9/4.0
 
 ## Experience
-- **Machine Learning & MLOps Engineer | Lead Backend Engineer** at Shanghai Mengou Technology Co., Ltd (Startup Environment), Shanghai, China (Mar 2024 – Aug 2024)
-  - Led the end-to-end design and deployment of a production-grade AI agent platform using large language models (LLMs) to automate customer service workflows for retail clients.
-  - Engineered and fine-tuned transformer-based LLMs (Python, PyTorch), implementing optimization and validation pipelines to mitigate hallucinations and improve response reliability, reducing pricing inconsistencies by 60%.
-  - Developed robust RESTful APIs with FastAPI, architected modular backend logic, and integrated scalable vector-search (FAISS) with agentic self-reflection (LangChain-inspired), ensuring effective MLOps for continuous improvement.
-  - Built comprehensive logging and monitoring dashboards, conducted data analysis for anomaly detection, and supported model and API deployments on AWS EC2/S3, significantly enhancing resilience and operational transparency.
+- **Software Development Engineer | Backend Systems Engineer** at University of British Columbia (Bachelor's Capstone Project), Canada (Apr 2023 – Sep 2023)
+  - Designed and implemented a scalable, fault-tolerant backend architecture for a university-wide peer evaluation platform serving hundreds of concurrent users across multiple departments.
+  - Led the development of RESTful APIs and relational database modeling in MySQL (hosted on AWS RDS), ensuring robust support for complex workflow automation, grading, and feedback histories.
+  - Optimized system performance through backend caching, efficient SQL queries, and Docker containerization, enabling secure deployment on AWS EC2 with NGINX reverse proxy.
+  - Successfully delivered a production-ready system with live user testing and positive feedback from faculty, demonstrating strong cloud deployment skills and impact-driven development.
 
-- **Lead Backend Developer** at University of British Columbia (Bachelor's Capstone Project), Canada (Apr 2023 – Sep 2023)
-  - Architected and delivered a university-scale peer evaluation system, serving hundreds of students, with high-performance backend services built in Node.js (Express) and MySQL on AWS RDS.
-  - Implemented CI/CD automation, containerization (Docker), and secure deployment to AWS EC2, integrating NGINX for scalable and reliable production delivery.
-  - Optimized database access patterns and backend workflows for scalability and fair, consistent system behavior under high concurrent load.
-  - Collaborated cross-functionally with frontend and devops teams, formalizing development processes and enforcing best practices for maintainable codebases.
+- **Full Stack Engineer | Machine Learning Engineer** at Shanghai Mengou Technology Co., Ltd (Startup Environment), Shanghai, China (Mar 2024 – Aug 2024)
+  - Led the design, development, and deployment of a production-grade AI agent system using FastAPI, Python, React, and transformer-based LLMs for scalable, automated customer service in retail.
+  - Architected distributed backend logic and an innovative multi-agent RAG pipeline leveraging FAISS and LangChain concepts, reducing incorrect AI-generated pricing by over 60%.
+  - Built monitoring dashboards and implemented anomaly detection to track and maintain high system performance and reliability in a live, rapidly iterating startup environment.
+  - Collaborated across functional teams to ensure rapid feature delivery, efficient resource management, and alignment with real-world business impact.
+
+- **Research Assistant** at Massachusetts Institute of Technology (MIT), Remote, US (Apr 2022 – Sep 2022)
+  - Designed and implemented deep learning solutions in Python and PyTorch for automated classification of lung tumors, achieving over 96% accuracy with resilient CNN architectures.
+  - Solved core challenges in model convergence and data variability by introducing advanced normalization, residual connections, and data augmentation for reliable large-scale inference.
+  - Managed the entire research lifecycle—from algorithm design to evaluation and publication—demonstrating self-motivation and a strong foundation in object-oriented and algorithmic principles.
+  - Published findings in IEEE and open-sourced the project, contributing to ongoing research and adoption in academic and clinical domains.
 
 
 ## Skills
-- **Programming & Scripting Languages**: Java (Core Java, Enterprise Java), Python (Data Science, Machine Learning), SQL (MySQL, Analytics), JavaScript (Node.js, TypeScript)
-- **Machine Learning & AI**: Large Language Models (LLMs, GenAI, Prompt Engineering, RAG), PyTorch (Deep Learning, CNN, Transfer Learning), ML Pipelines (MLOps, Model Deployment, MCP, ModelOps), PySpark (Distributed Data Processing, ETL)
-- **Cloud & DevOps**: AWS (EC2, ECS, Lambda, S3, CDK, RDS), Docker (Containerization, Orchestration), CI/CD Pipelines (DevOps, Release Automation, GitHub Actions), NGINX (Reverse Proxy, Web Server)
-- **Backend & API Technologies**: RESTful API (Express.js, FastAPI, Flask, API Design), GraphQL Integrations (API Development), gRPC Integrations (Microservices Communication), Database Systems (DynamoDB, MySQL, MongoDB)
+- **Programming Languages & Paradigms**: Python (OOP, procedural, scripting), Java, C++, C# (object-oriented design), TypeScript & JavaScript (ES6+), SQL (relational query language, MySQL, PostgreSQL)
+- **Frameworks & Distributed Systems**: FastAPI, Flask, Express.js (REST API frameworks), React.js (frontend, component-based UI), PyTorch (deep learning, CNNs, transfer learning), Docker (containerization, microservices, distributed deployment)
+- **Cloud Infrastructure & DevOps**: AWS (EC2, RDS, S3, cloud monitoring), NGINX (reverse proxy, load balancing), CI/CD pipelines & version control (Git, GitHub Actions), Linux/Ubuntu systems (server administration, bash scripting)
+- **AI, Data Engineering & Analytics**: Large Language Models (LLMs), prompt engineering, RAG pipeline, Data analysis (Pandas, EDA, anomaly detection), Vector search (FAISS), LangChain, embedding analysis, Database design, normalization, index/query optimization
 
 
 
