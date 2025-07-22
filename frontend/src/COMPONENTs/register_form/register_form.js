@@ -754,6 +754,13 @@ const ContactFrom = () => {
               }
               return;
             }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact.email)) {
+              setErrors((prev) => ({
+                ...prev,
+                email: { status: true, msg: "Invalid email format" },
+              }));
+              return;
+            }
             move_to_form("education");
           }}
         >
