@@ -559,7 +559,7 @@ const ForgotPasswordDialog = ({
     </Fragment>
   );
 };
-const UserFrom = () => {
+const UserForm = () => {
   const { theme } = useContext(ConfigContext);
   const { auth } = useContext(RequestContext);
   const { formData, update_email, update_password } =
@@ -837,6 +837,128 @@ const UserFrom = () => {
         login
       </Button>
       {navigateTo && <Navigate to={navigateTo} />}
+      <LoginOptions />
+    </div>
+  );
+};
+const LoginOptions = () => {
+  const { theme, onThemeMode } = useContext(ConfigContext);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        marginTop: "16px",
+        left: 0,
+        width: "100%",
+        height: "100px",
+        borderTop:
+          onThemeMode === "dark_mode"
+            ? "1px dashed rgba(255, 255, 255, 0.24)"
+            : "1px dashed rgba(0, 0, 0, 0.24)",
+      }}
+    >
+      <span
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontFamily: "Jost",
+          fontSize: "16px",
+          color: theme?.font.color || "#000000",
+          backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          padding: "0 16px",
+        }}
+      >
+        OR login with
+      </span>
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          display: "flex",
+          flexDirection: "row",
+          gap: "16px",
+        }}
+      >
+        <IconButton
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            backgroundColor: "#ff0034",
+          }}
+        >
+          <Icon
+            src={"google"}
+            color={"#FFFFFF"}
+            style={{
+              width: 22,
+              height: 22,
+              transition: "transform 0.15s ease",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transformOrigin: "center",
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        </IconButton>
+        <IconButton
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            // backgroundColor:
+            //   onThemeMode === "light_mode" ? "#020202" : "#FFFFFF",
+            border:
+              onThemeMode === "dark_mode"
+                ? "1px solid rgba(255, 255, 255, 0.24)"
+                : "1px solid rgba(0, 0, 0, 0.24)",
+          }}
+        >
+          <Icon
+            src={"apple_filled"}
+            color={onThemeMode === "light_mode" ? "#020202" : "#FFFFFF"}
+            style={{
+              width: 22,
+              height: 22,
+              transition: "transform 0.15s ease",
+              position: "absolute",
+              top: "47.5%",
+              left: "50%",
+              transformOrigin: "center",
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        </IconButton>
+        <IconButton
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            backgroundColor: "#0a67c2",
+          }}
+        >
+          <Icon
+            src={"linkedin_box"}
+            color={"#FFFFFF"}
+            style={{
+              width: 22,
+              height: 22,
+              transition: "transform 0.15s ease",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transformOrigin: "center",
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        </IconButton>
+      </div>
     </div>
   );
 };
@@ -877,7 +999,7 @@ const AuthForm = () => {
           transform: "translate(-50%, 0%)",
         }}
       >
-        <UserFrom />
+        <UserForm />
       </div>
     </AuthFormContext.Provider>
   );
