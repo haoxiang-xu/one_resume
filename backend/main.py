@@ -5,7 +5,7 @@ import math
 import random
 from bson import ObjectId
 from datetime import datetime, timedelta, timezone
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -17,6 +17,10 @@ import smtplib
 import mimetypes
 from email.message import EmailMessage
 from functools import wraps
+import requests
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
+from urllib.parse import urlencode
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +39,11 @@ app.config['SMTP_PASSWORD'] = "gwflwteesyburspz"
 # JWT configuration
 app.config['JWT_SECRET_KEY'] = 'LMdcjmsgY-ABxvGd1EBvq4jGQGAg-lqeSylnPrdQu_DM-3Z6dDHeiiLFROjc5u6Y'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=48)
+
+# Google OAuth configuration
+app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
+app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
+app.config['GOOGLE_REDIRECT_URI'] = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:8888/api/auth/google/callback')
 
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 # check if username is already exists
@@ -397,6 +406,168 @@ def get_user_info(user_id):
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 # { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
+
+# { google login } ---------------------------------------------------------------------------------------------------------------------------------------- #
+@app.route('/api/auth/google/login', methods=['GET'])
+def google_login():
+    """Initiate Google OAuth flow"""
+    try:
+        # Google OAuth 2.0 authorization endpoint
+        auth_url = 'https://accounts.google.com/o/oauth2/auth'
+        
+        params = {
+            'client_id': app.config['GOOGLE_CLIENT_ID'],
+            'redirect_uri': app.config['GOOGLE_REDIRECT_URI'],
+            'scope': 'openid email profile',
+            'response_type': 'code',
+            'access_type': 'offline',
+            'prompt': 'consent'
+        }
+        
+        authorization_url = f"{auth_url}?{urlencode(params)}"
+        
+        return jsonify({
+            'authorization_url': authorization_url
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+# { google login } ---------------------------------------------------------------------------------------------------------------------------------------- #
+
+# { google login callback } ------------------------------------------------------------------------------------------------------------------------------ #
+@app.route('/api/auth/google/callback', methods=['GET'])
+def google_callback():
+    """Handle Google OAuth callback"""
+    try:
+        code = request.args.get('code')
+        if not code:
+            return jsonify({'message': 'Authorization code not provided'}), 400
+        
+        # Exchange authorization code for access token, and the access token will be used for getting the user info from Google
+        token_url = 'https://oauth2.googleapis.com/token'
+        token_data = {
+            'client_id': app.config['GOOGLE_CLIENT_ID'],
+            'client_secret': app.config['GOOGLE_CLIENT_SECRET'],
+            'redirect_uri': app.config['GOOGLE_REDIRECT_URI'],
+            'grant_type': 'authorization_code',
+            'code': code
+        }
+        
+        token_response = requests.post(token_url, data=token_data)
+        token_json = token_response.json()
+        
+        if 'error' in token_json:
+            return jsonify({'message': f'Failed to get access token: {token_json.get("error_description", token_json["error"])}'}), 400
+        
+        # Get user info using access token
+        access_token = token_json.get('access_token')
+        user_info_response = requests.get(
+            # Get user info from Google
+            'https://www.googleapis.com/oauth2/v2/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+        
+        if user_info_response.status_code != 200:
+            return jsonify({'message': 'Failed to get user info from Google'}), 400
+            
+        user_info = user_info_response.json()
+        
+        # Extract user information
+        google_user_id = user_info['id']
+        email = user_info['email']
+        given_name = user_info.get('given_name', '')
+        family_name = user_info.get('family_name', '')
+        picture = user_info.get('picture', '')
+        
+        # Database operations (same as before)
+        client = MongoClient(os.getenv("MONGODB_URL"))
+        database = client["one_resume_db"]
+        user_auth_collection = database["user_auth"]
+        user_info_collection = database["user_info"]
+        
+        # Check if user already exists
+        existing_user = user_auth_collection.find_one({"email": email})
+        
+        if existing_user:
+            # User exists, update Google ID if not set
+            if not existing_user.get('google_id'):
+                user_auth_collection.update_one(
+                    {"email": email},
+                    {"$set": {"google_id": google_user_id}}
+                )
+            user_id = existing_user['_id']
+            role = existing_user['role']
+        else:
+            # Create new user
+            new_user_auth = {
+                "_id": email,
+                "role": "user",
+                "email": email,
+                "google_id": google_user_id,
+                "first_name": given_name,
+                "last_name": family_name,
+                "username": email.split('@')[0],
+                "password": None,
+                "created_via": "google"
+            }
+            
+            new_user_info = {
+                "_id": email,
+                "first_name": given_name,
+                "last_name": family_name,
+                "profile_picture": picture,
+                "contact": {
+                    "email": email,
+                    "cell": {"countryCode": "", "number": ""}
+                },
+                "education": [],
+                "experience": [],
+                "created_via": "google"
+            }
+            
+            user_auth_collection.insert_one(new_user_auth)
+            user_info_collection.insert_one(new_user_info)
+            
+            user_id = email
+            role = "user"
+        
+        client.close()
+        
+        # Generate JWT token
+        payload = {
+            'user_id': str(user_id),
+            'role': role,
+            'exp': datetime.utcnow() + app.config['JWT_ACCESS_TOKEN_EXPIRES']
+        }
+        token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
+        
+        # SUCCESS: Redirect to main app page
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:2907')
+        redirect_url = f"{frontend_url}/resume?google_login=success&token={token}&user_id={user_id}&role={role}"
+        
+        # once the user login successfully, redirect to the resume page as main entry point
+        return redirect(redirect_url)
+        
+    except Exception as e:
+        print(f"DEBUG: General exception: {str(e)}")
+        # ERROR: Redirect back to login page with error
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:2907')
+        redirect_url = f"{frontend_url}/auth?google_error={str(e)}"
+        
+        return redirect(redirect_url)
+# { google login callback } ------------------------------------------------------------------------------------------------------------------------------ #
+
+
+# { debug } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+@app.route('/api/debug/google-config', methods=['GET'])
+def debug_google_config():
+    return jsonify({
+        'google_client_id': app.config.get('GOOGLE_CLIENT_ID', 'NOT_SET'),
+        'google_client_secret': app.config.get('GOOGLE_CLIENT_SECRET', 'NOT_SET')[:10] + '...' if app.config.get('GOOGLE_CLIENT_SECRET') else 'NOT_SET',
+        'google_redirect_uri': app.config.get('GOOGLE_REDIRECT_URI', 'NOT_SET'),
+        'frontend_url': os.getenv('FRONTEND_URL', 'NOT_SET')
+    })
+# { debug } ---------------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { error handling } ------------------------------------------------------------------------------------------------------------------------------------- #
 @app.errorhandler(RateLimitExceeded)
