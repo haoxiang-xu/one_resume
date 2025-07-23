@@ -6,9 +6,10 @@ import { DataContext } from "./context";
 
 const DataContainer = ({ children }) => {
   const [authState, setAuthState] = useState({ loading: true, user: null });
+  const [userInfo, setUserInfo] = useState(null);
 
   return (
-    <DataContext.Provider value={{ authState, setAuthState }}>
+    <DataContext.Provider value={{ authState, setAuthState, userInfo, setUserInfo }}>
       {children}
     </DataContext.Provider>
   );

@@ -1,9 +1,4 @@
-import {
-  useState,
-  createContext,
-  useContext,
-  useEffect,
-} from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 
 /* Contexts -------------------------------------------------------------------------------------------------------------- */
 import { DataContext } from "../data/context";
@@ -50,7 +45,7 @@ const RequestAlert = ({
   );
 };
 const RequestContainer = ({ children }) => {
-  const { setAuthState } = useContext(DataContext);
+  const { authState, setAuthState, setUserInfo } = useContext(DataContext);
   const [alertState, setAlertState] = useState({
     open: false,
     vertical: "top",
@@ -76,6 +71,35 @@ const RequestContainer = ({ children }) => {
       }
     })();
   }, [root_url]);
+  useEffect(() => {
+    const get_user_info = async () => {
+      const res = await fetch(`${root_url}api/user/get_user_info`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const payload = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(payload.message || "Unknown server error");
+      }
+
+      return payload;
+    };
+    if (authState.loading === false && authState.user) {
+      get_user_info()
+        .then((userInfo) => {
+          setUserInfo(userInfo);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch user info:", err);
+          setUserInfo(null);
+        });
+    } else {
+      setUserInfo(null);
+    }
+  }, [authState, setUserInfo]);
 
   const alert = (type, message) => {
     setAlertState({

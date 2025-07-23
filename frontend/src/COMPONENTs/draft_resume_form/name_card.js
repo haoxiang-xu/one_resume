@@ -160,6 +160,7 @@ const ContactInfoTag = ({ icon, text }) => {
     <div
       className="contact-info-tag"
       style={{
+        transition: "all 0.2s ease",
         position: "relative",
         maxWidth: "100%",
         minWidth: "64px",
@@ -215,7 +216,7 @@ const ContactInfoTag = ({ icon, text }) => {
       </span>
       <div
         style={{
-          transition: "all 0.16s ease",
+          transition: "all 0.2s ease",
           position: "absolute",
           top: -6,
           right: -6,
@@ -277,6 +278,7 @@ const ContactInfoTag = ({ icon, text }) => {
 };
 const ContactSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
   const { formData } = useContext(DraftResumeFormContext);
   const contactTypeOptions = {
     linkedin: { icon: "linkedin" },
@@ -307,24 +309,31 @@ const ContactSection = () => {
       ))}
       <div
         style={{
+          transition: "all 0.2s ease",
           position: "relative",
-          maxWidth: "100%",
-          display: "inline-flex",
+          width: onEdit !== "add_contact" ? 36 : "100%",
+          display: "block",
           alignItems: "center",
           justifyContent: "center",
           gap: "6px",
           padding: "4px 8px",
-          borderRadius: "16px",
-          backgroundColor: theme
-            ? theme.backgroundColor
-            : "rgba(0, 0, 0, 0.04)",
-          marginRight: "6px",
-          marginBottom: "2px",
+          borderRadius: "18px",
+          backgroundColor:
+            onEdit !== "add_contact"
+              ? theme
+                ? theme.backgroundColor
+                : "rgba(0, 0, 0, 0.04)"
+              : "transparent",
+          marginTop: onEdit !== "add_contact" ? "0px" : "6px",
+          marginBottom: onEdit !== "add_contact" ? "2px" : "0px",
           border:
             onThemeMode === "dark_mode"
               ? "1px solid rgba(255, 255, 255, 0.16)"
               : "1px solid rgba(0, 0, 0, 0.16)",
           cursor: "pointer",
+        }}
+        onClick={() => {
+          setOnEdit("add_contact");
         }}
       >
         <Icon
@@ -449,7 +458,7 @@ const EducationRow = () => {
               height: 42,
               borderRadius: "8px",
               paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              transition: "height 0.2s ease",
             },
             "& .MuiInputBase-input": {
               height: "100%",
@@ -548,7 +557,7 @@ const EducationRow = () => {
               height: 42,
               borderRadius: "8px",
               paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              transition: "height 0.2s ease",
             },
             "& .MuiInputBase-input": {
               height: "100%",
@@ -582,7 +591,7 @@ const EducationRow = () => {
               height: 42,
               borderRadius: "8px",
               paddingRight: "14px",
-              transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              transition: "height 0.2s ease",
             },
             "& .MuiInputBase-input": {
               height: "100%",
@@ -665,7 +674,7 @@ const EducationTag = ({
   useEffect(() => {
     if (onHover) {
       setStyle({
-        width: "72px",
+        width: onEdit !== "none" ? "72px" : "60px",
         opacity: 1,
         pointerEvents: "auto",
       });
@@ -676,7 +685,7 @@ const EducationTag = ({
         pointerEvents: "none",
       });
     }
-  }, [onHover]);
+  }, [onHover, onEdit]);
 
   const remove_under_score_and_capitalize = (text) => {
     return text
@@ -689,6 +698,7 @@ const EducationTag = ({
       <div
         className="contact-info-tag"
         style={{
+          transition: "all 0.2s ease",
           position: "relative",
           maxWidth: "100%",
           display: "inline-flex",
@@ -745,7 +755,7 @@ const EducationTag = ({
         </span>
         <div
           style={{
-            transition: "all 0.16s ease",
+            transition: "all 0.2s ease",
             position: "absolute",
             top: -6,
             right: -6,
@@ -808,6 +818,7 @@ const EducationTag = ({
     return (
       <div
         style={{
+          transition: "all 0.2s ease",
           position: "relative",
           width: "100%",
           height: "70px",
@@ -942,7 +953,7 @@ const EducationTag = ({
         </span>
         <div
           style={{
-            transition: "all 0.16s ease",
+            transition: "all 0.2s ease",
             position: "absolute",
             top: -6,
             right: -6,
@@ -1010,7 +1021,7 @@ const EducationSection = () => {
         className="education-title"
         style={{
           fontFamily: "Jost",
-          fontSize: "20px",
+          fontSize: onEdit === "none" ? "20px" : "32px",
           color: theme ? theme.font.color : "#000000",
           marginBottom: "8px",
           pointerEvents: "none",
@@ -1038,7 +1049,7 @@ const EducationSection = () => {
       ))}
       <div
         style={{
-          transition: "all 0.32s ease",
+          transition: "all 0.2s ease",
           position: "relative",
           width: onEdit !== "add_education" ? 36 : "100%",
           display: "block",
@@ -1120,6 +1131,7 @@ const ExperienceTag = ({ icon, text }) => {
     <div
       className="contact-info-tag"
       style={{
+        transition: "all 0.2s ease",
         position: "relative",
         maxWidth: "100%",
         display: "inline-flex",
@@ -1174,7 +1186,7 @@ const ExperienceTag = ({ icon, text }) => {
       </span>
       <div
         style={{
-          transition: "all 0.16s ease",
+          transition: "all 0.2s ease",
           position: "absolute",
           top: -6,
           right: -6,
@@ -1248,7 +1260,7 @@ const ExperienceSection = () => {
         className="experience-title"
         style={{
           fontFamily: "Jost",
-          fontSize: "20px",
+          fontSize: onEdit === "none" ? "20px" : "32px",
           color: theme ? theme.font.color : "#000000",
           marginBottom: "8px",
           pointerEvents: "none",
@@ -1270,7 +1282,7 @@ const ExperienceSection = () => {
       ))}
       <div
         style={{
-          transition: "all 0.32s ease",
+          transition: "all 0.2s ease",
           position: "relative",
           width: onEdit !== "add_experience" ? 36 : "100%",
           display: "block",
@@ -1320,7 +1332,7 @@ const NameCard = () => {
       <>
         <div
           style={{
-            transition: "all 0.16s ease",
+            transition: "all 0.2s ease",
             position: "absolute",
             top: 0,
             left: 0,
@@ -1421,7 +1433,7 @@ const NameCard = () => {
           <DialogContent>
             <div
               style={{
-                transition: "all 0.16s ease",
+                transition: "all 0.2s ease",
                 position: "absolute",
                 top: 0,
                 left: 0,

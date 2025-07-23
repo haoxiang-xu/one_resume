@@ -1,8 +1,8 @@
 import * as React from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { DataContext } from "../../CONTAINERs/data/context";
 import { ConfigContext } from "../../CONTAINERs/config/context";
-import { RequestContext } from "../../CONTAINERs/request/container";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Resume from "./resume";
@@ -110,9 +110,7 @@ const ResumeContainer = ({
 };
 const FormStepper = ({ containerWidth }) => {
   const { theme } = React.useContext(ConfigContext);
-  const { onNameCardEdit, setOnNameCardEdit } = React.useContext(
-    DraftResumeFormContext
-  );
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [stepContent, setStepContent] = React.useState(null);
   const [style, setStyle] = React.useState({
@@ -340,9 +338,8 @@ const FormStepper = ({ containerWidth }) => {
   );
 };
 const DraftResumeForm = () => {
-  const { theme, windowSize, DialogTransition } =
-    React.useContext(ConfigContext);
-  const { get_user_info } = React.useContext(RequestContext);
+  const { userInfo } = React.useContext(DataContext);
+  const { theme, windowSize } = React.useContext(ConfigContext);
 
   const [formData, setFormData] = React.useState(null);
   const [onNameCardEdit, setOnNameCardEdit] = React.useState(false);
@@ -354,14 +351,10 @@ const DraftResumeForm = () => {
   const [resumeOnFocus, setResumeOnFocus] = React.useState(false);
 
   React.useEffect(() => {
-    get_user_info()
-      .then((data) => {
-        setFormData(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching user info:", error);
-      });
-  }, [get_user_info]);
+    if (userInfo) {
+      setFormData(userInfo);
+    }
+  }, [userInfo]);
   React.useEffect(() => {
     if (windowSize.width >= 1200) {
       setStyle({
@@ -378,6 +371,14 @@ const DraftResumeForm = () => {
       setResumeOnFocus(false);
     }
   }, [windowSize]);
+
+  const delete_phone_number = (index) => {
+    setFormData((prevData) => {
+      const updatedData = { ...prevData };
+      updatedData.phone_numbers.splice(index, 1);
+      return updatedData;
+    });
+  };
 
   return (
     <DraftResumeFormContext.Provider
