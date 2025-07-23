@@ -541,20 +541,20 @@ def google_callback():
         }
         token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
         
-        # SUCCESS: Redirect to main app page
-        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:2907')
-        redirect_url = f"{frontend_url}/resume?google_login=success&token={token}&user_id={user_id}&role={role}"
-        
-        # once the user login successfully, redirect to the resume page as main entry point
-        return redirect(redirect_url)
+        # Return JSON response like normal login API
+        return jsonify({
+            'message': 'Google login successful!',
+            'token': token,
+            'user_id': user_id,
+            'role': role,
+        }), 200
         
     except Exception as e:
         print(f"DEBUG: General exception: {str(e)}")
-        # ERROR: Redirect back to login page with error
-        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:2907')
-        redirect_url = f"{frontend_url}/auth?google_error={str(e)}"
-        
-        return redirect(redirect_url)
+        # Return error as JSON
+        return jsonify({
+            'message': f'Google login failed: {str(e)}'
+        }), 500
 # { google login callback } ------------------------------------------------------------------------------------------------------------------------------ #
 
 
