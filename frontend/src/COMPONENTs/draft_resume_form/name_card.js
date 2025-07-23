@@ -397,7 +397,7 @@ const EducationRow = ({ id, index }) => {
   useEffect(() => {
     setTimeout(() => {
       setStyle({
-        height: 56 * 4 + 16 * 3 + 8 + "px",
+        height: 42 * 4 + 8 * 3 + 8 + "px",
       });
     }, 32);
   }, []);
