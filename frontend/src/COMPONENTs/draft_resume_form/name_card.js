@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -35,7 +35,7 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
         }}
         display="flex"
         alignItems="center"
-        mt="16px"
+        mt="8px"
         width="100%"
       >
         <DatePicker
@@ -43,6 +43,7 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
           label="Start Date"
           value={startDate}
           format="MM/YYYY"
+          size="small"
           onChange={(newValue) => {
             setStartDate(newValue);
             if (
@@ -66,10 +67,11 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
           }}
           slotProps={{
             textField: {
+              size: "small",
               variant: "outlined",
               fullWidth: true,
               InputProps: {
-                sx: { borderRadius: "10px 0 0 10px" },
+                sx: { borderRadius: "10px 0 0 10px", height: 42 },
               },
             },
             popper: {
@@ -111,10 +113,11 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
           }}
           slotProps={{
             textField: {
+              size: "small",
               variant: "outlined",
               fullWidth: true,
               InputProps: {
-                sx: { borderRadius: "0 10px 10px 0" },
+                sx: { borderRadius: "0 10px 10px 0", height: 42 },
               },
             },
           }}
@@ -406,7 +409,7 @@ const EducationRow = ({ id, index }) => {
         paddingBottom: 6,
         top: 0,
         left: 0,
-        width: "calc(100% - 6px)",
+        width: "100%",
       }}
     >
       <div
@@ -422,15 +425,16 @@ const EducationRow = ({ id, index }) => {
           label={`Institution`}
           variant="outlined"
           value={""}
+          size="small"
           onChange={(e) => {
             return;
           }}
           sx={{
             transition: "all 0.2s ease",
             width: "100%",
-            marginBottom: "16px",
+            marginBottom: "8px",
             "& .MuiOutlinedInput-root": {
-              height: 56,
+              height: 42,
               borderRadius: "10px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
@@ -456,7 +460,11 @@ const EducationRow = ({ id, index }) => {
             borderRadius: "10px",
           }}
         >
-          <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
+          <InputLabel
+            id="degree-select-label"
+            size="small"
+            sx={{ fontFamily: "Jost" }}
+          >
             Degree
           </InputLabel>
           <Select
@@ -471,6 +479,7 @@ const EducationRow = ({ id, index }) => {
               transition: "all 0.2s ease",
               borderRadius: "10px",
               fontFamily: "Jost",
+              height: 42,
             }}
             MenuProps={{
               PaperProps: {
@@ -515,15 +524,16 @@ const EducationRow = ({ id, index }) => {
           label={`Grade / GPA`}
           variant="outlined"
           value={""}
+          size="small"
           onChange={(e) => {
             return;
           }}
           sx={{
             transition: "all 0.2s ease",
-            width: "calc(40% - 16px)",
-            marginLeft: "16px",
+            width: "calc(40% - 8px)",
+            marginLeft: "8px",
             "& .MuiOutlinedInput-root": {
-              height: 56,
+              height: 42,
               borderRadius: "10px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
@@ -548,15 +558,16 @@ const EducationRow = ({ id, index }) => {
           label={`Specialization`}
           variant="outlined"
           value={""}
+          size="small"
           onChange={(e) => {
             return;
           }}
           sx={{
             transition: "all 0.2s ease",
             width: "100%",
-            marginTop: "16px",
+            marginTop: "8px",
             "& .MuiOutlinedInput-root": {
-              height: 56,
+              height: 42,
               borderRadius: "10px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
@@ -587,6 +598,36 @@ const EducationRow = ({ id, index }) => {
           }}
         />
       </div>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => {
+            return;
+          }}
+          sx={{
+            mt: 2,
+            height: 42,
+            borderRadius: "10px",
+            textTransform: "none",
+            marginRight: "8px",
+          }}
+        >
+          cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            mt: 2,
+            height: 42,
+            borderRadius: "10px",
+            textTransform: "none",
+          }}
+        >
+          add education
+        </Button>
+      </Box>
     </div>
   );
 };
@@ -732,6 +773,7 @@ const EducationTag = ({ icon, text }) => {
 };
 const EducationSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const { handleOnEdit } = useContext(NameCardContext);
   const { formData } = useContext(DraftResumeFormContext);
 
   const [onState, setOnState] = useState("default");
@@ -802,7 +844,11 @@ const EducationSection = () => {
         {onState === "default" ? (
           <div
             onClick={() => {
-              setOnState("add_education");
+              if (handleOnEdit) {
+                handleOnEdit();
+              } else {
+                setOnState("add_education");
+              }
             }}
           >
             <Icon
@@ -1031,7 +1077,7 @@ const ExperienceSection = () => {
     </div>
   );
 };
-const NameCard = ({ blur, handleOnEdit, handleOnClose }) => {
+const NameCard = ({ handleOnEdit, handleOnClose }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const { formData } = useContext(DraftResumeFormContext);
 
@@ -1114,19 +1160,6 @@ const NameCard = ({ blur, handleOnEdit, handleOnClose }) => {
             <EducationSection />
             <ExperienceSection />
           </div>
-          {blur ? (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backdropFilter: blur ? "blur(12px)" : "none",
-                zIndex: 1,
-              }}
-            />
-          ) : null}
         </div>
       </>
     </NameCardContext.Provider>

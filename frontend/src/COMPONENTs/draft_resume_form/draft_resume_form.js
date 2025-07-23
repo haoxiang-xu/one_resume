@@ -455,12 +455,8 @@ const DraftResumeForm = () => {
         >
           <DialogContent>
             <NameCard
-              handleOnEdit={() => {
-                return;
-              }}
-              handleOnClose={() => {
-                return;
-              }}
+              handleOnEdit={null}
+              handleOnClose={null}
             />
           </DialogContent>
         </Dialog>
