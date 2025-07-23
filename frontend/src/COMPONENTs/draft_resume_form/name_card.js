@@ -11,6 +11,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -71,7 +73,7 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
               variant: "outlined",
               fullWidth: true,
               InputProps: {
-                sx: { borderRadius: "10px 0 0 10px", height: 42 },
+                sx: { borderRadius: "8px 0 0 8px", height: 42 },
               },
             },
             popper: {
@@ -117,7 +119,7 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
               variant: "outlined",
               fullWidth: true,
               InputProps: {
-                sx: { borderRadius: "0 10px 10px 0", height: 42 },
+                sx: { borderRadius: "0 8px 8px 0", height: 42 },
               },
             },
           }}
@@ -130,7 +132,7 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
 };
 const ContactInfoTag = ({ icon, text }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { handleOnEdit } = useContext(NameCardContext);
+  const { setOnEdit } = useContext(NameCardContext);
   const [onHover, setOnHover] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
@@ -160,6 +162,7 @@ const ContactInfoTag = ({ icon, text }) => {
       style={{
         position: "relative",
         maxWidth: "100%",
+        minWidth: "64px",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
@@ -248,7 +251,11 @@ const ContactInfoTag = ({ icon, text }) => {
             color={"red"}
           />
         </div>
-        <div onClick={() => handleOnEdit()}>
+        <div
+          onClick={() => {
+            setOnEdit("edit_contact");
+          }}
+        >
           <Icon
             src={"edit"}
             style={{
@@ -286,13 +293,16 @@ const ContactSection = () => {
         padding: "6px",
       }}
     >
-      <ContactInfoTag icon="phone" text={formData?.contact?.cell?.number} />
-      <ContactInfoTag icon="email" text={formData?.contact?.email} />
+      <ContactInfoTag
+        icon="phone"
+        text={formData?.contact?.cell?.number || "N/A"}
+      />
+      <ContactInfoTag icon="email" text={formData?.contact?.email || "N/A"} />
       {formData?.contact?.extra?.map((item, index) => (
         <ContactInfoTag
           key={index}
           icon={contactTypeOptions[item.contact_type].icon}
-          text={item.contact_value}
+          text={item.contact_value || "N/A"}
         />
       ))}
       <div
@@ -331,8 +341,9 @@ const ContactSection = () => {
     </div>
   );
 };
-const EducationRow = ({ id, index }) => {
+const EducationRow = () => {
   const { theme } = useContext(ConfigContext);
+  const { setOnEdit } = useContext(NameCardContext);
   const [style, setStyle] = useState({
     height: 0,
   });
@@ -406,10 +417,11 @@ const EducationRow = ({ id, index }) => {
     <div
       style={{
         position: "relative",
-        paddingBottom: 6,
+        paddingBottom: 0,
         top: 0,
-        left: 0,
-        width: "100%",
+        left: "120px",
+        width: "calc(100% - 120px)",
+        // border: "1px solid rgba(0, 0, 0, 0.16)",
       }}
     >
       <div
@@ -435,7 +447,7 @@ const EducationRow = ({ id, index }) => {
             marginBottom: "8px",
             "& .MuiOutlinedInput-root": {
               height: 42,
-              borderRadius: "10px",
+              borderRadius: "8px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
             },
@@ -477,7 +489,7 @@ const EducationRow = ({ id, index }) => {
             }}
             sx={{
               transition: "all 0.2s ease",
-              borderRadius: "10px",
+              borderRadius: "8px",
               fontFamily: "Jost",
               height: 42,
             }}
@@ -534,7 +546,7 @@ const EducationRow = ({ id, index }) => {
             marginLeft: "8px",
             "& .MuiOutlinedInput-root": {
               height: 42,
-              borderRadius: "10px",
+              borderRadius: "8px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
             },
@@ -568,7 +580,7 @@ const EducationRow = ({ id, index }) => {
             marginTop: "8px",
             "& .MuiOutlinedInput-root": {
               height: 42,
-              borderRadius: "10px",
+              borderRadius: "8px",
               paddingRight: "14px",
               transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
             },
@@ -603,12 +615,12 @@ const EducationRow = ({ id, index }) => {
           variant="outlined"
           color="primary"
           onClick={() => {
-            return;
+            setOnEdit("pending");
           }}
           sx={{
             mt: 2,
             height: 42,
-            borderRadius: "10px",
+            borderRadius: "8px",
             textTransform: "none",
             marginRight: "8px",
           }}
@@ -621,19 +633,28 @@ const EducationRow = ({ id, index }) => {
           sx={{
             mt: 2,
             height: 42,
-            borderRadius: "10px",
+            borderRadius: "8px",
             textTransform: "none",
           }}
         >
-          add education
+          add
         </Button>
       </Box>
     </div>
   );
 };
-const EducationTag = ({ icon, text }) => {
+const EducationTag = ({
+  icon,
+  text,
+  degree,
+  institution,
+  grade,
+  specialization,
+  startDate,
+  endDate,
+}) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { handleOnEdit } = useContext(NameCardContext);
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
   const [onHover, setOnHover] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
@@ -644,7 +665,7 @@ const EducationTag = ({ icon, text }) => {
   useEffect(() => {
     if (onHover) {
       setStyle({
-        width: "60px",
+        width: "72px",
         opacity: 1,
         pointerEvents: "auto",
       });
@@ -657,126 +678,326 @@ const EducationTag = ({ icon, text }) => {
     }
   }, [onHover]);
 
-  return (
-    <div
-      className="contact-info-tag"
-      style={{
-        position: "relative",
-        maxWidth: "100%",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "6px",
-        padding: "2px 8px",
-        borderRadius: "16px",
-        backgroundColor: theme ? theme.backgroundColor : "rgba(0, 0, 0, 0.04)",
-        marginRight: "6px",
-        marginBottom: "2px",
-        border:
-          onThemeMode === "dark_mode"
-            ? "1px solid rgba(255, 255, 255, 0.16)"
-            : "1px solid rgba(0, 0, 0, 0.16)",
-      }}
-      onMouseEnter={() => {
-        setOnHover(true);
-      }}
-      onMouseLeave={() => {
-        setOnHover(false);
-      }}
-    >
-      <Icon
-        src={icon}
-        style={{
-          flex: "0 0 18px",
-          width: "18px",
-          height: "18px",
-          opacity: 0.5,
-        }}
-        color={theme ? theme.font.color : "#000000"}
-      />
-      <span
-        className="contact-info-text"
-        style={{
-          fontFamily: "Jost",
-          fontSize: "14px",
-          color: theme ? theme.font.color : "#000000",
+  const remove_under_score_and_capitalize = (text) => {
+    return text
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          MsUserSelect: "none",
-        }}
-      >
-        {text}
-      </span>
+  if (onEdit === "none") {
+    return (
       <div
+        className="contact-info-tag"
         style={{
-          transition: "all 0.16s ease",
-          position: "absolute",
-          top: -6,
-          right: -6,
-          width: style.width,
-          height: "calc(100% + 12px)",
-          borderRadius: "124px",
-          zIndex: 1,
+          position: "relative",
+          maxWidth: "100%",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "6px",
+          padding: "2px 8px",
+          borderRadius: "16px",
           backgroundColor: theme
             ? theme.backgroundColor
-            : "rgba(255, 255, 255, 0.8)",
+            : "rgba(0, 0, 0, 0.04)",
+          marginRight: "6px",
+          marginBottom: "2px",
           border:
             onThemeMode === "dark_mode"
-              ? "1px solid rgba(255, 255, 255, 0.32)"
+              ? "1px solid rgba(255, 255, 255, 0.16)"
               : "1px solid rgba(0, 0, 0, 0.16)",
-          boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
-          backdropFilter: "blur(8px)",
-          opacity: style.opacity,
+        }}
+        onMouseEnter={() => {
+          setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          setOnHover(false);
         }}
       >
-        <div>
-          <Icon
-            src={"delete"}
-            style={{
-              width: "18px",
-              height: "18px",
-              position: "absolute",
-              top: "50%",
-              right: "0px",
-              transform: "translate(-50%, -50%)",
-              cursor: "pointer",
-              pointerEvents: style.pointerEvents,
+        <Icon
+          src={icon}
+          style={{
+            flex: "0 0 18px",
+            width: "18px",
+            height: "18px",
+            opacity: 0.5,
+          }}
+          color={theme ? theme.font.color : "#000000"}
+        />
+        <span
+          className="contact-info-text"
+          style={{
+            fontFamily: "Jost",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {text}
+        </span>
+        <div
+          style={{
+            transition: "all 0.16s ease",
+            position: "absolute",
+            top: -6,
+            right: -6,
+            width: style.width,
+            height: "calc(100% + 12px)",
+            borderRadius: "124px",
+            zIndex: 1,
+            backgroundColor: theme
+              ? theme.backgroundColor
+              : "rgba(255, 255, 255, 0.8)",
+            border:
+              onThemeMode === "dark_mode"
+                ? "1px solid rgba(255, 255, 255, 0.32)"
+                : "1px solid rgba(0, 0, 0, 0.16)",
+            boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
+            backdropFilter: "blur(8px)",
+            opacity: style.opacity,
+          }}
+        >
+          <div>
+            <Icon
+              src={"delete"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                right: "0px",
+                transform: "translate(-50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={"red"}
+            />
+          </div>
+          <div
+            onClick={() => {
+              setOnEdit("edit_education");
             }}
-            color={"red"}
-          />
-        </div>
-        <div onClick={() => handleOnEdit()}>
-          <Icon
-            src={"edit"}
-            style={{
-              width: "18px",
-              height: "18px",
-              position: "absolute",
-              top: "50%",
-              left: "0px",
-              transform: "translate(50%, -50%)",
-              cursor: "pointer",
-              pointerEvents: style.pointerEvents,
-            }}
-            color={theme ? theme.font.color : "#000000"}
-          />
+          >
+            <Icon
+              src={"edit"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                left: "0px",
+                transform: "translate(50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={theme ? theme.font.color : "#000000"}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "70px",
+          display: "inline-flex",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          gap: "6px",
+          padding: "2px 8px",
+          borderRadius: "16px",
+          marginRight: "6px",
+          marginTop: "6px",
+          marginBottom: "6px",
+        }}
+        onMouseEnter={() => {
+          setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          setOnHover(false);
+        }}
+      >
+        <Icon
+          src={icon}
+          style={{
+            position: "absolute",
+            top: 2,
+            left: 2,
+            width: "24px",
+            height: "24px",
+            opacity: 0.72,
+          }}
+          color={theme ? theme.font.color : "#000000"}
+        />
+        <span
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 2,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "16px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {remove_under_score_and_capitalize(degree)}
+        </span>
+        <span
+          className="contact-info-text"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 24,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+            opacity: 0.5,
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {specialization}
+        </span>
+        <span
+          className="contact-info-text"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 45,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {"@" + institution}
+        </span>
+        <span
+          className="contact-info-text"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 64,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+            opacity: 0.5,
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {startDate
+            ? dayjs(startDate).format("MM/YYYY") +
+              (endDate ? " - " + dayjs(endDate).format("MM/YYYY") : "")
+            : "N/A"}
+        </span>
+        <div
+          style={{
+            transition: "all 0.16s ease",
+            position: "absolute",
+            top: -6,
+            right: -6,
+            width: style.width,
+            height: "calc(100% + 12px)",
+            zIndex: 1,
+            backdropFilter: "blur(8px)",
+            opacity: style.opacity,
+          }}
+        >
+          <div>
+            <Icon
+              src={"delete"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                right: "0px",
+                transform: "translate(-50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={"red"}
+            />
+          </div>
+          <div
+            onClick={() => {
+              setOnEdit("edit_education");
+            }}
+          >
+            <Icon
+              src={"edit"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                left: "0px",
+                transform: "translate(50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={theme ? theme.font.color : "#000000"}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 const EducationSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { handleOnEdit } = useContext(NameCardContext);
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
   const { formData } = useContext(DraftResumeFormContext);
-
-  const [onState, setOnState] = useState("default");
 
   return (
     <div
@@ -806,51 +1027,53 @@ const EducationSection = () => {
           <EducationTag
             icon={"education"}
             text={`${item.degree + " @ " + item.institution}`}
+            degree={item.degree}
+            institution={item.institution}
+            grade={item.grade}
+            specialization={item.specialization}
+            startDate={item.startDate}
+            endDate={item.endDate}
           />
         </div>
       ))}
       <div
         style={{
-          transition: "all 0.2s ease",
+          transition: "all 0.32s ease",
           position: "relative",
-          maxWidth: "100%",
-          display: "inline-flex",
+          width: onEdit !== "add_education" ? 36 : "100%",
+          display: "block",
           alignItems: "center",
           justifyContent: "center",
           gap: "6px",
           padding: "4px 8px",
           borderRadius: "18px",
           backgroundColor:
-            onState === "default"
+            onEdit !== "add_education"
               ? theme
                 ? theme.backgroundColor
                 : "rgba(0, 0, 0, 0.04)"
               : "transparent",
-          marginTop: onState === "default" ? "0px" : "32px",
-          marginRight: "6px",
-          marginBottom: onState === "default" ? "2px" : "32px",
+          marginTop: onEdit !== "add_education" ? "0px" : "6px",
+          marginBottom: onEdit !== "add_education" ? "2px" : "0px",
           border:
-            onState === "default"
+            onEdit !== "add_education"
               ? onThemeMode === "dark_mode"
                 ? "1px solid rgba(255, 255, 255, 0.16)"
                 : "1px solid rgba(0, 0, 0, 0.16)"
               : "none",
           cursor: "pointer",
         }}
+        onClick={() => {
+          if (onEdit === "add_education") {
+          } else {
+            setOnEdit("add_education");
+          }
+        }}
       >
-        {onState === "add_education" ? (
+        {onEdit === "add_education" ? (
           <EducationRow id={null} index={null} />
-        ) : null}
-        {onState === "default" ? (
-          <div
-            onClick={() => {
-              if (handleOnEdit) {
-                handleOnEdit();
-              } else {
-                setOnState("add_education");
-              }
-            }}
-          >
+        ) : (
+          <div>
             <Icon
               src={"add"}
               style={{
@@ -862,14 +1085,14 @@ const EducationSection = () => {
               color={theme ? theme.font.color : "#000000"}
             />
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );
 };
 const ExperienceTag = ({ icon, text }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { handleOnEdit } = useContext(NameCardContext);
+  const { setOnEdit } = useContext(NameCardContext);
   const [onHover, setOnHover] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
@@ -987,7 +1210,11 @@ const ExperienceTag = ({ icon, text }) => {
             color={"red"}
           />
         </div>
-        <div onClick={() => handleOnEdit()}>
+        <div
+          onClick={() => {
+            setOnEdit("add_experience");
+          }}
+        >
           <Icon
             src={"edit"}
             style={{
@@ -1008,7 +1235,7 @@ const ExperienceTag = ({ icon, text }) => {
   );
 };
 const ExperienceSection = () => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { theme, onThemeMode, onEdit } = useContext(ConfigContext);
   const { formData } = useContext(DraftResumeFormContext);
   return (
     <div
@@ -1043,23 +1270,29 @@ const ExperienceSection = () => {
       ))}
       <div
         style={{
+          transition: "all 0.32s ease",
           position: "relative",
-          maxWidth: "100%",
-          display: "inline-flex",
+          width: onEdit !== "add_experience" ? 36 : "100%",
+          display: "block",
           alignItems: "center",
           justifyContent: "center",
           gap: "6px",
           padding: "4px 8px",
-          borderRadius: "16px",
-          backgroundColor: theme
-            ? theme.backgroundColor
-            : "rgba(0, 0, 0, 0.04)",
-          marginRight: "6px",
-          marginBottom: "2px",
+          borderRadius: "18px",
+          backgroundColor:
+            onEdit !== "add_experience"
+              ? theme
+                ? theme.backgroundColor
+                : "rgba(0, 0, 0, 0.04)"
+              : "transparent",
+          marginTop: onEdit !== "add_experience" ? "0px" : "6px",
+          marginBottom: onEdit !== "add_experience" ? "2px" : "0px",
           border:
-            onThemeMode === "dark_mode"
-              ? "1px solid rgba(255, 255, 255, 0.16)"
-              : "1px solid rgba(0, 0, 0, 0.16)",
+            onEdit !== "add_experience"
+              ? onThemeMode === "dark_mode"
+                ? "1px solid rgba(255, 255, 255, 0.16)"
+                : "1px solid rgba(0, 0, 0, 0.16)"
+              : "none",
           cursor: "pointer",
         }}
       >
@@ -1077,12 +1310,13 @@ const ExperienceSection = () => {
     </div>
   );
 };
-const NameCard = ({ handleOnEdit, handleOnClose }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+const NameCard = () => {
+  const { theme, onThemeMode, DialogTransition } = useContext(ConfigContext);
   const { formData } = useContext(DraftResumeFormContext);
+  const [onEdit, setOnEdit] = useState("none");
 
   return (
-    <NameCardContext.Provider value={{ handleOnEdit, handleOnClose }}>
+    <NameCardContext.Provider value={{ onEdit, setOnEdit }}>
       <>
         <div
           style={{
@@ -1156,11 +1390,116 @@ const NameCard = ({ handleOnEdit, handleOnClose }) => {
             >
               {formData?.first_name} {formData?.last_name}
             </span>
-            <ContactSection />
-            <EducationSection />
-            <ExperienceSection />
+            {onEdit === "none" ? (
+              <>
+                <ContactSection />
+                <EducationSection />
+                <ExperienceSection />
+              </>
+            ) : null}
           </div>
         </div>
+        <Dialog
+          open={onEdit !== "none"}
+          onClose={() => {
+            setOnEdit("none");
+          }}
+          slots={{
+            transition: DialogTransition,
+          }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          PaperProps={{
+            sx: {
+              height: "792px",
+              width: "490px",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            },
+          }}
+        >
+          <DialogContent>
+            <div
+              style={{
+                transition: "all 0.16s ease",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transform: "none",
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+                zIndex: 0,
+
+                backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
+                border:
+                  onThemeMode === "dark_mode"
+                    ? "1px solid rgba(255, 255, 255, 0.16)"
+                    : "none",
+                borderRadius: "8px",
+                boxShadow: "0 0px 8px rgba(0, 0, 0, 0.16)",
+              }}
+            >
+              <div
+                className="scrolling-space-v"
+                style={{
+                  position: "absolute",
+                  top: "8px",
+                  left: "8px",
+                  width: "calc(100% - 16px)",
+                  height: "calc(100% - 16px)",
+                  overflowX: "hidden",
+                  overflowY: "scroll",
+                }}
+              >
+                <img
+                  src={
+                    onThemeMode === "dark_mode"
+                      ? satisfied_light
+                      : satisfied_dark
+                  }
+                  alt="satisfied"
+                  draggable="false"
+                  style={{
+                    position: "absolute",
+                    top: "6px",
+                    left: "6px",
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+
+                    pointerEvents: "none",
+
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    MozUserSelect: "none",
+                    MsUserSelect: "none",
+                  }}
+                />
+                <span
+                  className="name-card-name-title"
+                  style={{
+                    position: "relative",
+                    marginLeft: "50px",
+                    fontFamily: "Jost",
+                    fontSize: "32px",
+                    color: theme ? theme.font.color : "#000000",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    MozUserSelect: "none",
+                    MsUserSelect: "none",
+                  }}
+                >
+                  {formData?.first_name} {formData?.last_name}
+                </span>
+                <ContactSection />
+                <EducationSection />
+                <ExperienceSection />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </>
     </NameCardContext.Provider>
   );

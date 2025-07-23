@@ -17,8 +17,6 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 
 const steps = [
   {
@@ -146,14 +144,7 @@ const FormStepper = ({ containerWidth }) => {
               height: "100%",
             }}
           >
-            <NameCard
-              handleOnEdit={() => {
-                setOnNameCardEdit(true);
-              }}
-              handleOnClose={() => {
-                setOnNameCardEdit(false);
-              }}
-            />
+            <NameCard />
           </div>
         );
       }, 160);
@@ -349,7 +340,8 @@ const FormStepper = ({ containerWidth }) => {
   );
 };
 const DraftResumeForm = () => {
-  const { theme, windowSize, DialogTransition } = React.useContext(ConfigContext);
+  const { theme, windowSize, DialogTransition } =
+    React.useContext(ConfigContext);
   const { get_user_info } = React.useContext(RequestContext);
 
   const [formData, setFormData] = React.useState(null);
@@ -433,34 +425,6 @@ const DraftResumeForm = () => {
           setResumeOnFocus={setResumeOnFocus}
         />
       </div>
-      {onNameCardEdit ? (
-        <Dialog
-          open={onNameCardEdit}
-          onClose={() => {
-            setOnNameCardEdit(false);
-          }}
-          slots={{
-            transition: DialogTransition,
-          }}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          PaperProps={{
-            sx: {
-              height: "792px",
-              width: "490px",
-              borderRadius: "10px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            },
-          }}
-        >
-          <DialogContent>
-            <NameCard
-              handleOnEdit={null}
-              handleOnClose={null}
-            />
-          </DialogContent>
-        </Dialog>
-      ) : null}
     </DraftResumeFormContext.Provider>
   );
 };

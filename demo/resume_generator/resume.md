@@ -7,37 +7,31 @@
 - **💻 github**: https://github.com/haoxiang-xu
 
 ## Summary
-Innovative software engineer with hands-on experience in designing and deploying scalable, distributed systems, RESTful APIs, and full stack solutions in both startup and academic environments. Proven skills in Python, JavaScript, SQL, backend architecture, LLM/NLP integration, anomaly detection, and cloud deployment (AWS, Docker). Excels at tackling ambiguity, leading cross-functional teams, and delivering high-impact, production-grade technology.
+Analytical and results-driven data analyst and developer with hands-on experience in business reporting, dashboard development, and ERP-AI integrations, including work with SAP Business One. Skilled in Power BI, RESTful APIs, SQL, Python, and large language models. Proven ability to deliver operational dashboards, automate data pipelines, and translate complex requirements into practical solutions in fast-paced, collaborative environments.
 
 ## Education
 - **Master of Data Science** at University of British Columbia, Canada (Sep 2024 – Jun 2025) - Grade: A
 - **Bachelor of Science in Computer Science** at University of British Columbia, Canada (Sep 2020 – Nov 2023) - GPA: 3.9/4.0
 
 ## Experience
-- **Software Development Engineer | Backend Systems Engineer** at University of British Columbia (Bachelor's Capstone Project), Canada (Apr 2023 – Sep 2023)
-  - Designed and implemented a scalable, fault-tolerant backend architecture for a university-wide peer evaluation platform serving hundreds of concurrent users across multiple departments.
-  - Led the development of RESTful APIs and relational database modeling in MySQL (hosted on AWS RDS), ensuring robust support for complex workflow automation, grading, and feedback histories.
-  - Optimized system performance through backend caching, efficient SQL queries, and Docker containerization, enabling secure deployment on AWS EC2 with NGINX reverse proxy.
-  - Successfully delivered a production-ready system with live user testing and positive feedback from faculty, demonstrating strong cloud deployment skills and impact-driven development.
+- **Business Data Analyst Intern | SAP Solutions Analyst Intern** at MTC Information Technology (SAP Business One Partner), Shanghai, China (Nov 2023 - Feb 2024)
+  - Collaborated with clients to identify operational pain points and gathered business requirements for SAP Business One and AI integration projects.
+  - Performed data analysis and reporting to evaluate the impact of proposed automation solutions, supporting process optimization through actionable insights.
+  - Supported the configuration and rollout of ERP and analytics solutions, documenting best practices and streamlining implementation workflows.
+  - Developed clear client presentations and process documentation, strengthening communication between technical and business stakeholders.
 
-- **Full Stack Engineer | Machine Learning Engineer** at Shanghai Mengou Technology Co., Ltd (Startup Environment), Shanghai, China (Mar 2024 – Aug 2024)
-  - Led the design, development, and deployment of a production-grade AI agent system using FastAPI, Python, React, and transformer-based LLMs for scalable, automated customer service in retail.
-  - Architected distributed backend logic and an innovative multi-agent RAG pipeline leveraging FAISS and LangChain concepts, reducing incorrect AI-generated pricing by over 60%.
-  - Built monitoring dashboards and implemented anomaly detection to track and maintain high system performance and reliability in a live, rapidly iterating startup environment.
-  - Collaborated across functional teams to ensure rapid feature delivery, efficient resource management, and alignment with real-world business impact.
-
-- **Research Assistant** at Massachusetts Institute of Technology (MIT), Remote, US (Apr 2022 – Sep 2022)
-  - Designed and implemented deep learning solutions in Python and PyTorch for automated classification of lung tumors, achieving over 96% accuracy with resilient CNN architectures.
-  - Solved core challenges in model convergence and data variability by introducing advanced normalization, residual connections, and data augmentation for reliable large-scale inference.
-  - Managed the entire research lifecycle—from algorithm design to evaluation and publication—demonstrating self-motivation and a strong foundation in object-oriented and algorithmic principles.
-  - Published findings in IEEE and open-sourced the project, contributing to ongoing research and adoption in academic and clinical domains.
+- **Full Stack Developer & Analytics Dashboard Lead** at University of British Columbia (Master's Capstone Project), Canada (May 2025 – Jun 2025)
+  - Spearheaded the creation of a dashboard-driven reporting tool for academic program transparency, automating data capture and visualization across multiple sources.
+  - Led a cross-functional team in gathering requirements, prioritizing a backlog, and delivering a scalable tool that reduced manual reporting workload by over 50%.
+  - Integrated advanced analytics, implemented modular data pipelines (React, Flask, MongoDB), and ensured operational dashboards were intuitive and maintainable.
+  - Presented findings and progress to stakeholders, documenting repeatable QA processes and aligning deliverables with evolving requirements.
 
 
 ## Skills
-- **Programming Languages & Paradigms**: Python (OOP, procedural, scripting), Java, C++, C# (object-oriented design), TypeScript & JavaScript (ES6+), SQL (relational query language, MySQL, PostgreSQL)
-- **Frameworks & Distributed Systems**: FastAPI, Flask, Express.js (REST API frameworks), React.js (frontend, component-based UI), PyTorch (deep learning, CNNs, transfer learning), Docker (containerization, microservices, distributed deployment)
-- **Cloud Infrastructure & DevOps**: AWS (EC2, RDS, S3, cloud monitoring), NGINX (reverse proxy, load balancing), CI/CD pipelines & version control (Git, GitHub Actions), Linux/Ubuntu systems (server administration, bash scripting)
-- **AI, Data Engineering & Analytics**: Large Language Models (LLMs), prompt engineering, RAG pipeline, Data analysis (Pandas, EDA, anomaly detection), Vector search (FAISS), LangChain, embedding analysis, Database design, normalization, index/query optimization
+- **Programming & Analytics Tools**: Python (Data Analysis, Automation, Machine Learning), SQL (Database Querying, MySQL, Data Extraction), Power BI (Dashboards, Business Reporting), JavaScript (Data Visualization, Full Stack Scripting)
+- **Frameworks & Data Platforms**: React.js (Frontend Development, UI Design), Flask & FastAPI (REST API, Backend Services), SAP Business One (ERP, Business Process Integration), MongoDB (NoSQL Data Storage, Document Databases)
+- **Cloud, DevOps & Deployment**: Docker (Containerization, CI/CD, Deployment Automation), AWS (EC2, Cloud Hosting, RDS), NGINX (Reverse Proxy, Server Configuration), Ubuntu (Linux Server Management, Scripting)
+- **AI, Data Science & Reporting Solutions**: Large Language Models (LLMs, NLP, Prompt Engineering), Exploratory Data Analysis (EDA, Anomaly Detection), PyTorch (Deep Learning, CNN Implementation), Operational Dashboards (KPI Reporting, Automated Metrics)
 
 
 

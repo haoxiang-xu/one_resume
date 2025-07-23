@@ -2,7 +2,6 @@ import {
   useState,
   createContext,
   useContext,
-  useCallback,
   useEffect,
 } from "react";
 
@@ -117,18 +116,19 @@ const RequestContainer = ({ children }) => {
     if (option === "default") {
       try {
         const { email, password } = data;
-        const response = await fetch(`${root_url}api/auth/login`, {
+        const res = await fetch(`${root_url}api/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 
-        const result = await response.json();
+        const json = await res.json().catch(() => ({}));
 
-        if (!response.ok) {
-          alert("error", result.message || "Login failed due to server error");
+        if (!res.ok) {
+          alert("error", json.message || "Login failed");
           return;
         }
         alert("success", "Login successful!");
