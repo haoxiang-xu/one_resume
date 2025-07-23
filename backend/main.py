@@ -5,7 +5,7 @@ import math
 import random
 from bson import ObjectId
 from datetime import datetime, timedelta, timezone
-from flask import Flask, jsonify, request, redirect
+from flask import Flask, jsonify, request, redirect, make_response, g
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -22,8 +22,15 @@ from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from urllib.parse import urlencode
 
+FRONTEND_ORIGIN = os.getenv("FRONTEND_URL", "http://localhost:2907")
+
 app = Flask(__name__)
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True,               # 允许携带 Cookie
+    methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
+)
 load_dotenv()
 
 limiter = Limiter(
@@ -38,12 +45,16 @@ app.config['SMTP_PASSWORD'] = "gwflwteesyburspz"
 
 # JWT configuration
 app.config['JWT_SECRET_KEY'] = 'LMdcjmsgY-ABxvGd1EBvq4jGQGAg-lqeSylnPrdQu_DM-3Z6dDHeiiLFROjc5u6Y'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=48)
+app.config["JWT_COOKIE_NAME"] = "access_token"        # 自定义
+app.config["JWT_COOKIE_SECURE"] = False               # 本地开发 http
+app.config["JWT_COOKIE_SAMESITE"] = "Lax"             # 跨站表单登录可用；生产跨域再改 None+Secure
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)
 
 # Google OAuth configuration
 app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 app.config['GOOGLE_REDIRECT_URI'] = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:8888/api/auth/google/callback')
+app.config['FRONTEND_ENDPOINT'] = os.getenv('FRONTEND_URL')
 
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 # check if username is already exists
@@ -113,7 +124,24 @@ def register_user():
         return jsonify({'message': str(e)}), 500
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 
-# { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+# { login & logout } ------------------------------------------------------------------------------------------------------------------------------------- #
+# check user status
+@app.route("/api/auth/user", methods=["GET"])
+def auth_user():
+    token = request.cookies.get(app.config["JWT_COOKIE_NAME"])
+    if not token:
+        return jsonify({'message': 'unauth'}), 401
+    try:
+        payload = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+        return jsonify({
+            'user_id': payload['user_id'],
+            'role': payload['role'],
+            # 你也可以在这儿返回更多（名字、头像）
+        })
+    except jwt.ExpiredSignatureError:
+        return jsonify({'message': 'expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'message': 'invalid token'}), 401
 # authenticate user
 @app.route('/api/auth/login', methods=['POST'])
 def auth_login():
@@ -144,14 +172,39 @@ def auth_login():
 
         client.close()
 
-        return jsonify({
+        resp = make_response(jsonify({
             'message': 'Login successful!',
+            # 迁移期：仍返回 token，方便你调试；上线后可删
             'token': token,
             'user_id': user['_id'],
             'role': user['role'],
-        })
+        }))
+        resp.set_cookie(
+            key=app.config["JWT_COOKIE_NAME"],
+            value=token,
+            httponly=True,
+            secure=app.config.get("JWT_COOKIE_SECURE", False),
+            samesite=app.config.get("JWT_COOKIE_SAMESITE", "Lax"),
+            max_age=int(app.config['JWT_ACCESS_TOKEN_EXPIRES'].total_seconds()),
+            path="/",
+        )
+        return resp
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+# logout
+@app.route("/api/auth/logout", methods=["POST"])
+def auth_logout():
+    resp = make_response(jsonify({'message': 'Logged out.'}))
+    resp.set_cookie(
+        key=app.config["JWT_COOKIE_NAME"],
+        value="",
+        max_age=0,
+        path="/",
+        httponly=True,
+        secure=app.config.get("JWT_COOKIE_SECURE", False),
+        samesite=app.config.get("JWT_COOKIE_SAMESITE", "Lax"),
+    )
+    return resp
 # forgot password -> send validation code to email
 @app.route('/api/auth/forgot_password/send_validation_code', methods=['POST'])
 @limiter.limit("5 per 15 minutes")
@@ -360,34 +413,40 @@ def auth_forgot_password_reset_password():
         return jsonify({'success': True, 'message': 'password reset successfully!'}), 200
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-# { login } ---------------------------------------------------------------------------------------------------------------------------------------------- #
+# { login & logout } ------------------------------------------------------------------------------------------------------------------------------------- #
+
+# { authentication } ------------------------------------------------------------------------------------------------------------------------------------- #
+def require_auth(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        # Let CORS pre‑flight (OPTIONS) requests through unchallenged
+        if request.method == "OPTIONS":
+            return f(*args, **kwargs)
+
+        token = request.cookies.get(app.config["JWT_COOKIE_NAME"])
+        if not token:
+            return jsonify({'message': 'unauth'}), 401
+        try:
+            payload = jwt.decode(token,
+                                 app.config['JWT_SECRET_KEY'],
+                                 algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'invalid token'}), 401
+
+        g.current_user = payload         # store for the downstream route
+        return f(*args, **kwargs)
+    return wrapper
+# { authentication } ------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            auth_header = request.headers['Authorization']
-            if auth_header.startswith('Bearer '):
-                token = auth_header.split(' ')[1]
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
-        try:
-            data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
-            request.user = data
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired!'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'message': 'Invalid token!'}), 401
-        return f(*args, **kwargs)
-    return decorated
-
-@app.route('/api/user/get_user_info/<user_id>', methods=['GET'])
+@app.route("/api/user/get_user_info", methods=["GET"])
 @limiter.limit("60 per minute")
-@token_required
-def get_user_info(user_id):
+@require_auth
+def get_user_info():
     try:
+        user_id = g.current_user['user_id']
         client = MongoClient(os.getenv("MONGODB_URL"))
         database = client["one_resume_db"]
         user_info_collection = database["user_info"]
@@ -402,6 +461,7 @@ def get_user_info(user_id):
         user_info.pop('password', None)
         
         client.close()
+        
         return jsonify(user_info), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
@@ -542,13 +602,18 @@ def google_callback():
         token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
         
         # Return JSON response like normal login API
-        return jsonify({
-            'message': 'Google login successful!',
-            'token': token,
-            'user_id': user_id,
-            'role': role,
-        }), 200
-        
+        resp = make_response(redirect(app.config['FRONTEND_ENDPOINT']))
+        resp.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,      # JS 无法读，防 XSS
+            samesite="Lax",     # 正常表单跳转可带 Cookie，跨站点 GET 不会
+            secure=False,       # 本地开发 http 用 False；线上 https 一定设 True
+            max_age=60*60*24*7, # 7 天
+            path="/"            # 前端所有路由都能带上
+            # domain="localhost"  # 默认即可；如果用自定义域，写成 ".example.com"
+        )
+        return resp
     except Exception as e:
         print(f"DEBUG: General exception: {str(e)}")
         # Return error as JSON

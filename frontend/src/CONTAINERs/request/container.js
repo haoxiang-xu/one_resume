@@ -1,4 +1,10 @@
-import { useState, createContext, useContext, useCallback } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+} from "react";
 
 /* Contexts -------------------------------------------------------------------------------------------------------------- */
 import { DataContext } from "../data/context";
@@ -45,7 +51,7 @@ const RequestAlert = ({
   );
 };
 const RequestContainer = ({ children }) => {
-  const { jwtToken, setJwtToken, userId, setUserId } = useContext(DataContext);
+  const { setAuthState } = useContext(DataContext);
   const [alertState, setAlertState] = useState({
     open: false,
     vertical: "top",
@@ -53,6 +59,24 @@ const RequestContainer = ({ children }) => {
     type: "error",
     message: "",
   });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${root_url}api/auth/user`, {
+          credentials: "include",
+        });
+        if (!res.ok) {
+          setAuthState({ loading: false, user: null });
+          return;
+        }
+        const user = await res.json();
+        setAuthState({ loading: false, user });
+      } catch {
+        setAuthState({ loading: false, user: null });
+      }
+    })();
+  }, [root_url]);
 
   const alert = (type, message) => {
     setAlertState({
@@ -89,34 +113,44 @@ const RequestContainer = ({ children }) => {
       return null;
     }
   };
-  const auth = async (data) => {
-    try {
-      const { email, password } = data;
-      const response = await fetch(`${root_url}api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  const auth = async (data, option = "default") => {
+    if (option === "default") {
+      try {
+        const { email, password } = data;
+        const response = await fetch(`${root_url}api/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (!response.ok) {
-        alert("error", result.message || "Login failed due to server error");
+        if (!response.ok) {
+          alert("error", result.message || "Login failed due to server error");
+          return;
+        }
+        alert("success", "Login successful!");
+      } catch (err) {
+        alert("error", "Login failed due to network error");
         return;
       }
-      const token = result.token;
-      const id = result.user_id;
+    } else if (option === "google") {
+      try {
+        // 向 Flask 发 GET 请求，拿到授权链接
+        const resp = await fetch(`${root_url}api/auth/google/login`);
+        if (!resp.ok) throw new Error("Failed to get authorization URL");
 
-      setJwtToken(token);
-      localStorage.setItem("jwtToken", token);
-      setUserId(id);
-      localStorage.setItem("userId", id);
-      alert("success", "Login successful!");
-    } catch (err) {
-      alert("error", "Login failed due to network error");
-      return;
+        const { authorization_url } = await resp.json();
+
+        // 跳转到 Google 的授权页（也可以用 window.open 开新窗口）
+        window.location.href = authorization_url;
+        // window.open(authorization_url, '_self');
+      } catch (err) {
+        console.error(err);
+        alert("Login failed, please try again later.");
+      }
     }
   };
   const forgot_password = async (onStep, data) => {
@@ -209,22 +243,11 @@ const RequestContainer = ({ children }) => {
       }
     }
   };
-  const get_user_info = useCallback(async () => {
-    const token = jwtToken || localStorage.getItem("jwtToken");
-    const id = userId || localStorage.getItem("userId");
-    if (!token) {
-      throw new Error("No auth token found – please log in again.");
-    }
-    if (!id) {
-      throw new Error("No user ID found – please log in again.");
-    }
-
-    const res = await fetch(`${root_url}api/user/get_user_info/${id}`, {
+  const get_user_info = async () => {
+    const res = await fetch(`${root_url}api/user/get_user_info`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
     });
 
     const payload = await res.json().catch(() => ({}));
@@ -234,7 +257,7 @@ const RequestContainer = ({ children }) => {
     }
 
     return payload;
-  }, [jwtToken, userId]);
+  };
 
   return (
     <RequestContext.Provider

@@ -5,24 +5,10 @@ import { DataContext } from "./context";
 /* Contexts -------------------------------------------------------------------------------------------------------------- */
 
 const DataContainer = ({ children }) => {
-  const [jwtToken, setJwtToken] = useState(null);
-  const [userId, setUserId] = useState(null);
-
-  /* { load from localStorage } ------------------------------------------------------------------ */
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    const id = localStorage.getItem("userId");
-    if (token) {
-      setJwtToken(token);
-    }
-    if (id) {
-      setUserId(id);
-    }
-  }, []);
-  /* { load from localStorage } ------------------------------------------------------------------ */
+  const [authState, setAuthState] = useState({ loading: true, user: null });
 
   return (
-    <DataContext.Provider value={{ jwtToken, setJwtToken, userId, setUserId }}>
+    <DataContext.Provider value={{ authState, setAuthState }}>
       {children}
     </DataContext.Provider>
   );

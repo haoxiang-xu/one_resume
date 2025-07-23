@@ -843,6 +843,7 @@ const UserForm = () => {
 };
 const LoginOptions = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const { auth } = useContext(RequestContext);
 
   return (
     <div
@@ -890,6 +891,9 @@ const LoginOptions = () => {
             height: 40,
             borderRadius: "50%",
             backgroundColor: "#ff0034",
+          }}
+          onClick={() => {
+            auth({ provider: "google" }, "google");
           }}
         >
           <Icon
