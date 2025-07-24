@@ -4,6 +4,7 @@ import satisfied_dark from "./satisfied_dark.png";
 import satisfied_light from "./satisfied_light.png";
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -13,6 +14,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import Skeleton from "@mui/material/Skeleton";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -142,11 +144,19 @@ const ContactInfoTag = ({ icon, text }) => {
 
   useEffect(() => {
     if (onHover) {
-      setStyle({
-        width: "60px",
-        opacity: 1,
-        pointerEvents: "auto",
-      });
+      if (icon === "phone" || icon === "email") {
+        setStyle({
+          width: "38px",
+          opacity: 1,
+          pointerEvents: "auto",
+        });
+      } else {
+        setStyle({
+          width: "60px",
+          opacity: 1,
+          pointerEvents: "auto",
+        });
+      }
     } else {
       setStyle({
         width: "0px",
@@ -154,7 +164,7 @@ const ContactInfoTag = ({ icon, text }) => {
         pointerEvents: "none",
       });
     }
-  }, [onHover]);
+  }, [icon, onHover]);
 
   return (
     <div
@@ -236,22 +246,24 @@ const ContactInfoTag = ({ icon, text }) => {
           opacity: style.opacity,
         }}
       >
-        <div onClick={() => {}}>
-          <Icon
-            src={"delete"}
-            style={{
-              width: "18px",
-              height: "18px",
-              position: "absolute",
-              top: "50%",
-              right: "0px",
-              transform: "translate(-50%, -50%)",
-              cursor: "pointer",
-              pointerEvents: style.pointerEvents,
-            }}
-            color={"red"}
-          />
-        </div>
+        {icon === "phone" || icon === "email" ? null : (
+          <div onClick={() => {}}>
+            <Icon
+              src={"delete"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                right: "0px",
+                transform: "translate(-50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={"red"}
+            />
+          </div>
+        )}
         <div
           onClick={() => {
             setOnEdit("edit_contact");
@@ -263,7 +275,7 @@ const ContactInfoTag = ({ icon, text }) => {
               width: "18px",
               height: "18px",
               position: "absolute",
-              top: "50%",
+              top: "52%",
               left: "0px",
               transform: "translate(50%, -50%)",
               cursor: "pointer",
@@ -279,19 +291,33 @@ const ContactInfoTag = ({ icon, text }) => {
 const ContactSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { formData } = useContext(DraftResumeFormContext);
-  const contactTypeOptions = {
+  const { formData, add_contact_extra_row } = useContext(
+    DraftResumeFormContext
+  );
+  const [newContact, setNewContact] = useState({
+    type: "",
+    value: "",
+  });
+  const contactTypeIcons = {
     linkedin: { icon: "linkedin" },
     github: { icon: "github" },
     personal_website: { icon: "link" },
     portfolio: { icon: "passport" },
     other: { icon: "link" },
   };
+  const contactTypeOptions = [
+    { value: "linkedin", label: "LinkedIn", icon: "linkedin" },
+    { value: "github", label: "GitHub", icon: "github" },
+    { value: "personal_website", label: "Personal Website", icon: "link" },
+    { value: "portfolio", label: "Portfolio", icon: "passport" },
+    { value: "other", label: "Other", icon: "link" },
+  ];
 
   return (
     <div
       className="contact-section"
       style={{
+        marginTop: onEdit === "none" ? "0px" : "12px",
         padding: "6px",
       }}
     >
@@ -303,7 +329,7 @@ const ContactSection = () => {
       {formData?.contact?.extra?.map((item, index) => (
         <ContactInfoTag
           key={index}
-          icon={contactTypeOptions[item.contact_type].icon}
+          icon={contactTypeIcons[item.contact_type].icon}
           text={item.contact_value || "N/A"}
         />
       ))}
@@ -316,7 +342,7 @@ const ContactSection = () => {
           alignItems: "center",
           justifyContent: "center",
           gap: "6px",
-          padding: "4px 8px",
+          padding: onEdit !== "add_contact" ? "4px 8px" : "8px 4px",
           borderRadius: "18px",
           backgroundColor:
             onEdit !== "add_contact"
@@ -324,24 +350,214 @@ const ContactSection = () => {
                 ? theme.backgroundColor
                 : "rgba(0, 0, 0, 0.04)"
               : "transparent",
-          marginTop: onEdit !== "add_contact" ? "0px" : "6px",
-          marginBottom: onEdit !== "add_contact" ? "2px" : "0px",
+          marginTop: onEdit !== "add_contact" ? 0 : 6,
+          marginBottom: 2,
           border:
-            onThemeMode === "dark_mode"
-              ? "1px solid rgba(255, 255, 255, 0.16)"
-              : "1px solid rgba(0, 0, 0, 0.16)",
+            onEdit !== "add_contact"
+              ? onThemeMode === "dark_mode"
+                ? "1px solid rgba(255, 255, 255, 0.16)"
+                : "1px solid rgba(0, 0, 0, 0.16)"
+              : "none",
           cursor: "pointer",
         }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           setOnEdit("add_contact");
         }}
       >
+        {onEdit === "add_contact" ? (
+          <>
+            <Select
+              labelId="contact-type-select-label"
+              id="contact-type-select"
+              value={newContact.type}
+              onChange={(e) => {
+                setNewContact({ ...newContact, type: e.target.value });
+              }}
+              renderValue={(value) => {
+                const selectedOption = contactTypeOptions.find(
+                  (opt) => opt.value === value
+                );
+                return (
+                  <Icon
+                    src={selectedOption.icon}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "40%",
+                      transform: "translate(-50%, -50%)",
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
+                );
+              }}
+              sx={{
+                transition: "all 0.2s ease",
+                position: "absolute",
+                top: 0,
+                left: 36,
+                width: "20%",
+                height: 40,
+                outline: "none",
+                borderRadius: "18px 0 0 18px",
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    border: "none",
+                    borderRadius: "10px",
+                    backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                    boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                    maxHeight: 300,
+                    fontFamily: "Jost",
+                  },
+                },
+                MenuListProps: {
+                  sx: {
+                    padding: "8px",
+                  },
+                },
+              }}
+            >
+              {contactTypeOptions.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                  sx={{
+                    fontFamily: "Jost",
+                    fontSize: "16px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      width: 16,
+                      height: 16,
+                      marginRight: "12px",
+                      borderRadius: "50%",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon
+                      src={option.icon}
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 20,
+                        height: 20,
+                      }}
+                    />
+                  </div>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField
+              label={newContact.type ? newContact.type : "select type"}
+              variant="outlined"
+              value={newContact.value}
+              size="small"
+              onChange={(e) => {
+                setNewContact({ ...newContact, value: e.target.value });
+              }}
+              sx={{
+                transition: "all 0.2s ease",
+                position: "absolute",
+                top: 0,
+                left: "calc(20% + 36px)",
+                width: "calc(60% - 36px)",
+                marginLeft: "2px",
+                "& .MuiOutlinedInput-root": {
+                  height: 40,
+                  borderRadius: "0 18px 18px 0",
+                  paddingRight: "14px",
+                  transition:
+                    "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+                },
+                "& .MuiInputBase-input": {
+                  height: "100%",
+                  fontFamily: "Jost",
+                  boxSizing: "border-box",
+                  padding: "12px 14px",
+                },
+                "& label": {
+                  fontFamily: "Jost",
+                },
+                "& input": {
+                  height: "100%",
+                  fontFamily: "Jost",
+                },
+              }}
+            />
+            <IconButton
+              color="success"
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: 0,
+                transform: "translate(0%, -50%)",
+                width: 36,
+                height: 36,
+                borderRadius: "18px",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Icon
+                src="check"
+                color="green"
+                style={{
+                  position: "absolute",
+                  transform: "translate(-50%, -50%)",
+                  top: "50%",
+                  left: "50%",
+                  height: "24px",
+                  width: "24px",
+                }}
+              />
+            </IconButton>
+            <IconButton
+              color="error"
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: 45,
+                transform: "translate(0%, -50%)",
+                width: 36,
+                height: 36,
+                borderRadius: "18px",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOnEdit("pending");
+              }}
+            >
+              <Icon
+                src="close"
+                color="red"
+                style={{
+                  position: "absolute",
+                  transform: "translate(-50%, -50%)",
+                  top: "50%",
+                  left: "50%",
+                  height: "24px",
+                  width: "24px",
+                }}
+              />
+            </IconButton>
+          </>
+        ) : null}
         <Icon
           src={"add"}
           style={{
             flex: "0 0 18px",
-            width: "18px",
-            height: "18px",
+            width: onEdit === "add_contact" ? "24px" : "18px",
+            height: onEdit === "add_contact" ? "24px" : "18px",
             opacity: 0.5,
           }}
           color={theme ? theme.font.color : "#000000"}
@@ -802,7 +1018,7 @@ const EducationTag = ({
                 width: "18px",
                 height: "18px",
                 position: "absolute",
-                top: "50%",
+                top: "52%",
                 left: "0px",
                 transform: "translate(50%, -50%)",
                 cursor: "pointer",
@@ -991,7 +1207,7 @@ const EducationTag = ({
                 width: "18px",
                 height: "18px",
                 position: "absolute",
-                top: "50%",
+                top: "52%",
                 left: "0px",
                 transform: "translate(50%, -50%)",
                 cursor: "pointer",
@@ -1233,7 +1449,7 @@ const ExperienceTag = ({ icon, text }) => {
               width: "18px",
               height: "18px",
               position: "absolute",
-              top: "50%",
+              top: "52%",
               left: "0px",
               transform: "translate(50%, -50%)",
               cursor: "pointer",
@@ -1247,7 +1463,8 @@ const ExperienceTag = ({ icon, text }) => {
   );
 };
 const ExperienceSection = () => {
-  const { theme, onThemeMode, onEdit } = useContext(ConfigContext);
+  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { onEdit } = useContext(NameCardContext);
   const { formData } = useContext(DraftResumeFormContext);
   return (
     <div
@@ -1408,7 +1625,27 @@ const NameCard = () => {
                 <EducationSection />
                 <ExperienceSection />
               </>
-            ) : null}
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "4px",
+                  width: "100%",
+                }}
+              >
+                <Skeleton variant="rounded" animation="wave" height={60} />
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  height={32}
+                  width={64}
+                />
+
+                <Skeleton variant="rounded" animation="wave" height={24} />
+                <Skeleton variant="rounded" animation="wave" height={24} />
+              </Box>
+            )}
           </div>
         </div>
         <Dialog
@@ -1428,6 +1665,9 @@ const NameCard = () => {
               borderRadius: "10px",
               boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
             },
+          }}
+          onClick={(e) => {
+            setOnEdit("pending");
           }}
         >
           <DialogContent>
@@ -1505,9 +1745,17 @@ const NameCard = () => {
                 >
                   {formData?.first_name} {formData?.last_name}
                 </span>
-                <ContactSection />
-                <EducationSection />
-                <ExperienceSection />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
+                  <ContactSection />
+                  <EducationSection />
+                  <ExperienceSection />
+                </div>
               </div>
             </div>
           </DialogContent>

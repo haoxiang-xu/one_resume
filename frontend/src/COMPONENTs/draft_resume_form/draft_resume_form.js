@@ -353,6 +353,7 @@ const DraftResumeForm = () => {
   React.useEffect(() => {
     if (userInfo) {
       setFormData(userInfo);
+      console.log(userInfo);
     }
   }, [userInfo]);
   React.useEffect(() => {
@@ -372,13 +373,20 @@ const DraftResumeForm = () => {
     }
   }, [windowSize]);
 
-  const delete_phone_number = (index) => {
-    setFormData((prevData) => {
-      const updatedData = { ...prevData };
-      updatedData.phone_numbers.splice(index, 1);
-      return updatedData;
-    });
+  /* { contact } ----------------------------------------------------------------------------- */
+  const add_contact_extra_row = (type, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      contacts: {
+        ...prevData.contacts,
+        extra: [
+          ...prevData.contacts.extra,
+          { contact_type: type, contact_value: value },
+        ],
+      },
+    }));
   };
+  /* { contact } ----------------------------------------------------------------------------- */
 
   return (
     <DraftResumeFormContext.Provider
@@ -388,6 +396,8 @@ const DraftResumeForm = () => {
         setResumeOnFocus,
         onNameCardEdit,
         setOnNameCardEdit,
+
+        add_contact_extra_row,
       }}
     >
       <div
