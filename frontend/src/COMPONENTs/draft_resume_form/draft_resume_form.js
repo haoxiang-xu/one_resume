@@ -200,6 +200,27 @@ const FormStepper = ({ containerWidth }) => {
     }
   }, [containerWidth]);
 
+  const get_icon_src = (index) => {
+    switch (index) {
+      case 0:
+        return "arrow_right";
+      case 1:
+        return "marker";
+      default:
+        return "check";
+    }
+  };
+  const get_button_label = (index) => {
+    switch (index) {
+      case 0:
+        return "continue";
+      case 1:
+        return "Build resume";
+      default:
+        return "finish";
+    }
+  };
+
   return (
     <Box
       className="scrolling-space-v"
@@ -298,7 +319,7 @@ const FormStepper = ({ containerWidth }) => {
                   sx={{ mt: 1, borderRadius: "8px", textTransform: "none" }}
                   endIcon={
                     <Icon
-                      src="arrow_right"
+                      src={get_icon_src(index)}
                       style={{
                         width: 24,
                         height: 24,
@@ -306,7 +327,7 @@ const FormStepper = ({ containerWidth }) => {
                     />
                   }
                 >
-                  {index === steps.length - 1 ? "finish" : "continue"}
+                  {get_button_label(index)}
                 </Button>
               </Box>
             </StepContent>
@@ -382,7 +403,7 @@ const DraftResumeForm = () => {
         ["cell"]: value,
       },
     }));
-  }
+  };
   const update_email = (value) => {
     setFormData((prevData) => ({
       ...prevData,
