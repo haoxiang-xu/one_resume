@@ -357,7 +357,7 @@ const ContactSection = () => {
               ? onThemeMode === "dark_mode"
                 ? "1px solid rgba(255, 255, 255, 0.16)"
                 : "1px solid rgba(0, 0, 0, 0.16)"
-              : "none",
+              : "1px solid rgba(0, 0, 0, 0)",
           cursor: "pointer",
         }}
         onClick={(e) => {
