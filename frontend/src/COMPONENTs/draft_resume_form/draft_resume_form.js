@@ -374,6 +374,24 @@ const DraftResumeForm = () => {
   }, [windowSize]);
 
   /* { contact } ----------------------------------------------------------------------------- */
+  const update_cell = (value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      contact: {
+        ...prevData.contact,
+        ["cell"]: value,
+      },
+    }));
+  }
+  const update_email = (value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      contact: {
+        ...prevData.contact,
+        ["email"]: value,
+      },
+    }));
+  };
   const add_contact_extra_row = (type, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -423,6 +441,8 @@ const DraftResumeForm = () => {
         onNameCardEdit,
         setOnNameCardEdit,
 
+        update_cell,
+        update_email,
         add_contact_extra_row,
         update_contact_extra_row,
         delete_contact_extra_row,

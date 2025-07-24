@@ -1,7 +1,8 @@
-import { useState, useContext, useEffect, createContext } from "react";
+import { useState, useContext, useEffect, createContext, use } from "react";
 
 import satisfied_dark from "./satisfied_dark.png";
 import satisfied_light from "./satisfied_light.png";
+import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import IconButton from "@mui/material/IconButton";
@@ -11,6 +12,8 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
+import Autocomplete from "@mui/material/Autocomplete";
+import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -149,14 +152,17 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
 };
 const ContactInfoTag = ({ index, icon, text, type, value }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { delete_contact_extra_row, update_contact_extra_row } = useContext(
-    DraftResumeFormContext
-  );
+  const { update_cell, update_email, delete_contact_extra_row, update_contact_extra_row } =
+    useContext(DraftResumeFormContext);
   const { onEdit, setOnEdit } = useContext(NameCardContext);
 
   const [newContact, setNewContact] = useState({
     type: type,
     value: value,
+  });
+  const [newCell, setNewCell] = useState({
+    number: value.number || "",
+    countryCode: value.countryCode || "",
   });
   const [onEditing, setOnEditing] = useState(false);
   const [onHover, setOnHover] = useState(false);
@@ -180,7 +186,16 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
       setOnEditing(false);
     }
   }, [onEdit]);
-
+  useEffect(() => {
+    setNewContact({
+      type: type,
+      value: value,
+    });
+    setNewCell({
+      number: value.number || "",
+      countryCode: value.countryCode || "",
+    });
+  }, [type, value, onEdit]);
   useEffect(() => {
     if (onHover) {
       if (icon === "phone" || icon === "email") {
@@ -245,7 +260,380 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
         e.stopPropagation();
       }}
     >
-      {onEditing ? (
+      {onEditing && type === "phone" ? (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 40,
+          }}
+        >
+          <Autocomplete
+            className="country-code-autocomplete"
+            options={countries}
+            disableClearable
+            value={
+              newCell.countryCode
+                ? countries.find(
+                    ((c) => c.code === newCell.countryCode) || null
+                  )
+                : null
+            }
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setNewCell({
+                  ...newCell,
+                  countryCode: newValue.code,
+                });
+              } else {
+                setNewCell({
+                  ...newCell,
+                  countryCode: "",
+                });
+              }
+            }}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: 40,
+              width: "30%",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px 0 0 18px",
+                background: "transparent",
+                boxShadow: "none",
+                height: 40,
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                fontSize: 16,
+              },
+            }}
+            slotProps={{
+              paper: {
+                className: "scrolling-space-v",
+                sx: {
+                  borderRadius: "10px",
+                  backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                  boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                  width: 512,
+                  fontFamily: "Jost",
+                },
+              },
+              listbox: {
+                className: "scrolling-space-v",
+                sx: {
+                  margin: "6px",
+                  padding: "8px",
+                  fontFamily: "Jost",
+                },
+              },
+              listItem: {
+                sx: {
+                  fontFamily: "Jost",
+                },
+              },
+            }}
+            autoHighlight
+            getOptionLabel={(option) => `+${option.phone}`}
+            isOptionEqualToValue={(option, value) => option.code === value.code}
+            filterOptions={(options, { inputValue }) =>
+              options.filter((option) =>
+                `${option.label} ${option.code} ${option.phone}`
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              )
+            }
+            renderOption={(props, option) => {
+              const { key, ...rest } = props;
+              return (
+                <MenuItem
+                  component="li"
+                  sx={{
+                    borderRadius: "6px",
+                    "& > img": { mr: 2, flexShrink: 0 },
+                    fontFamily: "Jost",
+                  }}
+                  key={option.code + option.phone + option.label}
+                  {...rest}
+                >
+                  <img
+                    loading="lazy"
+                    width="20"
+                    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                    alt=""
+                  />
+                  <span style={{ flexGrow: 1 }}>
+                    {option.label} ({option.code}) + {option.phone}
+                  </span>
+                </MenuItem>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                required
+                label=""
+                size="small"
+                placeholder="+1"
+                sx={{
+                  "& .MuiInputBase-input": { fontFamily: "Jost" },
+                }}
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: "new-password",
+                  style: { fontSize: 15, textAlign: "right" },
+                }}
+              />
+            )}
+          />
+          <TextField
+            required
+            error={error.status}
+            fullWidth
+            label="Cell"
+            variant="outlined"
+            size="small"
+            value={newCell.number}
+            onChange={(e) => {
+              setNewCell({ ...newCell, number: e.target.value });
+            }}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: "30%",
+              width: "50%",
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                marginLeft: "2px",
+                borderRadius: "0 18px 18px 0",
+                fontFamily: "Jost",
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
+              },
+              "& label": { fontFamily: "Jost" },
+              "& input": { fontFamily: "Jost" },
+            }}
+            inputProps={{
+              style: { fontSize: 16 },
+            }}
+          />
+          <IconButton
+            color="success"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 0,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!newCell.number || !newCell.countryCode) {
+                if (!newCell.countryCode) {
+                  setError({
+                    status: true,
+                    msg: "select the country code",
+                  });
+                }
+                if (!newCell.number) {
+                  setError({
+                    status: true,
+                    msg: "cell number can not be empty",
+                  });
+                }
+                return;
+              }
+              setError({
+                status: false,
+                msg: "",
+              });
+              update_cell(newCell);
+              setNewContact({ type: "", value: "" });
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
+            <Icon
+              src="check"
+              color="green"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+          <IconButton
+            color="error"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 45,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
+            <Icon
+              src="close"
+              color="red"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+        </Box>
+      ) : null}
+      {onEditing && type === "email" ? (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 40,
+          }}
+        >
+          <TextField
+            required
+            error={error.status}
+            id="email-input"
+            label="Email"
+            size="small"
+            variant="outlined"
+            value={newContact.value}
+            onChange={(e) => {
+              setNewContact({ ...newContact, value: e.target.value });
+            }}
+            sx={{
+              left: 0,
+              width: "80%",
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                borderRadius: "18px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                fontFamily: "Jost",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Icon
+                    src="email"
+                    style={{
+                      width: 24,
+                      height: 24,
+                    }}
+                    color={theme?.font?.color || "#000000"}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <IconButton
+            color="success"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 0,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!newContact.type || !newContact.value) {
+                if (!newContact.value) {
+                  setError({
+                    status: true,
+                    msg: "email can not be empty",
+                  });
+                }
+                return;
+              }
+              setError({
+                status: false,
+                msg: "",
+              });
+              update_email(newContact.value);
+              setNewContact({ type: "", value: "" });
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
+            <Icon
+              src="check"
+              color="green"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+          <IconButton
+            color="error"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 45,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
+            <Icon
+              src="close"
+              color="red"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+        </Box>
+      ) : null}
+      {onEditing && type !== "phone" && type !== "email" ? (
         <>
           <Select
             labelId="contact-type-select-label"
@@ -348,7 +736,6 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
             value={newContact.value}
             size="small"
             error={error.status}
-            helperText={error.msg}
             onChange={(e) => {
               setNewContact({ ...newContact, value: e.target.value });
             }}
@@ -466,7 +853,8 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
             />
           </IconButton>
         </>
-      ) : (
+      ) : null}
+      {!onEditing ? (
         <>
           <Icon
             src={icon}
@@ -522,6 +910,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   delete_contact_extra_row(index);
+                  setOnEdit("pending");
                 }}
               >
                 <Icon
@@ -563,7 +952,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
             </div>
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
@@ -594,7 +983,10 @@ const ContactSection = () => {
         icon="phone"
         text={formData?.contact?.cell?.number || "N/A"}
         type="phone"
-        value={formData?.contact?.cell?.number || "N/A"}
+        value={{
+          number: formData?.contact?.cell?.number || "N/A",
+          countryCode: formData?.contact?.cell?.countryCode || "N/A",
+        }}
       />
       <ContactInfoTag
         index={-1}
@@ -1983,7 +2375,7 @@ const NameCard = () => {
             },
           }}
           onClick={(e) => {
-            setOnEdit("pending");
+            // setOnEdit("pending");
           }}
         >
           <DialogContent>
