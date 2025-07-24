@@ -377,14 +377,40 @@ const DraftResumeForm = () => {
   const add_contact_extra_row = (type, value) => {
     setFormData((prevData) => ({
       ...prevData,
-      contacts: {
-        ...prevData.contacts,
+      contact: {
+        ...prevData.contact,
         extra: [
-          ...prevData.contacts.extra,
+          ...prevData.contact.extra,
           { contact_type: type, contact_value: value },
         ],
       },
     }));
+  };
+  const update_contact_extra_row = (index, type, value) => {
+    setFormData((prevData) => {
+      const newExtra = [...prevData.contact.extra];
+      newExtra[index] = { contact_type: type, contact_value: value };
+      return {
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          extra: newExtra,
+        },
+      };
+    });
+  };
+  const delete_contact_extra_row = (index) => {
+    setFormData((prevData) => {
+      const newExtra = [...prevData.contact.extra];
+      newExtra.splice(index, 1);
+      return {
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          extra: newExtra,
+        },
+      };
+    });
   };
   /* { contact } ----------------------------------------------------------------------------- */
 
@@ -398,6 +424,8 @@ const DraftResumeForm = () => {
         setOnNameCardEdit,
 
         add_contact_extra_row,
+        update_contact_extra_row,
+        delete_contact_extra_row,
       }}
     >
       <div

@@ -27,6 +27,21 @@ import { DraftResumeFormContext } from "./draft_resume_form";
 
 const NameCardContext = createContext();
 
+const contactTypeIcons = {
+  linkedin: { icon: "linkedin" },
+  github: { icon: "github" },
+  personal_website: { icon: "link" },
+  portfolio: { icon: "passport" },
+  other: { icon: "link" },
+};
+const contactTypeOptions = [
+  { value: "linkedin", label: "LinkedIn", icon: "linkedin" },
+  { value: "github", label: "GitHub", icon: "github" },
+  { value: "personal_website", label: "Personal Website", icon: "link" },
+  { value: "portfolio", label: "Portfolio", icon: "passport" },
+  { value: "other", label: "Other", icon: "link" },
+];
+
 const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
   const { theme } = useContext(ConfigContext);
 
@@ -132,15 +147,39 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
     </LocalizationProvider>
   );
 };
-const ContactInfoTag = ({ icon, text }) => {
+const ContactInfoTag = ({ index, icon, text, type, value }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { setOnEdit } = useContext(NameCardContext);
+  const { delete_contact_extra_row, update_contact_extra_row } = useContext(
+    DraftResumeFormContext
+  );
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
+
+  const [newContact, setNewContact] = useState({
+    type: type,
+    value: value,
+  });
+  const [onEditing, setOnEditing] = useState(false);
   const [onHover, setOnHover] = useState(false);
+  const [error, setError] = useState({
+    status: false,
+    msg: "",
+  });
   const [style, setStyle] = useState({
     width: "0px",
     opacity: 0,
     pointerEvents: "none",
   });
+
+  useEffect(() => {
+    if (
+      onEdit.split("_").length === 3 &&
+      parseInt(onEdit.split("_")[2]) === index
+    ) {
+      setOnEditing(true);
+    } else {
+      setOnEditing(false);
+    }
+  }, [onEdit]);
 
   useEffect(() => {
     if (onHover) {
@@ -174,19 +213,27 @@ const ContactInfoTag = ({ icon, text }) => {
         position: "relative",
         maxWidth: "100%",
         minWidth: "64px",
+        width: onEditing ? "100%" : "auto",
+        height: onEditing ? "40px" : "28px",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         gap: "6px",
         padding: "2px 8px",
         borderRadius: "16px",
-        backgroundColor: theme ? theme.backgroundColor : "rgba(0, 0, 0, 0.04)",
+        backgroundColor: onEditing
+          ? "transparent"
+          : theme
+          ? theme.backgroundColor
+          : "rgba(0, 0, 0, 0.04)",
+        marginTop: onEditing ? 6 : 0,
         marginRight: "6px",
         marginBottom: "2px",
-        border:
-          onThemeMode === "dark_mode"
-            ? "1px solid rgba(255, 255, 255, 0.16)"
-            : "1px solid rgba(0, 0, 0, 0.16)",
+        border: onEditing
+          ? "1px solid rgba(0, 0, 0, 0)"
+          : onThemeMode === "dark_mode"
+          ? "1px solid rgba(255, 255, 255, 0.16)"
+          : "1px solid rgba(0, 0, 0, 0.16)",
       }}
       onMouseEnter={() => {
         setOnHover(true);
@@ -194,97 +241,329 @@ const ContactInfoTag = ({ icon, text }) => {
       onMouseLeave={() => {
         setOnHover(false);
       }}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
     >
-      <Icon
-        src={icon}
-        style={{
-          flex: "0 0 18px",
-          width: "18px",
-          height: "18px",
-          opacity: 0.5,
-        }}
-        color={theme ? theme.font.color : "#000000"}
-      />
-      <span
-        className="contact-info-text"
-        style={{
-          fontFamily: "Jost",
-          fontSize: "14px",
-          color: theme ? theme.font.color : "#000000",
-
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          MsUserSelect: "none",
-        }}
-      >
-        {text}
-      </span>
-      <div
-        style={{
-          transition: "all 0.2s ease",
-          position: "absolute",
-          top: -6,
-          right: -6,
-          width: style.width,
-          height: "calc(100% + 12px)",
-          borderRadius: "124px",
-          zIndex: 1,
-          backgroundColor: theme
-            ? theme.backgroundColor
-            : "rgba(255, 255, 255, 0.8)",
-          border:
-            onThemeMode === "dark_mode"
-              ? "1px solid rgba(255, 255, 255, 0.32)"
-              : "1px solid rgba(0, 0, 0, 0.16)",
-          boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
-          backdropFilter: "blur(8px)",
-          opacity: style.opacity,
-        }}
-      >
-        {icon === "phone" || icon === "email" ? null : (
-          <div onClick={() => {}}>
+      {onEditing ? (
+        <>
+          <Select
+            labelId="contact-type-select-label"
+            id="contact-type-select"
+            value={newContact.type}
+            onChange={(e) => {
+              setNewContact({ ...newContact, type: e.target.value });
+            }}
+            renderValue={(value) => {
+              const selectedOption = contactTypeOptions.find(
+                (opt) => opt.value === value
+              );
+              return (
+                <Icon
+                  src={selectedOption.icon}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "40%",
+                    transform: "translate(-50%, -50%)",
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+              );
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "20%",
+              height: 40,
+              outline: "none",
+              borderRadius: "18px 0 0 18px",
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  border: "none",
+                  borderRadius: "10px",
+                  backgroundColor: theme?.backgroundColor || "#FFFFFF",
+                  boxShadow: "0 2px 32px rgba(0,0,0,0.16)",
+                  maxHeight: 300,
+                  fontFamily: "Jost",
+                },
+              },
+              MenuListProps: {
+                sx: {
+                  padding: "8px",
+                },
+              },
+            }}
+          >
+            {contactTypeOptions.map((option) => (
+              <MenuItem
+                key={option.value}
+                value={option.value}
+                sx={{
+                  fontFamily: "Jost",
+                  fontSize: "16px",
+                  borderRadius: "6px",
+                }}
+              >
+                <div
+                  style={{
+                    position: "relative",
+                    width: 16,
+                    height: 16,
+                    marginRight: "12px",
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Icon
+                    src={option.icon}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
+                </div>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField
+            required
+            label={
+              type
+                ? contactTypeOptions.find((opt) => opt.value === type)?.label ||
+                  "select contact type"
+                : "select contact type"
+            }
+            variant="outlined"
+            value={newContact.value}
+            size="small"
+            error={error.status}
+            helperText={error.msg}
+            onChange={(e) => {
+              setNewContact({ ...newContact, value: e.target.value });
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              position: "absolute",
+              top: 0,
+              left: "20%",
+              width: "60%",
+              marginLeft: "2px",
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                borderRadius: "0 18px 18px 0",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <IconButton
+            color="success"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 0,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!newContact.type || !newContact.value) {
+                if (!newContact.type) {
+                  setError({
+                    status: true,
+                    msg: "select the contact type",
+                  });
+                }
+                if (!newContact.value) {
+                  setError({
+                    status: true,
+                    msg: "web link can not be empty",
+                  });
+                }
+                return;
+              }
+              setError({
+                status: false,
+                msg: "",
+              });
+              update_contact_extra_row(
+                index,
+                newContact.type,
+                newContact.value
+              );
+              setNewContact({ type: "", value: "" });
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
             <Icon
-              src={"delete"}
+              src="check"
+              color="green"
               style={{
-                width: "18px",
-                height: "18px",
                 position: "absolute",
-                top: "50%",
-                right: "0px",
                 transform: "translate(-50%, -50%)",
-                cursor: "pointer",
-                pointerEvents: style.pointerEvents,
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
               }}
-              color={"red"}
             />
-          </div>
-        )}
-        <div
-          onClick={() => {
-            setOnEdit("edit_contact");
-          }}
-        >
+          </IconButton>
+          <IconButton
+            color="error"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 45,
+              transform: "translate(0%, -50%)",
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOnEdit("pending");
+              setOnHover(false);
+            }}
+          >
+            <Icon
+              src="close"
+              color="red"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+        </>
+      ) : (
+        <>
           <Icon
-            src={"edit"}
+            src={icon}
             style={{
+              flex: "0 0 18px",
               width: "18px",
               height: "18px",
-              position: "absolute",
-              top: "52%",
-              left: "0px",
-              transform: "translate(50%, -50%)",
-              cursor: "pointer",
-              pointerEvents: style.pointerEvents,
+              opacity: 0.5,
             }}
             color={theme ? theme.font.color : "#000000"}
           />
-        </div>
-      </div>
+          <span
+            className="contact-info-text"
+            style={{
+              fontFamily: "Jost",
+              fontSize: "14px",
+              color: theme ? theme.font.color : "#000000",
+
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {text}
+          </span>
+          <div
+            style={{
+              transition: "all 0.2s ease",
+              position: "absolute",
+              top: -6,
+              right: -6,
+              width: style.width,
+              height: "calc(100% + 12px)",
+              borderRadius: "124px",
+              zIndex: 1,
+              backgroundColor: theme
+                ? theme.backgroundColor
+                : "rgba(255, 255, 255, 0.8)",
+              border:
+                onThemeMode === "dark_mode"
+                  ? "1px solid rgba(255, 255, 255, 0.32)"
+                  : "1px solid rgba(0, 0, 0, 0.16)",
+              boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
+              backdropFilter: "blur(8px)",
+              opacity: style.opacity,
+            }}
+          >
+            {icon === "phone" || icon === "email" ? null : (
+              <div
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  delete_contact_extra_row(index);
+                }}
+              >
+                <Icon
+                  src={"delete"}
+                  style={{
+                    width: "18px",
+                    height: "18px",
+                    position: "absolute",
+                    top: "50%",
+                    right: "0px",
+                    transform: "translate(-50%, -50%)",
+                    cursor: "pointer",
+                    pointerEvents: style.pointerEvents,
+                  }}
+                  color={"red"}
+                />
+              </div>
+            )}
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setOnEdit("edit_contact_" + String(index));
+              }}
+            >
+              <Icon
+                src={"edit"}
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  position: "absolute",
+                  top: "52%",
+                  left: "0px",
+                  transform: "translate(50%, -50%)",
+                  cursor: "pointer",
+                  pointerEvents: style.pointerEvents,
+                }}
+                color={theme ? theme.font.color : "#000000"}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -294,24 +573,13 @@ const ContactSection = () => {
   const { formData, add_contact_extra_row } = useContext(
     DraftResumeFormContext
   );
+  const [error, setError] = useState({
+    newContact: { status: false, msg: "" },
+  });
   const [newContact, setNewContact] = useState({
     type: "",
     value: "",
   });
-  const contactTypeIcons = {
-    linkedin: { icon: "linkedin" },
-    github: { icon: "github" },
-    personal_website: { icon: "link" },
-    portfolio: { icon: "passport" },
-    other: { icon: "link" },
-  };
-  const contactTypeOptions = [
-    { value: "linkedin", label: "LinkedIn", icon: "linkedin" },
-    { value: "github", label: "GitHub", icon: "github" },
-    { value: "personal_website", label: "Personal Website", icon: "link" },
-    { value: "portfolio", label: "Portfolio", icon: "passport" },
-    { value: "other", label: "Other", icon: "link" },
-  ];
 
   return (
     <div
@@ -322,15 +590,27 @@ const ContactSection = () => {
       }}
     >
       <ContactInfoTag
+        index={-2}
         icon="phone"
         text={formData?.contact?.cell?.number || "N/A"}
+        type="phone"
+        value={formData?.contact?.cell?.number || "N/A"}
       />
-      <ContactInfoTag icon="email" text={formData?.contact?.email || "N/A"} />
+      <ContactInfoTag
+        index={-1}
+        icon="email"
+        text={formData?.contact?.email || "N/A"}
+        type="email"
+        value={formData?.contact?.email || "N/A"}
+      />
       {formData?.contact?.extra?.map((item, index) => (
         <ContactInfoTag
           key={index}
-          icon={contactTypeIcons[item.contact_type].icon}
+          index={index}
+          icon={contactTypeIcons[item.contact_type]?.icon || "link"}
           text={item.contact_value || "N/A"}
+          type={item.contact_type}
+          value={item.contact_value}
         />
       ))}
       <div
@@ -457,10 +737,19 @@ const ContactSection = () => {
               ))}
             </Select>
             <TextField
-              label={newContact.type ? newContact.type : "select type"}
+              required
+              label={
+                newContact.type
+                  ? contactTypeOptions.find(
+                      (opt) => opt.value === newContact.type
+                    )?.label || "select contact type"
+                  : "select contact type"
+              }
               variant="outlined"
               value={newContact.value}
               size="small"
+              error={error.newContact.status}
+              helperText={error.newContact.msg}
               onChange={(e) => {
                 setNewContact({ ...newContact, value: e.target.value });
               }}
@@ -506,6 +795,31 @@ const ContactSection = () => {
               }}
               onClick={(e) => {
                 e.stopPropagation();
+                if (!newContact.type || !newContact.value) {
+                  if (!newContact.type) {
+                    setError({
+                      newContact: {
+                        status: true,
+                        msg: "select the contact type",
+                      },
+                    });
+                  }
+                  if (!newContact.value) {
+                    setError({
+                      newContact: {
+                        status: true,
+                        msg: "web link can not be empty",
+                      },
+                    });
+                  }
+                  return;
+                }
+                setError({
+                  newContact: { status: false, msg: "" },
+                });
+                add_contact_extra_row(newContact.type, newContact.value);
+                setNewContact({ type: "", value: "" });
+                setOnEdit("pending");
               }}
             >
               <Icon
@@ -559,6 +873,8 @@ const ContactSection = () => {
             width: onEdit === "add_contact" ? "24px" : "18px",
             height: onEdit === "add_contact" ? "24px" : "18px",
             opacity: 0.5,
+
+            cursor: "pointer",
           }}
           color={theme ? theme.font.color : "#000000"}
         />
