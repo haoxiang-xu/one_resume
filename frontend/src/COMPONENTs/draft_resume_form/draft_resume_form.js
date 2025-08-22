@@ -451,6 +451,19 @@ const DraftResumeForm = () => {
       };
     });
   };
+  const add_education_row = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      education: [...prevData.education, { 
+        degree: "",
+        gpa_grade: "",
+        institution: "",
+        specialization: "",
+        startDate: null,
+        endDate: null,
+       }],
+    }));
+  };
   /* { contact } ----------------------------------------------------------------------------- */
 
   return (
@@ -467,6 +480,8 @@ const DraftResumeForm = () => {
         add_contact_extra_row,
         update_contact_extra_row,
         delete_contact_extra_row,
+
+        add_education_row,
       }}
     >
       <div

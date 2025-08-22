@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, createContext, use } from "react";
+import { useState, useContext, useEffect, createContext } from "react";
 
 import satisfied_dark from "./satisfied_dark.png";
 import satisfied_light from "./satisfied_light.png";
@@ -152,8 +152,12 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
 };
 const ContactInfoTag = ({ index, icon, text, type, value }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { update_cell, update_email, delete_contact_extra_row, update_contact_extra_row } =
-    useContext(DraftResumeFormContext);
+  const {
+    update_cell,
+    update_email,
+    delete_contact_extra_row,
+    update_contact_extra_row,
+  } = useContext(DraftResumeFormContext);
   const { onEdit, setOnEdit } = useContext(NameCardContext);
 
   const [newContact, setNewContact] = useState({
@@ -301,7 +305,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               height: 40,
               width: "30%",
               "& .MuiOutlinedInput-root": {
-                borderRadius: "18px 0 0 18px",
+                borderRadius: "32px 0 0 32px",
                 background: "transparent",
                 boxShadow: "none",
                 height: 40,
@@ -410,7 +414,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               "& .MuiOutlinedInput-root": {
                 height: 40,
                 marginLeft: "2px",
-                borderRadius: "0 18px 18px 0",
+                borderRadius: "0 32px 32px 0",
                 fontFamily: "Jost",
                 background: "transparent",
                 border: "none",
@@ -532,7 +536,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               width: "80%",
               "& .MuiOutlinedInput-root": {
                 height: 40,
-                borderRadius: "18px",
+                borderRadius: "32px",
               },
               "& label": {
                 fontFamily: "Jost",
@@ -668,7 +672,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               width: "20%",
               height: 40,
               outline: "none",
-              borderRadius: "18px 0 0 18px",
+              borderRadius: "32px 0 0 32px",
             }}
             MenuProps={{
               PaperProps: {
@@ -748,7 +752,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               marginLeft: "2px",
               "& .MuiOutlinedInput-root": {
                 height: 40,
-                borderRadius: "0 18px 18px 0",
+                borderRadius: "0 32px 32px 0",
                 paddingRight: "14px",
                 transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
               },
@@ -876,6 +880,8 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
+
+              userSelect: "none",
             }}
           >
             {text}
@@ -888,7 +894,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
               right: -6,
               width: style.width,
               height: "calc(100% + 12px)",
-              borderRadius: "124px",
+              borderRadius: "32px",
               zIndex: 1,
               backgroundColor: theme
                 ? theme.backgroundColor
@@ -941,7 +947,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
                   width: "18px",
                   height: "18px",
                   position: "absolute",
-                  top: "52%",
+                  top: "50%",
                   left: "0px",
                   transform: "translate(50%, -50%)",
                   cursor: "pointer",
@@ -1072,7 +1078,7 @@ const ContactSection = () => {
                 width: "20%",
                 height: 40,
                 outline: "none",
-                borderRadius: "18px 0 0 18px",
+                borderRadius: "32px 0 0 32px",
               }}
               MenuProps={{
                 PaperProps: {
@@ -1154,7 +1160,7 @@ const ContactSection = () => {
                 marginLeft: "2px",
                 "& .MuiOutlinedInput-root": {
                   height: 40,
-                  borderRadius: "0 18px 18px 0",
+                  borderRadius: "0 32px 32px 0",
                   paddingRight: "14px",
                   transition:
                     "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
@@ -1274,7 +1280,7 @@ const ContactSection = () => {
     </div>
   );
 };
-const EducationRow = () => {
+const EducationEditTag = () => {
   const { theme } = useContext(ConfigContext);
   const { setOnEdit } = useContext(NameCardContext);
   const [style, setStyle] = useState({
@@ -1352,15 +1358,17 @@ const EducationRow = () => {
         position: "relative",
         paddingBottom: 0,
         top: 0,
-        left: "120px",
-        width: "calc(100% - 120px)",
-        // border: "1px solid rgba(0, 0, 0, 0.16)",
+        left: "50%",
+        width: "100%",
+        transform: "translateX(-50%)",
+        // border: "1px solid rgba(255, 255, 255, 0.16)",
       }}
     >
       <div
         style={{
-          paddingTop: 6,
+          padding: 4,
           transition: "height 0.2s ease",
+          width: "80%",
           height: style.height,
           overflow: "hidden",
         }}
@@ -1493,7 +1501,7 @@ const EducationRow = () => {
               fontFamily: "Jost",
             },
             "& input": {
-              height: "100%",
+              height: 36,
               fontFamily: "Jost",
             },
           }}
@@ -1543,36 +1551,64 @@ const EducationRow = () => {
           }}
         />
       </div>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            setOnEdit("pending");
+      <IconButton
+        color="success"
+        sx={{
+          position: "absolute",
+          top: "50%",
+          right: 0,
+          transform: "translate(0%, -50%)",
+          width: 36,
+          height: 36,
+          borderRadius: "18px",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOnEdit("pending");
+        }}
+      >
+        <Icon
+          src="check"
+          color="green"
+          style={{
+            position: "absolute",
+            transform: "translate(-50%, -50%)",
+            top: "50%",
+            left: "50%",
+            height: "24px",
+            width: "24px",
           }}
-          sx={{
-            mt: 2,
-            height: 42,
-            borderRadius: "8px",
-            textTransform: "none",
-            marginRight: "8px",
+        />
+      </IconButton>
+      <IconButton
+        color="error"
+        sx={{
+          position: "absolute",
+          top: "50%",
+          right: 45,
+          transform: "translate(0%, -50%)",
+          width: 36,
+          height: 36,
+          borderRadius: "18px",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOnEdit("pending");
+        }}
+      >
+        <Icon
+          src="close"
+          color="red"
+          style={{
+            position: "absolute",
+            transform: "translate(-50%, -50%)",
+            top: "50%",
+            left: "50%",
+            height: "24px",
+            width: "24px",
           }}
-        >
-          cancel
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            mt: 2,
-            height: 42,
-            borderRadius: "8px",
-            textTransform: "none",
-          }}
-        >
-          add
-        </Button>
-      </Box>
+        />
+      </IconButton>
     </div>
   );
 };
@@ -1726,7 +1762,7 @@ const EducationTag = ({
                 width: "18px",
                 height: "18px",
                 position: "absolute",
-                top: "52%",
+                top: "50%",
                 left: "0px",
                 transform: "translate(50%, -50%)",
                 cursor: "pointer",
@@ -1915,7 +1951,7 @@ const EducationTag = ({
                 width: "18px",
                 height: "18px",
                 position: "absolute",
-                top: "52%",
+                top: "50%",
                 left: "0px",
                 transform: "translate(50%, -50%)",
                 cursor: "pointer",
@@ -2006,7 +2042,7 @@ const EducationSection = () => {
         }}
       >
         {onEdit === "add_education" ? (
-          <EducationRow id={null} index={null} />
+          <EducationEditTag id={null} index={null} />
         ) : (
           <div>
             <Icon
@@ -2342,16 +2378,9 @@ const NameCard = () => {
                   width: "100%",
                 }}
               >
-                <Skeleton variant="rounded" animation="wave" height={60} />
-                <Skeleton
-                  variant="rounded"
-                  animation="wave"
-                  height={32}
-                  width={64}
-                />
-
-                <Skeleton variant="rounded" animation="wave" height={24} />
-                <Skeleton variant="rounded" animation="wave" height={24} />
+                <Skeleton variant="rounded" animation="wave" height={160} />
+                <Skeleton variant="rounded" animation="wave" height={20} />
+                <Skeleton variant="rounded" animation="wave" height={20} />
               </Box>
             )}
           </div>

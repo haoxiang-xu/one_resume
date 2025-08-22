@@ -7,31 +7,29 @@
 - **💻 github**: https://github.com/haoxiang-xu
 
 ## Summary
-Analytical and results-driven data analyst and developer with hands-on experience in business reporting, dashboard development, and ERP-AI integrations, including work with SAP Business One. Skilled in Power BI, RESTful APIs, SQL, Python, and large language models. Proven ability to deliver operational dashboards, automate data pipelines, and translate complex requirements into practical solutions in fast-paced, collaborative environments.
+Results-driven engineer with strong proficiency in SQL and Python, experienced in developing optimized data pipelines, backend APIs, and relational databases in production environments (MySQL, AWS, RESTful APIs). Hands-on background in data modeling, ETL processes, and analytics dashboards, with demonstrated success in scalable system design and data transformation for high-impact, real-world applications.
 
 ## Education
 - **Master of Data Science** at University of British Columbia, Canada (Sep 2024 – Jun 2025) - Grade: A
 - **Bachelor of Science in Computer Science** at University of British Columbia, Canada (Sep 2020 – Nov 2023) - GPA: 3.9/4.0
 
 ## Experience
-- **Business Data Analyst Intern | SAP Solutions Analyst Intern** at MTC Information Technology (SAP Business One Partner), Shanghai, China (Nov 2023 - Feb 2024)
-  - Collaborated with clients to identify operational pain points and gathered business requirements for SAP Business One and AI integration projects.
-  - Performed data analysis and reporting to evaluate the impact of proposed automation solutions, supporting process optimization through actionable insights.
-  - Supported the configuration and rollout of ERP and analytics solutions, documenting best practices and streamlining implementation workflows.
-  - Developed clear client presentations and process documentation, strengthening communication between technical and business stakeholders.
+- **Data Engineer | Lead Backend Developer** at University of British Columbia (Bachelor's Capstone Project), Canada (Apr 2023 – Sep 2023)
+  - Designed and implemented scalable ETL data pipelines supporting university-wide peer evaluation workflows, using MySQL for normalized relational modeling and AWS RDS for high-availability storage.
+  - Optimized SQL queries and batch processing to serve hundreds of concurrent users, resulting in robust data integrity and reduced API latency under high load.
+  - Led backend containerization and deployed services to AWS EC2 with Docker and NGINX, ensuring secure, cloud-based access for stakeholders across multiple departments.
+  - Collaborated with frontend and product teams to deliver actionable analytics and reporting features, directly supporting enhanced instructor decision-making.
 
-- **Full Stack Developer & Analytics Dashboard Lead** at University of British Columbia (Master's Capstone Project), Canada (May 2025 – Jun 2025)
-  - Spearheaded the creation of a dashboard-driven reporting tool for academic program transparency, automating data capture and visualization across multiple sources.
-  - Led a cross-functional team in gathering requirements, prioritizing a backlog, and delivering a scalable tool that reduced manual reporting workload by over 50%.
-  - Integrated advanced analytics, implemented modular data pipelines (React, Flask, MongoDB), and ensured operational dashboards were intuitive and maintainable.
-  - Presented findings and progress to stakeholders, documenting repeatable QA processes and aligning deliverables with evolving requirements.
+- **Machine Learning & Data Pipeline Engineer** at Shanghai Mengou Technology Co., Ltd (Startup Environment), Shanghai, China (Mar 2024 – Aug 2024)
+  - Developed and maintained production-grade, Python-based data pipelines and transformation layers leveraging FastAPI and scalable backend logic for AI agent services.
+  - Designed real-time logging and analytics systems for monitoring large-scale model API interactions, enabling continuous anomaly detection and system performance optimization.
+  - Implemented robust data extraction, cleaning, and embedding analysis workflows; applied SQL and advanced data analysis for model evaluation and reliability.
+  - Worked cross-functionally with ML engineers and business leads to translate customer requirements into reliable, high-performing data services, reducing operational errors by over 60%.
 
 
 ## Skills
-- **Programming & Analytics Tools**: Python (Data Analysis, Automation, Machine Learning), SQL (Database Querying, MySQL, Data Extraction), Power BI (Dashboards, Business Reporting), JavaScript (Data Visualization, Full Stack Scripting)
-- **Frameworks & Data Platforms**: React.js (Frontend Development, UI Design), Flask & FastAPI (REST API, Backend Services), SAP Business One (ERP, Business Process Integration), MongoDB (NoSQL Data Storage, Document Databases)
-- **Cloud, DevOps & Deployment**: Docker (Containerization, CI/CD, Deployment Automation), AWS (EC2, Cloud Hosting, RDS), NGINX (Reverse Proxy, Server Configuration), Ubuntu (Linux Server Management, Scripting)
-- **AI, Data Science & Reporting Solutions**: Large Language Models (LLMs, NLP, Prompt Engineering), Exploratory Data Analysis (EDA, Anomaly Detection), PyTorch (Deep Learning, CNN Implementation), Operational Dashboards (KPI Reporting, Automated Metrics)
-
-
+- **Programming & Scripting Languages**: Python (data engineering, scripting, machine learning), SQL (query optimization, data transformation), JavaScript/TypeScript (full stack, backend APIs), Bash/Shell Scripting (automation)
+- **Data Engineering & Cloud Platforms**: ETL/ELT Pipelines (Spark, PySpark), Data Warehousing (Snowflake, Amazon Redshift, Google BigQuery, AWS RDS), Data Lakes & Distributed Systems (AWS S3, GCP, Azure), Docker Containerization & NGINX Deployment (cloud migration, DevOps)
+- **Databases & Data Modeling**: Relational Databases (MySQL, PostgreSQL, SQL Server), NoSQL Databases (MongoDB, Redis), Data Modeling & Architecture (normalization, data marts, dimensional modeling), Big Data Processing (batch, streaming, scalable pipelines)
+- **Data Science & Analytics**: Exploratory Data Analysis (EDA, Pandas, NumPy), LLM/NLP (Large Language Models, prompt engineering, RAG pipelines, FAISS vector search), Machine Learning (PyTorch, model evaluation, anomaly detection), Performance Tuning & Monitoring (profiling, error analysis, documentation)
 
