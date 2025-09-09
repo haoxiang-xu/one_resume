@@ -182,6 +182,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
 
   useEffect(() => {
     if (
+      onEdit.startsWith("edit_contact_") &&
       onEdit.split("_").length === 3 &&
       parseInt(onEdit.split("_")[2]) === index
     ) {
@@ -916,7 +917,6 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   delete_contact_extra_row(index);
-                  setOnEdit("pending");
                 }}
               >
                 <Icon
@@ -1280,12 +1280,21 @@ const ContactSection = () => {
     </div>
   );
 };
-const EducationEditTag = () => {
+const EducationEditTag = ({ index }) => {
   const { theme } = useContext(ConfigContext);
+  const { get_education_row, edit_education_row, add_education_row } =
+    useContext(DraftResumeFormContext);
   const { setOnEdit } = useContext(NameCardContext);
   const [style, setStyle] = useState({
     height: 0,
   });
+  const [degree, setDegree] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [gpa_grade, setGpa_grade] = useState("");
+  const [specialization, setSpecialization] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   const degreeOptions = [
     { value: "doctor_category", label: "Doctoral Degrees:", disabled: true },
     { value: "doctor_of_philosophy", label: "Doctor of Philosophy (Ph.D.)" },
@@ -1351,6 +1360,29 @@ const EducationEditTag = () => {
       });
     }, 32);
   }, []);
+  useEffect(() => {
+    if (index !== null && index !== undefined && index >= 0) {
+      const educationRow = get_education_row(index);
+      if (educationRow) {
+        setDegree(educationRow.degree);
+        setInstitution(educationRow.institution);
+        setGpa_grade(educationRow.gpa_grade);
+        setSpecialization(educationRow.specialization);
+        // Ensure DatePicker gets a Dayjs or null
+        const parsedStart = educationRow.startDate
+          ? dayjs(
+              // support ISO string, timestamp, or Mongo $date shape
+              educationRow.startDate?.$date || educationRow.startDate
+            )
+          : null;
+        const parsedEnd = educationRow.endDate
+          ? dayjs(educationRow.endDate?.$date || educationRow.endDate)
+          : null;
+        setStartDate(parsedStart && parsedStart.isValid() ? parsedStart : null);
+        setEndDate(parsedEnd && parsedEnd.isValid() ? parsedEnd : null);
+      }
+    }
+  }, [index]);
 
   return (
     <div
@@ -1377,10 +1409,10 @@ const EducationEditTag = () => {
           id={`institution-input`}
           label={`Institution`}
           variant="outlined"
-          value={""}
+          value={institution}
           size="small"
           onChange={(e) => {
-            return;
+            setInstitution(e.target.value);
           }}
           sx={{
             transition: "all 0.2s ease",
@@ -1424,9 +1456,9 @@ const EducationEditTag = () => {
             labelId="degree-select-label"
             id="degree-select"
             label="Degree"
-            value={""}
+            value={degree}
             onChange={(e) => {
-              return;
+              setDegree(e.target.value);
             }}
             sx={{
               transition: "all 0.2s ease",
@@ -1476,10 +1508,10 @@ const EducationEditTag = () => {
           id={`grade-gpa-input`}
           label={`Grade / GPA`}
           variant="outlined"
-          value={""}
+          value={gpa_grade}
           size="small"
           onChange={(e) => {
-            return;
+            setGpa_grade(e.target.value);
           }}
           sx={{
             transition: "all 0.2s ease",
@@ -1510,10 +1542,10 @@ const EducationEditTag = () => {
           id={`specialization-input`}
           label={`Specialization`}
           variant="outlined"
-          value={""}
+          value={specialization}
           size="small"
           onChange={(e) => {
-            return;
+            setSpecialization(e.target.value);
           }}
           sx={{
             transition: "all 0.2s ease",
@@ -1541,13 +1573,13 @@ const EducationEditTag = () => {
           }}
         />
         <MonthRangePicker
-          startDate={null}
-          endDate={null}
+          startDate={startDate}
+          endDate={endDate}
           setStartDate={(date) => {
-            return;
+            setStartDate(date);
           }}
           setEndDate={(date) => {
-            return;
+            setEndDate(date);
           }}
         />
       </div>
@@ -1564,6 +1596,26 @@ const EducationEditTag = () => {
         }}
         onClick={(e) => {
           e.stopPropagation();
+          if (index !== null && index !== undefined && index >= 0) {
+            edit_education_row(
+              index,
+              degree,
+              gpa_grade,
+              institution,
+              specialization,
+              startDate,
+              endDate
+            );
+          } else {
+            add_education_row(
+              degree,
+              gpa_grade,
+              institution,
+              specialization,
+              startDate,
+              endDate
+            );
+          }
           setOnEdit("pending");
         }}
       >
@@ -1613,6 +1665,7 @@ const EducationEditTag = () => {
   );
 };
 const EducationTag = ({
+  index,
   icon,
   text,
   degree,
@@ -1623,14 +1676,23 @@ const EducationTag = ({
   endDate,
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const { delete_education_row } = useContext(DraftResumeFormContext);
   const { onEdit, setOnEdit } = useContext(NameCardContext);
   const [onHover, setOnHover] = useState(false);
+  const [onEditing, setOnEditing] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
     opacity: 0,
     pointerEvents: "none",
   });
 
+  useEffect(() => {
+    if (onEdit === "edit_education_" + String(index)) {
+      setOnEditing(true);
+    } else {
+      setOnEditing(false);
+    }
+  }, [onEdit]);
   useEffect(() => {
     if (onHover) {
       setStyle({
@@ -1735,7 +1797,15 @@ const EducationTag = ({
             opacity: style.opacity,
           }}
         >
-          <div>
+          <div
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              delete_education_row(index);
+            }}
+          >
             <Icon
               src={"delete"}
               style={{
@@ -1745,7 +1815,6 @@ const EducationTag = ({
                 top: "50%",
                 right: "0px",
                 transform: "translate(-50%, -50%)",
-                cursor: "pointer",
                 pointerEvents: style.pointerEvents,
               }}
               color={"red"}
@@ -1753,7 +1822,7 @@ const EducationTag = ({
           </div>
           <div
             onClick={() => {
-              setOnEdit("edit_education");
+              setOnEdit("edit_education_" + String(index));
             }}
           >
             <Icon
@@ -1772,6 +1841,19 @@ const EducationTag = ({
             />
           </div>
         </div>
+      </div>
+    );
+  } else if (onEditing) {
+    return (
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          marginTop: "8px",
+          marginBottom: "8px",
+        }}
+      >
+        <EducationEditTag id={null} index={index} />
       </div>
     );
   } else {
@@ -1924,7 +2006,15 @@ const EducationTag = ({
             opacity: style.opacity,
           }}
         >
-          <div>
+          <div
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              delete_education_row(index);
+            }}
+          >
             <Icon
               src={"delete"}
               style={{
@@ -1942,7 +2032,7 @@ const EducationTag = ({
           </div>
           <div
             onClick={() => {
-              setOnEdit("edit_education");
+              setOnEdit("edit_education_" + String(index));
             }}
           >
             <Icon
@@ -1996,6 +2086,7 @@ const EducationSection = () => {
       {formData?.education?.map((item, index) => (
         <div key={index} className="education-item">
           <EducationTag
+            index={index}
             icon={"education"}
             text={`${item.degree + " @ " + item.institution}`}
             degree={item.degree}

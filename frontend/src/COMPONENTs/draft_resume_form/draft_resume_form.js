@@ -451,18 +451,70 @@ const DraftResumeForm = () => {
       };
     });
   };
-  const add_education_row = () => {
+  const get_education_row = (index) => {
+    if (formData && formData.education && index < formData.education.length) {
+      return formData.education[index];
+    } else {
+      return null;
+    }
+  };
+  const add_education_row = (
+    degree,
+    gpa_grade,
+    institution,
+    specialization,
+    startDate,
+    endDate
+  ) => {
     setFormData((prevData) => ({
       ...prevData,
-      education: [...prevData.education, { 
-        degree: "",
-        gpa_grade: "",
-        institution: "",
-        specialization: "",
-        startDate: null,
-        endDate: null,
-       }],
+      education: [
+        ...prevData.education,
+        {
+          degree: degree || "",
+          gpa_grade: gpa_grade || "",
+          institution: institution || "",
+          specialization: specialization || "",
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      ],
     }));
+  };
+  const edit_education_row = (
+    index,
+    degree,
+    gpa_grade,
+    institution,
+    specialization,
+    startDate,
+    endDate
+  ) => {
+    setFormData((prevData) => {
+      const newEducation = [...prevData.education];
+      newEducation[index] = {
+        degree: degree || "",
+        gpa_grade: gpa_grade || "",
+        institution: institution || "",
+        specialization: specialization || "",
+        startDate: startDate || null,
+        endDate: endDate || null,
+      };
+      return {
+        ...prevData,
+        education: newEducation,
+      };
+    });
+  };
+  const delete_education_row = (index) => {
+    setFormData((prevData) => {
+      const newEducation = [...prevData.education];
+      newEducation.splice(index, 1);
+      return {
+        ...prevData,
+        education: newEducation,
+      };
+    });
   };
   /* { contact } ----------------------------------------------------------------------------- */
 
@@ -481,7 +533,10 @@ const DraftResumeForm = () => {
         update_contact_extra_row,
         delete_contact_extra_row,
 
+        get_education_row,
         add_education_row,
+        edit_education_row,
+        delete_education_row,
       }}
     >
       <div
