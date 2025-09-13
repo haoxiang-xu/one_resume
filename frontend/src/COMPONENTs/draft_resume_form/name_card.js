@@ -1703,6 +1703,11 @@ const EducationTag = ({
       });
     }
   }, [onHover, onEdit]);
+  useEffect(() => {
+    if (!onEditing) {
+      setOnHover(false);
+    }
+  }, [onEditing]);
 
   const remove_under_score_and_capitalize = (text) => {
     return text
@@ -2492,6 +2497,11 @@ const ExperienceTag = ({ icon, index, text, item }) => {
       });
     }
   }, [onHover, onEdit]);
+  useEffect(() => {
+    if (!onEditing) {
+      setOnHover(false);
+    }
+  }, [onEditing]);
   useEffect(() => {
     const exp = get_experience_row(index);
     if (exp) {
