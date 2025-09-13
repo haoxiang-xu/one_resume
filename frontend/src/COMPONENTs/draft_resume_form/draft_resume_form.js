@@ -523,6 +523,64 @@ const DraftResumeForm = () => {
       return null;
     }
   };
+  const add_experience_row = (
+    company,
+    role,
+    location,
+    description,
+    startDate,
+    endDate
+  ) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      experience: [
+        ...prevData.experience,
+        {
+          company: company || "",
+          role: role || "",
+          location: location || "",
+          description: description || "",
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      ],
+    }));
+  };
+  const edit_experience_row = (
+    index,
+    company,
+    role,
+    location,
+    description,
+    startDate,
+    endDate
+  ) => {
+    setFormData((prevData) => {
+      const newExperience = [...prevData.experience];
+      newExperience[index] = {
+        company: company || "",
+        role: role || "",
+        location: location || "",
+        description: description || "",
+        startDate: startDate || null,
+        endDate: endDate || null,
+      };
+      return {
+        ...prevData,
+        experience: newExperience,
+      };
+    });
+  };
+  const delete_experience_row = (index) => {
+    setFormData((prevData) => {
+      const newExperience = [...prevData.experience];
+      newExperience.splice(index, 1);
+      return {
+        ...prevData,
+        experience: newExperience,
+      };
+    });
+  };
   /* { contact } ----------------------------------------------------------------------------- */
 
   return (
@@ -546,6 +604,9 @@ const DraftResumeForm = () => {
         delete_education_row,
 
         get_experience_row,
+        add_experience_row,
+        edit_experience_row,
+        delete_experience_row,
       }}
     >
       <div

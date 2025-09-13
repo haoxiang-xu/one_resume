@@ -1361,21 +1361,17 @@ const EducationEditTag = ({ index }) => {
   }, []);
   useEffect(() => {
     if (index !== null && index !== undefined && index >= 0) {
-      const educationRow = get_education_row(index);
-      if (educationRow) {
-        setDegree(educationRow.degree);
-        setInstitution(educationRow.institution);
-        setGpa_grade(educationRow.gpa_grade);
-        setSpecialization(educationRow.specialization);
-        // Ensure DatePicker gets a Dayjs or null
-        const parsedStart = educationRow.startDate
-          ? dayjs(
-              // support ISO string, timestamp, or Mongo $date shape
-              educationRow.startDate?.$date || educationRow.startDate
-            )
+      const education = get_education_row(index);
+      if (education) {
+        setDegree(education.degree);
+        setInstitution(education.institution);
+        setGpa_grade(education.gpa_grade);
+        setSpecialization(education.specialization);
+        const parsedStart = education.startDate
+          ? dayjs(education.startDate?.$date || education.startDate)
           : null;
-        const parsedEnd = educationRow.endDate
-          ? dayjs(educationRow.endDate?.$date || educationRow.endDate)
+        const parsedEnd = education.endDate
+          ? dayjs(education.endDate?.$date || education.endDate)
           : null;
         setStartDate(parsedStart && parsedStart.isValid() ? parsedStart : null);
         setEndDate(parsedEnd && parsedEnd.isValid() ? parsedEnd : null);
@@ -2154,11 +2150,319 @@ const EducationSection = () => {
     </div>
   );
 };
-const ExperienceTag = ({ icon, index, text }) => {
+const ExperienceEditTag = ({ index }) => {
+  const { get_experience_row, add_experience_row, edit_experience_row } =
+    useContext(DraftResumeFormContext);
+  const { setOnEdit } = useContext(NameCardContext);
+  const [style, setStyle] = useState({
+    height: 0,
+  });
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setStyle({
+        height: (42 * 4 + 8 * 3) * 2 + 44 + 16 + "px",
+      });
+    }, 32);
+  }, []);
+  useEffect(() => {
+    const experience = get_experience_row(index);
+    if (experience) {
+      setCompany(experience.company);
+      setRole(experience.role);
+      setLocation(experience.location);
+      setDescription(experience.description);
+      const parsedStart = experience.startDate
+        ? dayjs(experience.startDate?.$date || experience.startDate)
+        : null;
+      const parsedEnd = experience.endDate
+        ? dayjs(experience.endDate?.$date || experience.endDate)
+        : null;
+      setStartDate(parsedStart && parsedStart.isValid() ? parsedStart : null);
+      setEndDate(parsedEnd && parsedEnd.isValid() ? parsedEnd : null);
+    }
+  }, [index]);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          width: "100%",
+          transition: "height 0.2s ease",
+          paddingTop: "8px",
+          height: style.height,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
+          <TextField
+            id={`role-input`}
+            label={`Role / Position`}
+            variant="outlined"
+            value={role}
+            size="small"
+            onChange={(e) => {
+              setRole(e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "100%",
+              "& .MuiOutlinedInput-root": {
+                height: 42,
+                borderRadius: "8px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <TextField
+            id={`company-input`}
+            label={`Company / Institution`}
+            variant="outlined"
+            value={company}
+            size="small"
+            onChange={(e) => {
+              setCompany(e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "100%",
+              marginTop: "8px",
+              "& .MuiOutlinedInput-root": {
+                height: 42,
+                borderRadius: "8px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <TextField
+            id={`location-input`}
+            label={`Location`}
+            variant="outlined"
+            value={location}
+            size="small"
+            onChange={(e) => {
+              setLocation(e.target.value);
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              height: 42,
+              width: "100%",
+              marginTop: "8px",
+              "& .MuiOutlinedInput-root": {
+                height: 42,
+                borderRadius: "8px",
+                paddingRight: "14px",
+                transition: "height 0.36s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+              },
+              "& .MuiInputBase-input": {
+                height: "100%",
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                padding: "12px 14px",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                height: "100%",
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <MonthRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={(date) => {
+              setStartDate(date);
+            }}
+            setEndDate={(date) => {
+              setEndDate(date);
+            }}
+          />
+          <TextField
+            id={`description-input`}
+            label={`Description`}
+            variant="outlined"
+            multiline
+            value={description || ""}
+            size="small"
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
+            InputProps={{
+              sx: {
+                padding: "16px 8px 8px 16px",
+              },
+              inputProps: {
+                className: "scrolling-space-v",
+                style: {
+                  fontSize: 16,
+                  height: "100%",
+                  overflowY: "auto",
+                  boxSizing: "border-box",
+                  fontFamily: "Jost",
+                },
+              },
+            }}
+            sx={{
+              transition: "all 0.2s ease",
+              width: "100%",
+              marginTop: "8px",
+              height: 42 * 4 + 8 * 3,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "100%",
+                alignItems: "flex-start",
+              },
+              "& .MuiInputBase-input": {
+                fontFamily: "Jost",
+                boxSizing: "border-box",
+                overflow: "auto !important",
+                height: "100% !important",
+                resize: "none",
+              },
+              "& label": {
+                fontFamily: "Jost",
+              },
+              "& input": {
+                fontFamily: "Jost",
+              },
+            }}
+          />
+          <IconButton
+            color="success"
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (index !== null && index !== undefined && index >= 0) {
+                edit_experience_row(
+                  index,
+                  company,
+                  role,
+                  location,
+                  description,
+                  startDate,
+                  endDate
+                );
+              } else {
+                add_experience_row(
+                  company,
+                  role,
+                  location,
+                  description,
+                  startDate,
+                  endDate
+                );
+              }
+              setOnEdit("pending");
+            }}
+          >
+            <Icon
+              src="check"
+              color="green"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+          <IconButton
+            color="error"
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 45,
+              width: 36,
+              height: 36,
+              borderRadius: "18px",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOnEdit("pending");
+            }}
+          >
+            <Icon
+              src="close"
+              color="red"
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                top: "50%",
+                left: "50%",
+                height: "24px",
+                width: "24px",
+              }}
+            />
+          </IconButton>
+        </div>
+      </div>
+    </div>
+  );
+};
+const ExperienceTag = ({ icon, index, text, item }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { get_experience_row } = useContext(DraftResumeFormContext);
+  const { get_experience_row, delete_experience_row } = useContext(
+    DraftResumeFormContext
+  );
   const [experience, setExperience] = useState({});
+  const [onEditing, setOnEditing] = useState(false);
   const [onHover, setOnHover] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
@@ -2166,6 +2470,13 @@ const ExperienceTag = ({ icon, index, text }) => {
     pointerEvents: "none",
   });
 
+  useEffect(() => {
+    if (onEdit === "edit_experience_" + String(index)) {
+      setOnEditing(true);
+    } else {
+      setOnEditing(false);
+    }
+  }, [onEdit]);
   useEffect(() => {
     if (onHover) {
       setStyle({
@@ -2186,7 +2497,7 @@ const ExperienceTag = ({ icon, index, text }) => {
     if (exp) {
       setExperience(exp);
     }
-  }, []);
+  }, [item]);
 
   if (onEdit === "none") {
     return (
@@ -2270,7 +2581,15 @@ const ExperienceTag = ({ icon, index, text }) => {
             opacity: style.opacity,
           }}
         >
-          <div>
+          <div
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              delete_experience_row(index);
+            }}
+          >
             <Icon
               src={"delete"}
               style={{
@@ -2287,8 +2606,11 @@ const ExperienceTag = ({ icon, index, text }) => {
             />
           </div>
           <div
+            style={{
+              cursor: "pointer",
+            }}
             onClick={() => {
-              setOnEdit("add_experience");
+              setOnEdit("edit_experience_" + String(index));
             }}
           >
             <Icon
@@ -2309,6 +2631,8 @@ const ExperienceTag = ({ icon, index, text }) => {
         </div>
       </div>
     );
+  } else if (onEditing) {
+    return <ExperienceEditTag index={index} />;
   } else {
     return (
       <div
@@ -2494,7 +2818,10 @@ const ExperienceTag = ({ icon, index, text }) => {
             style={{
               cursor: "pointer",
             }}
-            onClick={(e) => {}}
+            onClick={(e) => {
+              e.stopPropagation();
+              delete_experience_row(index);
+            }}
           >
             <Icon
               src={"delete"}
@@ -2511,7 +2838,11 @@ const ExperienceTag = ({ icon, index, text }) => {
               color={"red"}
             />
           </div>
-          <div onClick={() => {}}>
+          <div
+            onClick={() => {
+              setOnEdit("edit_experience_" + String(index));
+            }}
+          >
             <Icon
               src={"edit"}
               style={{
@@ -2534,7 +2865,7 @@ const ExperienceTag = ({ icon, index, text }) => {
 };
 const ExperienceSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { onEdit } = useContext(NameCardContext);
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
   const { formData } = useContext(DraftResumeFormContext);
   return (
     <div
@@ -2565,6 +2896,7 @@ const ExperienceSection = () => {
             icon={"pin"}
             index={index}
             text={`${item.role + " @ " + item.company}`}
+            item={item}
           />
         </div>
       ))}
@@ -2595,17 +2927,29 @@ const ExperienceSection = () => {
               : "none",
           cursor: "pointer",
         }}
+        onClick={() => {
+          if (onEdit === "add_experience") {
+          } else {
+            setOnEdit("add_experience");
+          }
+        }}
       >
-        <Icon
-          src={"add"}
-          style={{
-            flex: "0 0 18px",
-            width: "18px",
-            height: "18px",
-            opacity: 0.5,
-          }}
-          color={theme ? theme.font.color : "#000000"}
-        />
+        {onEdit === "add_experience" ? (
+          <ExperienceEditTag index={null} />
+        ) : (
+          <div>
+            <Icon
+              src={"add"}
+              style={{
+                flex: "0 0 18px",
+                width: "18px",
+                height: "18px",
+                opacity: 0.5,
+              }}
+              color={theme ? theme.font.color : "#000000"}
+            />{" "}
+          </div>
+        )}
       </div>
     </div>
   );
