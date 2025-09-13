@@ -516,6 +516,13 @@ const DraftResumeForm = () => {
       };
     });
   };
+  const get_experience_row = (index) => {
+    if (formData && formData.experience && index < formData.experience.length) {
+      return formData.experience[index];
+    } else {
+      return null;
+    }
+  };
   /* { contact } ----------------------------------------------------------------------------- */
 
   return (
@@ -537,6 +544,8 @@ const DraftResumeForm = () => {
         add_education_row,
         edit_education_row,
         delete_education_row,
+
+        get_experience_row,
       }}
     >
       <div

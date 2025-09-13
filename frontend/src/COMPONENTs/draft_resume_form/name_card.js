@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect, createContext } from "react";
 
-import satisfied_dark from "./satisfied_dark.png";
-import satisfied_light from "./satisfied_light.png";
+import satisfied_dark from "../../assets/others/satisfied_dark.png";
+import satisfied_light from "../../assets/others/satisfied_light.png";
 import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
@@ -11,7 +11,6 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
@@ -2003,6 +2002,9 @@ const EducationTag = ({
             height: "calc(100% + 12px)",
             zIndex: 1,
             backdropFilter: "blur(8px)",
+            backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
+            boxShadow: "-12px 0px 32px rgba(0, 0, 0, 0.08)",
+            borderRadius: "8px",
             opacity: style.opacity,
           }}
         >
@@ -2152,9 +2154,11 @@ const EducationSection = () => {
     </div>
   );
 };
-const ExperienceTag = ({ icon, text }) => {
+const ExperienceTag = ({ icon, index, text }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { setOnEdit } = useContext(NameCardContext);
+  const { onEdit, setOnEdit } = useContext(NameCardContext);
+  const { get_experience_row } = useContext(DraftResumeFormContext);
+  const [experience, setExperience] = useState({});
   const [onHover, setOnHover] = useState(false);
   const [style, setStyle] = useState({
     width: "0px",
@@ -2165,7 +2169,7 @@ const ExperienceTag = ({ icon, text }) => {
   useEffect(() => {
     if (onHover) {
       setStyle({
-        width: "60px",
+        width: onEdit !== "none" ? "72px" : "60px",
         opacity: 1,
         pointerEvents: "auto",
       });
@@ -2176,126 +2180,357 @@ const ExperienceTag = ({ icon, text }) => {
         pointerEvents: "none",
       });
     }
-  }, [onHover]);
+  }, [onHover, onEdit]);
+  useEffect(() => {
+    const exp = get_experience_row(index);
+    if (exp) {
+      setExperience(exp);
+    }
+  }, []);
 
-  return (
-    <div
-      className="contact-info-tag"
-      style={{
-        transition: "all 0.2s ease",
-        position: "relative",
-        maxWidth: "100%",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "6px",
-        padding: "2px 8px",
-        borderRadius: "16px",
-        backgroundColor: theme ? theme.backgroundColor : "rgba(0, 0, 0, 0.04)",
-        marginRight: "6px",
-        marginBottom: "2px",
-        border:
-          onThemeMode === "dark_mode"
-            ? "1px solid rgba(255, 255, 255, 0.16)"
-            : "1px solid rgba(0, 0, 0, 0.16)",
-      }}
-      onMouseEnter={() => {
-        setOnHover(true);
-      }}
-      onMouseLeave={() => {
-        setOnHover(false);
-      }}
-    >
-      <Icon
-        src={icon}
+  if (onEdit === "none") {
+    return (
+      <div
+        className="contact-info-tag"
         style={{
-          flex: "0 0 18px",
-          width: "18px",
-          height: "18px",
-          opacity: 0.5,
+          transition: "all 0.2s ease",
+          position: "relative",
+          maxWidth: "100%",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "6px",
+          padding: "2px 8px",
+          borderRadius: "16px",
+          backgroundColor: theme
+            ? theme.backgroundColor
+            : "rgba(0, 0, 0, 0.04)",
+          marginRight: "6px",
+          marginBottom: "2px",
+          border:
+            onThemeMode === "dark_mode"
+              ? "1px solid rgba(255, 255, 255, 0.16)"
+              : "1px solid rgba(0, 0, 0, 0.16)",
         }}
-        color={theme ? theme.font.color : "#000000"}
-      />
-      <span
-        className="contact-info-text"
-        style={{
-          fontFamily: "Jost",
-          fontSize: "14px",
-          color: theme ? theme.font.color : "#000000",
-
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          MsUserSelect: "none",
+        onMouseEnter={() => {
+          setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          setOnHover(false);
         }}
       >
-        {text}
-      </span>
+        <Icon
+          src={icon}
+          style={{
+            flex: "0 0 18px",
+            width: "18px",
+            height: "18px",
+            opacity: 0.5,
+          }}
+          color={theme ? theme.font.color : "#000000"}
+        />
+        <span
+          className="contact-info-text"
+          style={{
+            fontFamily: "Jost",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {text}
+        </span>
+        <div
+          style={{
+            transition: "all 0.2s ease",
+            position: "absolute",
+            top: -6,
+            right: -6,
+            width: style.width,
+            height: "calc(100% + 12px)",
+            borderRadius: "124px",
+            zIndex: 1,
+            backgroundColor: theme
+              ? theme.backgroundColor
+              : "rgba(255, 255, 255, 0.8)",
+            border:
+              onThemeMode === "dark_mode"
+                ? "1px solid rgba(255, 255, 255, 0.32)"
+                : "1px solid rgba(0, 0, 0, 0.16)",
+            boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
+            backdropFilter: "blur(8px)",
+            opacity: style.opacity,
+          }}
+        >
+          <div>
+            <Icon
+              src={"delete"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                right: "0px",
+                transform: "translate(-50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={"red"}
+            />
+          </div>
+          <div
+            onClick={() => {
+              setOnEdit("add_experience");
+            }}
+          >
+            <Icon
+              src={"edit"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "52%",
+                left: "0px",
+                transform: "translate(50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={theme ? theme.font.color : "#000000"}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return (
       <div
         style={{
           transition: "all 0.2s ease",
-          position: "absolute",
-          top: -6,
-          right: -6,
-          width: style.width,
-          height: "calc(100% + 12px)",
-          borderRadius: "124px",
-          zIndex: 1,
-          backgroundColor: theme
-            ? theme.backgroundColor
-            : "rgba(255, 255, 255, 0.8)",
-          border:
-            onThemeMode === "dark_mode"
-              ? "1px solid rgba(255, 255, 255, 0.32)"
-              : "1px solid rgba(0, 0, 0, 0.16)",
-          boxShadow: "0 0px 8px rgba(0, 0, 0, 0.08)",
-          backdropFilter: "blur(8px)",
-          opacity: style.opacity,
+          position: "relative",
+          width: "100%",
+          height: "164px",
+          display: "inline-flex",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          gap: "6px",
+          padding: "2px 8px",
+          borderRadius: "16px",
+          marginRight: "6px",
+          marginTop: "6px",
+          marginBottom: "6px",
+        }}
+        onMouseEnter={() => {
+          setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          setOnHover(false);
         }}
       >
-        <div>
-          <Icon
-            src={"delete"}
-            style={{
-              width: "18px",
-              height: "18px",
-              position: "absolute",
-              top: "50%",
-              right: "0px",
-              transform: "translate(-50%, -50%)",
-              cursor: "pointer",
-              pointerEvents: style.pointerEvents,
-            }}
-            color={"red"}
-          />
-        </div>
-        <div
-          onClick={() => {
-            setOnEdit("add_experience");
+        <Icon
+          src={icon}
+          style={{
+            position: "absolute",
+            top: 2,
+            left: 2,
+            width: "24px",
+            height: "24px",
+            opacity: 0.72,
+          }}
+          color={theme ? theme.font.color : "#000000"}
+        />
+        <span
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 2,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "16px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
           }}
         >
-          <Icon
-            src={"edit"}
+          {experience.role}
+        </span>
+        <span
+          className="experience-company-name"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 24,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {"@" + experience.company}
+        </span>
+        <span
+          className="experience-location"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 45,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+            opacity: 0.5,
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {experience.location}
+        </span>
+        <span
+          className="experience-description"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 64,
+            left: 36,
+            height: 64,
+            right: 0,
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+            opacity: 0.5,
+
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {experience.description}
+        </span>
+        <span
+          className="experience-start-date"
+          style={{
+            position: "absolute",
+            fontFamily: "Jost",
+            top: 128,
+            left: 36,
+            right: 0,
+            flex: "1 1 auto",
+            fontSize: "14px",
+            color: theme ? theme.font.color : "#000000",
+            opacity: 0.5,
+
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            MsUserSelect: "none",
+          }}
+        >
+          {experience.startDate
+            ? dayjs(experience.startDate).format("MM/YYYY") +
+              (experience.endDate
+                ? " - " + dayjs(experience.endDate).format("MM/YYYY")
+                : "")
+            : "N/A"}
+        </span>
+        <div
+          style={{
+            transition: "all 0.2s ease",
+            position: "absolute",
+            top: -6,
+            right: -6,
+            width: style.width,
+            height: "calc(100% + 12px)",
+            zIndex: 1,
+            backdropFilter: "blur(8px)",
+            backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
+            boxShadow: "-12px 0px 32px rgba(0, 0, 0, 0.08)",
+            borderRadius: "8px",
+            opacity: style.opacity,
+          }}
+        >
+          <div
             style={{
-              width: "18px",
-              height: "18px",
-              position: "absolute",
-              top: "52%",
-              left: "0px",
-              transform: "translate(50%, -50%)",
               cursor: "pointer",
-              pointerEvents: style.pointerEvents,
             }}
-            color={theme ? theme.font.color : "#000000"}
-          />
+            onClick={(e) => {}}
+          >
+            <Icon
+              src={"delete"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                right: "0px",
+                transform: "translate(-50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={"red"}
+            />
+          </div>
+          <div onClick={() => {}}>
+            <Icon
+              src={"edit"}
+              style={{
+                width: "18px",
+                height: "18px",
+                position: "absolute",
+                top: "50%",
+                left: "0px",
+                transform: "translate(50%, -50%)",
+                cursor: "pointer",
+                pointerEvents: style.pointerEvents,
+              }}
+              color={theme ? theme.font.color : "#000000"}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 const ExperienceSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
@@ -2328,6 +2563,7 @@ const ExperienceSection = () => {
         <div key={index} className="experience-item">
           <ExperienceTag
             icon={"pin"}
+            index={index}
             text={`${item.role + " @ " + item.company}`}
           />
         </div>
