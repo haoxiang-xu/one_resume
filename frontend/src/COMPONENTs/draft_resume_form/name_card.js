@@ -189,7 +189,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
     } else {
       setOnEditing(false);
     }
-  }, [onEdit]);
+  }, [index, onEdit]);
   useEffect(() => {
     setNewContact({
       type: type,
@@ -1377,7 +1377,7 @@ const EducationEditTag = ({ index }) => {
         setEndDate(parsedEnd && parsedEnd.isValid() ? parsedEnd : null);
       }
     }
-  }, [index]);
+  }, [index, get_education_row]);
 
   return (
     <div
@@ -1665,7 +1665,6 @@ const EducationTag = ({
   text,
   degree,
   institution,
-  grade,
   specialization,
   startDate,
   endDate,
@@ -1687,7 +1686,7 @@ const EducationTag = ({
     } else {
       setOnEditing(false);
     }
-  }, [onEdit]);
+  }, [index, onEdit]);
   useEffect(() => {
     if (onHover) {
       setStyle({
@@ -2192,7 +2191,7 @@ const ExperienceEditTag = ({ index }) => {
       setStartDate(parsedStart && parsedStart.isValid() ? parsedStart : null);
       setEndDate(parsedEnd && parsedEnd.isValid() ? parsedEnd : null);
     }
-  }, [index]);
+  }, [index, get_experience_row]);
 
   return (
     <div
@@ -2481,7 +2480,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
     } else {
       setOnEditing(false);
     }
-  }, [onEdit]);
+  }, [index, onEdit]);
   useEffect(() => {
     if (onHover) {
       setStyle({
@@ -2507,7 +2506,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
     if (exp) {
       setExperience(exp);
     }
-  }, [item]);
+  }, [index, item, get_experience_row]);
 
   if (onEdit === "none") {
     return (

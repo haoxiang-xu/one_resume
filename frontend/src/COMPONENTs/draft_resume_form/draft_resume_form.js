@@ -400,7 +400,7 @@ const DraftResumeForm = () => {
       ...prevData,
       contact: {
         ...prevData.contact,
-        ["cell"]: value,
+        "cell": value,
       },
     }));
   };
@@ -409,7 +409,7 @@ const DraftResumeForm = () => {
       ...prevData,
       contact: {
         ...prevData.contact,
-        ["email"]: value,
+        "email": value,
       },
     }));
   };

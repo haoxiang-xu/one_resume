@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /* Contexts -------------------------------------------------------------------------------------------------------------- */
 import { DataContext } from "./context";

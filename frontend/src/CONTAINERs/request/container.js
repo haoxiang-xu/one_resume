@@ -70,7 +70,7 @@ const RequestContainer = ({ children }) => {
         setAuthState({ loading: false, user: null });
       }
     })();
-  }, [root_url]);
+  }, [setAuthState]);
   useEffect(() => {
     const get_user_info = async () => {
       const res = await fetch(`${root_url}api/user/get_user_info`, {
