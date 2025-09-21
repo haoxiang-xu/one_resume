@@ -126,14 +126,6 @@ const DeleteConfirmDialog = ({
             {description ||
               "Are you sure you want to delete this item?"}
           </DialogContentText>
-          <div
-            style={{
-              marginTop: "32px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "16px",
-            }}
-          ></div>
         </DialogContent>
         <DialogActions>
           <Button
@@ -1927,7 +1919,6 @@ const EducationTag = ({
             description={
               "Are you sure you want to delete this education entry?"
             }
-            positiion={"top"}
             onConfirm={() => {
               delete_education_row(index);
               setOnHover(false);
@@ -2144,7 +2135,6 @@ const EducationTag = ({
             description={
               "Are you sure you want to delete this education entry?"
             }
-            positiion={"top"}
             onConfirm={() => {
               delete_education_row(index);
               setOnHover(false);
