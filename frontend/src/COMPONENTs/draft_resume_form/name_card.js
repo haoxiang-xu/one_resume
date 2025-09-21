@@ -1,10 +1,17 @@
-import { useState, useContext, useEffect, createContext } from "react";
+import {
+  Fragment,
+  useState,
+  useContext,
+  useEffect,
+  createContext,
+} from "react";
 
 import satisfied_dark from "../../assets/others/satisfied_dark.png";
 import satisfied_light from "../../assets/others/satisfied_light.png";
 import { countries } from "../../BUILTIN_COMPONENTs/consts/countries";
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
@@ -14,9 +21,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import Skeleton from "@mui/material/Skeleton";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -44,6 +54,112 @@ const contactTypeOptions = [
   { value: "other", label: "Other", icon: "link" },
 ];
 
+const DeleteConfirmDialog = ({
+  title,
+  description,
+  children,
+  onConfirm,
+  onClose,
+}) => {
+  const { theme, DialogTransition } = useContext(ConfigContext);
+  const [open, setOpen] = useState(false);
+
+  const handle_dialog_open = () => {
+    setOpen(true);
+  };
+  const handle_dialog_close = () => {
+    setOpen(false);
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  return (
+    <Fragment>
+      <div
+        style={{
+          cursor: "pointer",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          handle_dialog_open();
+        }}
+      >
+        {children}
+      </div>
+      <Dialog
+        open={open}
+        onClose={handle_dialog_close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        slots={{
+          transition: DialogTransition,
+        }}
+        PaperProps={{
+          sx: {
+            width: "500px",
+            borderRadius: "14px",
+            backgroundColor: theme?.backgroundColor || "#FFFFFF",
+          },
+        }}
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            fontFamily: "Jost",
+            fontSize: "24px",
+            fontWeight: 500,
+            color: theme?.font.color || "#000000",
+          }}
+        >
+          {title || "Delete Confirmation"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              fontFamily: "Jost",
+              fontSize: "16px",
+              color: theme?.font.color || "#000000",
+            }}
+          >
+            {description ||
+              "Are you sure you want to delete this item?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="default"
+            onClick={() => {
+              handle_dialog_close();
+            }}
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
+          >
+            cancel
+          </Button>
+          <Button
+            color="error"
+            onClick={() => {
+              onConfirm();
+            }}
+            autoFocus
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              fontFamily: "Jost",
+            }}
+          >
+            delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
+  );
+};
 const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
   const { theme } = useContext(ConfigContext);
 
@@ -909,13 +1025,15 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
             }}
           >
             {icon === "phone" || icon === "email" ? null : (
-              <div
-                style={{
-                  cursor: "pointer",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
+              <DeleteConfirmDialog
+                title="Delete Contact"
+                description="Are you sure you want to delete this contact information?"
+                onConfirm={() => {
                   delete_contact_extra_row(index);
+                  setOnHover(false);
+                }}
+                onClose={() => {
+                  setOnHover(false);
                 }}
               >
                 <Icon
@@ -932,7 +1050,7 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
                   }}
                   color={"red"}
                 />
-              </div>
+              </DeleteConfirmDialog>
             )}
             <div
               onClick={(e) => {
@@ -1796,13 +1914,17 @@ const EducationTag = ({
             opacity: style.opacity,
           }}
         >
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
+          <DeleteConfirmDialog
+            title={"Delete Education Entry"}
+            description={
+              "Are you sure you want to delete this education entry?"
+            }
+            onConfirm={() => {
               delete_education_row(index);
+              setOnHover(false);
+            }}
+            onClose={() => {
+              setOnHover(false);
             }}
           >
             <Icon
@@ -1818,7 +1940,7 @@ const EducationTag = ({
               }}
               color={"red"}
             />
-          </div>
+          </DeleteConfirmDialog>
           <div
             onClick={() => {
               setOnEdit("edit_education_" + String(index));
@@ -2008,13 +2130,17 @@ const EducationTag = ({
             opacity: style.opacity,
           }}
         >
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
+          <DeleteConfirmDialog
+            title={"Delete Education Entry"}
+            description={
+              "Are you sure you want to delete this education entry?"
+            }
+            onConfirm={() => {
               delete_education_row(index);
+              setOnHover(false);
+            }}
+            onClose={() => {
+              setOnHover(false);
             }}
           >
             <Icon
@@ -2031,7 +2157,7 @@ const EducationTag = ({
               }}
               color={"red"}
             />
-          </div>
+          </DeleteConfirmDialog>
           <div
             onClick={() => {
               setOnEdit("edit_education_" + String(index));
@@ -2590,13 +2716,17 @@ const ExperienceTag = ({ icon, index, text, item }) => {
             opacity: style.opacity,
           }}
         >
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
+          <DeleteConfirmDialog
+            title={"Delete Experience Entry"}
+            description={
+              "Are you sure you want to delete this experience entry?"
+            }
+            onConfirm={() => {
               delete_experience_row(index);
+              setOnHover(false);
+            }}
+            onClose={() => {
+              setOnHover(false);
             }}
           >
             <Icon
@@ -2613,7 +2743,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
               }}
               color={"red"}
             />
-          </div>
+          </DeleteConfirmDialog>
           <div
             style={{
               cursor: "pointer",
@@ -2823,13 +2953,17 @@ const ExperienceTag = ({ icon, index, text, item }) => {
             opacity: style.opacity,
           }}
         >
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
+          <DeleteConfirmDialog
+            title={"Delete Experience Entry"}
+            description={
+              "Are you sure you want to delete this experience entry?"
+            }
+            onConfirm={() => {
               delete_experience_row(index);
+              setOnHover(false);
+            }}
+            onClose={() => {
+              setOnHover(false);
             }}
           >
             <Icon
@@ -2846,7 +2980,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
               }}
               color={"red"}
             />
-          </div>
+          </DeleteConfirmDialog>
           <div
             onClick={() => {
               setOnEdit("edit_experience_" + String(index));
