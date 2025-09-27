@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   createContext,
+  useRef,
 } from "react";
 
 import satisfied_dark from "../../assets/others/satisfied_dark.png";
@@ -3101,6 +3102,51 @@ const NameCard = () => {
   const { theme, onThemeMode, DialogTransition } = useContext(ConfigContext);
   const { formData } = useContext(DraftResumeFormContext);
   const [onEdit, setOnEdit] = useState("none");
+  
+  // Ref for the scrollable container in the dialog
+  const dialogScrollContainerRef = useRef(null);
+  
+  // Scroll to the editing section when onEdit changes
+  useEffect(() => {
+    if (onEdit !== "none" && onEdit !== "pending" && dialogScrollContainerRef.current) {
+      // Wait for the dialog to be fully rendered and sections to be in edit mode
+      const timer = setTimeout(() => {
+        const scrollContainer = dialogScrollContainerRef.current;
+        let targetElement = null;
+        
+        // Find the target element based on the onEdit state
+        if (onEdit.startsWith("edit_contact_") || onEdit === "add_contact") {
+          // Contact section - should be at the top, minimal scrolling needed
+          targetElement = scrollContainer.querySelector('.contact-section');
+        } else if (onEdit.startsWith("edit_education_") || onEdit === "add_education") {
+          // Education section
+          targetElement = scrollContainer.querySelector('.education-section');
+        } else if (onEdit.startsWith("edit_experience_") || onEdit === "add_experience") {
+          // Experience section
+          targetElement = scrollContainer.querySelector('.experience-section');
+        }
+        
+        if (targetElement) {
+          // Calculate the scroll position - scroll to show the editing form
+          const containerRect = scrollContainer.getBoundingClientRect();
+          const targetRect = targetElement.getBoundingClientRect();
+          const scrollTop = scrollContainer.scrollTop;
+          
+          // Calculate the target scroll position
+          // We want to position the section's editing area in the upper part of the visible area
+          const targetScrollTop = scrollTop + (targetRect.top - containerRect.top) - 20;
+          
+          // Smooth scroll to the target position
+          scrollContainer.scrollTo({
+            top: Math.max(0, targetScrollTop),
+            behavior: 'smooth'
+          });
+        }
+      }, 300); // Wait for dialog animation and content rendering
+      
+      return () => clearTimeout(timer);
+    }
+  }, [onEdit]);
 
   return (
     <NameCardContext.Provider value={{ onEdit, setOnEdit }}>
@@ -3244,6 +3290,7 @@ const NameCard = () => {
               }}
             >
               <div
+                ref={dialogScrollContainerRef}
                 className="scrolling-space-v"
                 style={{
                   position: "absolute",
