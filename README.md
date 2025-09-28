@@ -19,7 +19,9 @@
   - [Backend](#backend)
   - [Database](#database)
 - [Quick Actions](#quick-actions)
-  - [Setup and run a local instance](#setup-and-run-a-local-instance)
+  - [Initial local instance](#initial-local-instance)
+  - [Update local instance](#update-local-instance)
+
 
 ## <h1>Prerequisites</h1> <a id="prerequisites"></a>
 
@@ -117,10 +119,10 @@
 
 ### Frontend <a id="frontend"></a>
 
-- **src**: Contains the source code for the frontend application.
-  - **COMPONENTs**: Contains reusable components used throughout the application.
-  - **CONTAINERs**: Contains context providers and other container components.
-  - **PAGES**: Contains the main pages of the application.
+- **src**: <span style="opacity: 0.32">Contains the source code for the frontend application.</span>
+  - **COMPONENTs**: <span style="opacity: 0.32">Contains reusable components used throughout the application.</span>
+  - **CONTAINERs**: <span style="opacity: 0.32">Contains context providers and other container components.</span>
+  - **PAGES**: <span style="opacity: 0.32">Contains the main pages of the application.</span>
     - **landing.js**: <span style="opacity: 0.32">The landing page of the application.</span>
     - **router.js**: <span style="opacity: 0.32">The main router for the application.</span>
     - **register.js**: <span style="opacity: 0.32">The registration page for applicants.</span>
@@ -131,3 +133,35 @@
       - **coverletter.js**: <span style="opacity: 0.32">The cover letter page for users.</span>
       - **settings.js**: <span style="opacity: 0.32">The settings page for users.</span>
     - **admin.js**: <span style="opacity: 0.32">The admin dashboard page.</span>
+
+### Backend <a id="backend"></a>
+
+### Database <a id="database"></a>
+
+## <h1>Quick Actions</h1> <a id="quick-actions"></a>
+
+### Initial local instance <a id="initial-local-instance"></a>
+
+<span style="opacity: 0.32">If you have not set up a local instance of the application before, you can use the following script to set up and run a local instance using Docker. This script will create and start the necessary Docker containers for the frontend, backend, and database. Do not run this script if you have already set up a local instance before, as it may overwrite your existing data in the database.</span>
+
+```bash
+# The following script will set up and run a local instance of the application using Docker. Make sure you have Docker installed and running on your machine.
+
+# Redirect to the project shell directory
+cd shell
+# Run the setup script
+./init_docker_instance.sh
+```
+
+### Update local instance <a id="update-local-instance"></a>
+
+<span style="opacity: 0.32">If you have already set up a local instance of the application before, you can use the following script to update and run the existing local instance using Docker. This script will pull the latest changes from the repository, rebuild the Docker images, and restart the necessary Docker containers for the frontend, backend, and database. This script will not overwrite your existing data in the database.</span>
+
+```bash
+# The following script will update and run the existing local instance of the application using Docker. Make sure you have Docker installed and running on your machine.
+
+# Redirect to the project shell directory
+cd shell
+# Run the update script
+./update_docker_instance.sh
+```
