@@ -40,7 +40,7 @@ import dayjs from "dayjs";
 
 const ApplicantInfoFormContext = createContext();
 
-const NameFrom = () => {
+const NameForm = () => {
   const { onForm, formData, move_to_form, update_name } = useContext(
     ApplicantInfoFormContext
   );
@@ -73,6 +73,42 @@ const NameFrom = () => {
       });
     }
   }, [onForm]);
+
+  const form_on_submit = useCallback(() => {
+    let textfield_to_focus = null;
+
+    if (!formData.name.firstName || !formData.name.lastName) {
+      if (!formData.name.firstName) {
+        setErrors((prev) => ({
+          ...prev,
+          firstName: { status: true, msg: "First name is required" },
+        }));
+        if (!textfield_to_focus) textfield_to_focus = "first-name-input";
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          firstName: { status: false, msg: "" },
+        }));
+      }
+      if (!formData.name.lastName) {
+        setErrors((prev) => ({
+          ...prev,
+          lastName: { status: true, msg: "Last name is required" },
+        }));
+        if (!textfield_to_focus) textfield_to_focus = "last-name-input";
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          lastName: { status: false, msg: "" },
+        }));
+      }
+      if (textfield_to_focus) {
+        document.getElementById(textfield_to_focus).focus();
+      }
+      return;
+    }
+    move_to_form("contact");
+  }, [formData, move_to_form]);
 
   return (
     <div
@@ -114,6 +150,16 @@ const NameFrom = () => {
         onChange={(e) => {
           update_name(e.target.value, formData.name.lastName);
         }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            form_on_submit();
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            document.getElementById("last-name-input").focus();
+          }
+        }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "10px",
@@ -136,6 +182,16 @@ const NameFrom = () => {
         value={formData.name.lastName}
         onChange={(e) => {
           update_name(formData.name.firstName, e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            form_on_submit();
+          }
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            document.getElementById("first-name-input").focus();
+          }
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
@@ -170,22 +226,7 @@ const NameFrom = () => {
           />
         }
         onClick={() => {
-          if (!formData.name.firstName || !formData.name.lastName) {
-            if (!formData.name.firstName) {
-              setErrors((prev) => ({
-                ...prev,
-                firstName: { status: true, msg: "First name is required" },
-              }));
-            }
-            if (!formData.name.lastName) {
-              setErrors((prev) => ({
-                ...prev,
-                lastName: { status: true, msg: "Last name is required" },
-              }));
-            }
-            return;
-          }
-          move_to_form("contact");
+          form_on_submit();
         }}
       >
         continue
@@ -194,11 +235,14 @@ const NameFrom = () => {
   );
 };
 const ContactRow = ({
+  index,
   contact_type,
   contact_value,
   edit_contact_row_type,
   edit_contact_row_value,
   delete_contact_row,
+  form_on_submit,
+  error,
 }) => {
   const { theme } = useContext(ConfigContext);
   const [style, setStyle] = useState({
@@ -326,15 +370,34 @@ const ContactRow = ({
         ))}
       </Select>
       <TextField
-        id={`${contact_value}-input`}
+        id={`extra-contact-${index}-input`}
         label={`${
           (contactTypeOptions.find((opt) => opt.value === contact_type) || {})
             .label || ""
         }`}
+        error={error.status}
         variant="outlined"
         value={contact_value}
         onChange={(e) => {
           edit_contact_row_value(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            form_on_submit();
+          }
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (index === 0) {
+              document.getElementById("email-input").focus();
+            } else {
+              document.getElementById(`extra-contact-${index - 1}-input`).focus();
+            }
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            document.getElementById(`extra-contact-${index + 1}-input`)?.focus();
+          }
         }}
         sx={{
           transition: "all 0.2s ease",
@@ -395,7 +458,7 @@ const ContactRow = ({
     </div>
   );
 };
-const ContactFrom = () => {
+const ContactForm = () => {
   const { theme } = useContext(ConfigContext);
   const { scroll_to_bottom } = useContext(FormPageContext);
   const {
@@ -416,6 +479,9 @@ const ContactFrom = () => {
   const [errors, setErrors] = useState({
     cell: { status: false, msg: "" },
     email: { status: false, msg: "" },
+    extra: [
+      /* { status: false, msg: "" }, */
+    ],
   });
 
   useEffect(() => {
@@ -435,6 +501,80 @@ const ContactFrom = () => {
       });
     }
   }, [onForm]);
+
+  const form_on_submit = useCallback(() => {
+    if (!check_if_all_text_filled_and_valid()) {
+      return;
+    }
+    move_to_form("education");
+  }, [formData, move_to_form]);
+  const check_if_all_text_filled_and_valid = useCallback(() => {
+    let is_valid = true;
+    let textfield_to_focus = null;
+    if (!formData.contact.cell.number || !formData.contact.email) {
+      if (!formData.contact.cell.number) {
+        setErrors((prev) => ({
+          ...prev,
+          cell: { status: true, msg: "Phone number is required" },
+        }));
+        if (!textfield_to_focus) textfield_to_focus = "cell-input";
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          cell: { status: false, msg: "" },
+        }));
+      }
+      if (!formData.contact.email) {
+        setErrors((prev) => ({
+          ...prev,
+          email: { status: true, msg: "Email is required" },
+        }));
+        if (!textfield_to_focus) textfield_to_focus = "email-input";
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          email: { status: false, msg: "" },
+        }));
+      }
+      is_valid = false;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        email: { status: false, msg: "" },
+      }));
+      setErrors((prev) => ({
+        ...prev,
+        email: { status: false, msg: "" },
+      }));
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact.email)) {
+      setErrors((prev) => ({
+        ...prev,
+        email: { status: true, msg: "Invalid email format" },
+      }));
+      if (!textfield_to_focus) textfield_to_focus = "email-input";
+      is_valid = false;
+    }
+
+    let extra_errors = [];
+    for (let i = 0; i < formData.contact.extra.length; i++) {
+      if (formData.contact.extra[i].contact_value) {
+        extra_errors.push({ status: false, msg: "" });
+      } else {
+        extra_errors.push({ status: true, msg: "This field is required" });
+        if (!textfield_to_focus) textfield_to_focus = `extra-contact-${i}-input`;
+        is_valid = false;
+      }
+    }
+    setErrors((prev) => ({
+      ...prev,
+      extra: extra_errors,
+    }));
+    if (textfield_to_focus) {
+      document.getElementById(textfield_to_focus).focus();
+    }
+    return is_valid;
+  }, [formData]);
 
   return (
     <div
@@ -586,6 +726,7 @@ const ContactFrom = () => {
           )}
         />
         <TextField
+          id="cell-input"
           required
           error={errors.cell.status}
           helperText={errors.cell.msg}
@@ -595,6 +736,16 @@ const ContactFrom = () => {
           value={formData.contact.cell.number}
           onChange={(e) => {
             update_cell(formData.contact.cell.countryCode, e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              form_on_submit();
+            }
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              document.getElementById("email-input").focus();
+            }
           }}
           sx={{
             width: "calc(100% - 140px - 2px)",
@@ -625,6 +776,22 @@ const ContactFrom = () => {
         onChange={(e) => {
           update_email(e.target.value);
         }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            form_on_submit();
+          }
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            document.getElementById("cell-input").focus();
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (formData.contact.extra.length > 0) {
+              document.getElementById("extra-contact-0-input").focus();
+            }
+          }
+        }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "10px",
@@ -654,6 +821,7 @@ const ContactFrom = () => {
       {formData.contact.extra.map((contact, index) => (
         <div key={index}>
           <ContactRow
+            index={index}
             contact_type={contact.contact_type}
             contact_value={contact.contact_value}
             edit_contact_row_type={(contact_type) => {
@@ -665,6 +833,8 @@ const ContactFrom = () => {
             delete_contact_row={() => {
               delete_contact_extra_row(index);
             }}
+            form_on_submit={form_on_submit}
+            error={errors.extra[index] || { status: false, msg: "" }}
           />
         </div>
       ))}
@@ -739,29 +909,7 @@ const ContactFrom = () => {
             />
           }
           onClick={() => {
-            if (!formData.contact.cell.number || !formData.contact.email) {
-              if (!formData.contact.cell.number) {
-                setErrors((prev) => ({
-                  ...prev,
-                  cell: { status: true, msg: "Phone number is required" },
-                }));
-              }
-              if (!formData.contact.email) {
-                setErrors((prev) => ({
-                  ...prev,
-                  email: { status: true, msg: "Email is required" },
-                }));
-              }
-              return;
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact.email)) {
-              setErrors((prev) => ({
-                ...prev,
-                email: { status: true, msg: "Invalid email format" },
-              }));
-              return;
-            }
-            move_to_form("education");
+            form_on_submit();
           }}
         >
           continue
@@ -2638,8 +2786,8 @@ const RegisterForm = ({ onForm, setOnForm }) => {
           transform: "translate(-50%, 0%)",
         }}
       >
-        {onForm === "name" && <NameFrom />}
-        {onForm === "contact" && <ContactFrom />}
+        {onForm === "name" && <NameForm />}
+        {onForm === "contact" && <ContactForm />}
         {onForm === "education" && <EudcationForm />}
         {onForm === "experience" && <ExperienceForm />}
         {onForm === "user" && <UserForm />}
