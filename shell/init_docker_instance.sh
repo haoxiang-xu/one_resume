@@ -42,9 +42,9 @@ echo "[setup] Current container status"
 cat <<'MSG'
 
 Docker stack started.
-Frontend: http://localhost:2907
-Backend API: http://localhost:8888
-MongoDB: mongodb://localhost:27017
+Frontend (via Nginx): http://localhost
+API (proxied): http://localhost/api/
+MongoDB is only accessible from the backend container.
 
 Use "${COMPOSE_CMD[*]} logs -f" to follow logs.
 MSG
