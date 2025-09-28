@@ -9,7 +9,7 @@ import Snackbar from "@mui/material/Snackbar";
 
 const RequestContext = createContext();
 
-const root_url = "http://localhost:8888/";
+const root_url = process.env.REACT_APP_API_URL || "http://localhost:8888/";
 
 const RequestAlert = ({
   open,

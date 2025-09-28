@@ -1,12 +1,27 @@
-version: "3.8"
-
 services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "2907:2907"
+      args:
+        - REACT_APP_API_URL=http://localhost/
+    environment:
+      - REACT_APP_API_URL=http://localhost/
+    # Remove external port mapping, nginx will handle routing
+    expose:
+      - "2907"
     depends_on:
       - backend
       - database
@@ -17,8 +32,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8888:8888"
+    # Remove external port mapping, nginx will handle routing
+    expose:
+      - "8888"
     environment:
       - FLASK_APP=main.py
       - FLASK_ENV=development

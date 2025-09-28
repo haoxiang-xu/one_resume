@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY .env .env
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 COPY . .
 
