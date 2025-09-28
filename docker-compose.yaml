@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "2907:2907"
+    depends_on:
+      - backend
+      - database
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+      - MONGODB_URL=mongodb://database:27017
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

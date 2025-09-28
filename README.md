@@ -18,6 +18,8 @@
   - [Frontend](#frontend)
   - [Backend](#backend)
   - [Database](#database)
+- [Quick Actions](#quick-actions)
+  - [Setup and run a local instance](#setup-and-run-a-local-instance)
 
 ## <h1>Prerequisites</h1> <a id="prerequisites"></a>
 
@@ -38,8 +40,8 @@
 
   ```bash
   #Before running the script, make sure you have python3 installed and in project root path
-  #Redirect to the project code directory
-  cd code
+  #Redirect to the project backend directory
+  cd backend
   #create a virtual environment
   python3 -m venv venv
   #activate the virtual environment
@@ -54,8 +56,8 @@
 
   ```bash
     #Before running the script, make sure you have python3 installed and in project root path
-    #Redirect to the project code directory
-    cd code
+    #Redirect to the project backend directory
+    cd backend
     #create a virtual environment
     python -m venv venv
     #activate the virtual environment
