@@ -5,8 +5,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "2907:2907"
+    expose:
+      - "2907"
     depends_on:
       - backend
       - database
@@ -17,26 +17,42 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8888:8888"
+    expose:
+      - "8888"
     environment:
       - FLASK_APP=main.py
       - FLASK_ENV=development
-      - MONGODB_URL=mongodb://database:27017
+      - MONGODB_URL=mongodb://admin_0001:WNB231_M2B3J1_0AN2KS_2NDI34_9X1MDO_O27CBS_0H6C4J_P4NG7S_PNGH76_0M1FTB_IBRVFD_PZQAS3_H767FV@database:27017/one_resume_db
     depends_on:
       - database
     networks:
       - app-network
+      - backend-db
 
   database:
     build:
       context: ./database
       dockerfile: Dockerfile
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin_0001
+      - MONGO_INITDB_ROOT_PASSWORD=WNB231_M2B3J1_0AN2KS_2NDI34_9X1MDO_O27CBS_0H6C4J_P4NG7S_PNGH76_0M1FTB_IBRVFD_PZQAS3_H767FV
+      - MONGO_INITDB_DATABASE=one_resume_db
+    networks:
+      - backend-db
+
+  nginx:
+    build: ./nginx
     ports:
-      - "27017:27017"
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+  backend-db:
+    driver: bridge
+    internal: true
