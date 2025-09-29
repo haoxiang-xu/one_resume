@@ -3,6 +3,7 @@ import {
   useState,
   useContext,
   useEffect,
+  useRef,
   createContext,
 } from "react";
 
@@ -123,8 +124,7 @@ const DeleteConfirmDialog = ({
               color: theme?.font.color || "#000000",
             }}
           >
-            {description ||
-              "Are you sure you want to delete this item?"}
+            {description || "Are you sure you want to delete this item?"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -343,6 +343,9 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
   return (
     <div
       className="contact-info-tag"
+      data-on-edit-key={
+        Number.isInteger(index) ? `edit_contact_${index}` : undefined
+      }
       style={{
         transition: "all 0.2s ease",
         position: "relative",
@@ -1129,6 +1132,7 @@ const ContactSection = () => {
         />
       ))}
       <div
+        data-on-edit-key="add_contact"
         style={{
           transition: "all 0.2s ease",
           position: "relative",
@@ -1412,6 +1416,10 @@ const EducationEditTag = ({ index }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
+  const editKey = Number.isInteger(index)
+    ? `edit_education_${index}`
+    : undefined;
+
   const degreeOptions = [
     { value: "doctor_category", label: "Doctoral Degrees:", disabled: true },
     { value: "doctor_of_philosophy", label: "Doctor of Philosophy (Ph.D.)" },
@@ -1499,6 +1507,7 @@ const EducationEditTag = ({ index }) => {
 
   return (
     <div
+      data-on-edit-key={editKey}
       style={{
         position: "relative",
         paddingBottom: 0,
@@ -1967,6 +1976,7 @@ const EducationTag = ({
   } else if (onEditing) {
     return (
       <div
+        data-on-edit-key={`edit_education_${index}`}
         style={{
           position: "relative",
           width: "100%",
@@ -2227,6 +2237,7 @@ const EducationSection = () => {
         </div>
       ))}
       <div
+        data-on-edit-key="add_education"
         style={{
           transition: "all 0.2s ease",
           position: "relative",
@@ -2294,6 +2305,10 @@ const ExperienceEditTag = ({ index }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
+  const editKey = Number.isInteger(index)
+    ? `edit_experience_${index}`
+    : undefined;
+
   useEffect(() => {
     setTimeout(() => {
       setStyle({
@@ -2321,6 +2336,7 @@ const ExperienceEditTag = ({ index }) => {
 
   return (
     <div
+      data-on-edit-key={editKey}
       style={{
         position: "relative",
         display: "flex",
@@ -3044,6 +3060,7 @@ const ExperienceSection = () => {
         </div>
       ))}
       <div
+        data-on-edit-key="add_experience"
         style={{
           transition: "all 0.2s ease",
           position: "relative",
@@ -3101,6 +3118,42 @@ const NameCard = () => {
   const { theme, onThemeMode, DialogTransition } = useContext(ConfigContext);
   const { formData } = useContext(DraftResumeFormContext);
   const [onEdit, setOnEdit] = useState("none");
+  const nameCardRef = useRef(null);
+  const editDialogRef = useRef(null);
+
+  useEffect(() => {
+    if (onEdit === "none" || onEdit === "pending") {
+      return;
+    }
+    const scrollToTarget = (container) => {
+      if (!container) {
+        return false;
+      }
+      const target = container.querySelector(
+        `[data-on-edit-key="${onEdit}"]`
+      );
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+        return true;
+      }
+      return false;
+    };
+    const timeoutId = setTimeout(() => {
+      if (!scrollToTarget(editDialogRef.current)) {
+        if (!scrollToTarget(nameCardRef.current) && nameCardRef.current) {
+          nameCardRef.current.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }
+      }
+    }, 240);
+    return () => clearTimeout(timeoutId);
+  }, [onEdit]);
 
   return (
     <NameCardContext.Provider value={{ onEdit, setOnEdit }}>
@@ -3128,6 +3181,7 @@ const NameCard = () => {
         >
           <div
             className="scrolling-space-v"
+            ref={nameCardRef}
             style={{
               position: "absolute",
               top: "8px",
@@ -3245,6 +3299,7 @@ const NameCard = () => {
             >
               <div
                 className="scrolling-space-v"
+                ref={editDialogRef}
                 style={{
                   position: "absolute",
                   top: "8px",
