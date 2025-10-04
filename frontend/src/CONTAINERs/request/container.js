@@ -9,7 +9,7 @@ import Snackbar from "@mui/material/Snackbar";
 
 const RequestContext = createContext();
 
-const root_url = "http://localhost:8888/";
+const root_url = "/";
 
 const RequestAlert = ({
   open,
