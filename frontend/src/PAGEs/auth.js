@@ -6,7 +6,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 
 import AuthForm from "../COMPONENTs/auth_form/auth_form";
 import Logo from "../COMPONENTs/logo/logo";
-import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Header from "../COMPONENTs/header/header";
 import Footer from "../COMPONENTs/footer/footer";
 
 const Auth = () => {
@@ -25,7 +25,7 @@ const Auth = () => {
       }}
     >
       <AuthForm />
-      <TopMenu items={["light switch", "sign up"]} /> <Logo format={"stroke"} />{" "}
+      <Header items={["light switch", "sign up"]} /> <Logo format={"stroke"} />{" "}
       <Footer onPage={"auth"} />
     </div>
   );

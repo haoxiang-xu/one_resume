@@ -5,7 +5,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import Logo from "../COMPONENTs/logo/logo";
-import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Header from "../COMPONENTs/header/header";
 import ClosedStringSpinner from "../BUILTIN_COMPONENTs/spinner/string_spinner";
 
 const Landing = () => {
@@ -48,7 +48,7 @@ const Landing = () => {
       >
         Landing Page in Construction...
       </span>
-      <TopMenu items={["light switch", "sign up", "login"]} />
+      <Header items={["light switch", "sign up", "login"]} />
       <Logo format={"stroke"} />
     </div>
   );

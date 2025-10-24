@@ -67,7 +67,7 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
     ></div>
   );
 };
-const TopMenu = ({ items = [] }) => {
+const Header = ({ items = [] }) => {
   const { theme, windowSize } = useContext(ConfigContext);
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
@@ -192,4 +192,4 @@ const TopMenu = ({ items = [] }) => {
   );
 };
 
-export default TopMenu;
+export default Header;

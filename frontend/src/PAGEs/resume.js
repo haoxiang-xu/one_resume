@@ -1,6 +1,6 @@
 import React from "react";
 
-import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Header from "../COMPONENTs/header/header";
 import Logo from "../COMPONENTs/logo/logo";
 import DraftResumeForm from "../COMPONENTs/draft_resume_form/draft_resume_form";
 
@@ -25,7 +25,7 @@ const Resume = () => {
       }}
     >
       <DraftResumeForm />
-      <TopMenu items={["light switch", "user"]} /> <Logo format={"stroke"} />
+      <Header items={["light switch", "user"]} /> <Logo format={"stroke"} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 
 import RegisterForm from "../COMPONENTs/register_form/register_form";
 import Logo from "../COMPONENTs/logo/logo";
-import TopMenu from "../COMPONENTs/top_menu/top_menu";
+import Header from "../COMPONENTs/header/header";
 import Footer from "../COMPONENTs/footer/footer";
 
 const FormPageContext = createContext();
@@ -54,7 +54,7 @@ const Register = () => {
         >
           <RegisterForm onForm={onForm} setOnForm={setOnForm} />
         </div>
-        <TopMenu items={["light switch", "login"]} /> <Logo format={"stroke"} />{" "}
+        <Header items={["light switch", "login"]} /> <Logo format={"stroke"} />{" "}
         {onForm === "user" ? <Footer onPage={"register"} /> : null}
       </div>
     </FormPageContext.Provider>
