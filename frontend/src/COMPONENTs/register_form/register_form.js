@@ -378,6 +378,7 @@ const ContactRow = ({
         error={error.status}
         variant="outlined"
         value={contact_value}
+        required
         onChange={(e) => {
           edit_contact_row_value(e.target.value);
         }}
@@ -391,12 +392,16 @@ const ContactRow = ({
             if (index === 0) {
               document.getElementById("email-input").focus();
             } else {
-              document.getElementById(`extra-contact-${index - 1}-input`).focus();
+              document
+                .getElementById(`extra-contact-${index - 1}-input`)
+                .focus();
             }
           }
           if (e.key === "ArrowDown") {
             e.preventDefault();
-            document.getElementById(`extra-contact-${index + 1}-input`)?.focus();
+            document
+              .getElementById(`extra-contact-${index + 1}-input`)
+              ?.focus();
           }
         }}
         sx={{
@@ -562,7 +567,8 @@ const ContactForm = () => {
         extra_errors.push({ status: false, msg: "" });
       } else {
         extra_errors.push({ status: true, msg: "This field is required" });
-        if (!textfield_to_focus) textfield_to_focus = `extra-contact-${i}-input`;
+        if (!textfield_to_focus)
+          textfield_to_focus = `extra-contact-${i}-input`;
         is_valid = false;
       }
     }
@@ -1133,14 +1139,31 @@ const EducationRow = ({ id, index }) => {
         }}
       >
         <TextField
-          id={`institution-input`}
+          id={`institution-input-${index}`}
           label={`Institution`}
+          required
           variant="outlined"
           value={
             formData.education.find((item) => item.id === id)?.institution || ""
           }
           onChange={(e) => {
             update_education_row_institution(id, e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              if (index === 0) {
+                document.getElementById("contact-form-title").focus();
+              } else {
+                document
+                  .getElementById(`education-institution-input-${index - 1}`)
+                  .focus();
+              }
+            }
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              document.getElementById(`degree-select-${index}`).focus();
+            }
           }}
           sx={{
             transition: "all 0.2s ease",
@@ -1172,13 +1195,22 @@ const EducationRow = ({ id, index }) => {
             width: "60%",
             borderRadius: "10px",
           }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowRight") {
+              e.preventDefault();
+              document.getElementById(`grade-gpa-input-${index}`).focus();
+            }
+          }}
         >
-          <InputLabel id="degree-select-label" sx={{ fontFamily: "Jost" }}>
+          <InputLabel
+            id={`degree-select-label-${index}`}
+            sx={{ fontFamily: "Jost" }}
+          >
             Degree
           </InputLabel>
           <Select
             labelId="degree-select-label"
-            id="degree-select"
+            id={`degree-select-${index}`}
             label="Degree"
             value={
               formData.education.find((item) => item.id === id)?.degree || ""
@@ -1230,7 +1262,7 @@ const EducationRow = ({ id, index }) => {
           </Select>
         </FormControl>
         <TextField
-          id={`grade-gpa-input`}
+          id={`grade-gpa-input-${index}`}
           label={`Grade / GPA`}
           variant="outlined"
           value={
@@ -1238,6 +1270,22 @@ const EducationRow = ({ id, index }) => {
           }
           onChange={(e) => {
             update_education_row_gpa_grade(id, e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              document
+                .getElementById(`institution-input-${index}`)
+                .focus();
+            }
+            if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              document.getElementById(`degree-select-${index}`).focus();
+            }
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              document.getElementById(`specialization-input-${index}`).focus();
+            }
           }}
           sx={{
             transition: "all 0.2s ease",
@@ -1265,15 +1313,24 @@ const EducationRow = ({ id, index }) => {
           }}
         />
         <TextField
-          id={`specialization-input`}
+          id={`specialization-input-${index}`}
           label={`Specialization`}
           variant="outlined"
+          required
           value={
             formData.education.find((item) => item.id === id)?.specialization ||
             ""
           }
           onChange={(e) => {
             update_education_row_specialization(id, e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              document
+                .getElementById(`grade-gpa-input-${index}`)
+                .focus();
+            }
           }}
           sx={{
             transition: "all 0.2s ease",
