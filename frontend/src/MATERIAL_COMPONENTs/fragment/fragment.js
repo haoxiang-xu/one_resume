@@ -17,7 +17,7 @@ const Fragment = ({ children }) => {
   };
 
   return (
-    <Fragment>
+    <ReactFragment>
       <div
         style={{
           cursor: "pointer",
@@ -57,7 +57,7 @@ const Fragment = ({ children }) => {
           {children}
         </div>
       </Dialog>
-    </Fragment>
+    </ReactFragment>
   );
 };
 
