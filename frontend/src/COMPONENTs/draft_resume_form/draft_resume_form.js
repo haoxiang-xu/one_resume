@@ -365,6 +365,8 @@ const DraftResumeForm = () => {
   const [formData, setFormData] = React.useState(null);
   const [onNameCardEdit, setOnNameCardEdit] = React.useState(false);
   const [style, setStyle] = React.useState({
+    top: "50%",
+    left: "50%",
     header_left: 6,
     container_width: 490,
     container_height: 811,
@@ -380,12 +382,26 @@ const DraftResumeForm = () => {
   React.useEffect(() => {
     if (windowSize.width >= 1200) {
       setStyle({
+        top: "50%",
+        left: "50%",
         header_left: 30,
         container_width: 1200,
         container_height: 811,
       });
     } else {
-      setStyle({ header_left: 6, container_width: 490, container_height: 811 });
+      setStyle({
+        top: "50%",
+        left: "50%",
+        header_left: 6,
+        container_width: 490,
+        container_height: 811,
+      });
+    }
+    if (windowSize.height < 811 + 128) {
+      setStyle((prevStyle) => ({
+        ...prevStyle,
+        top: 64 + 811 / 2,
+      }));
     }
   }, [windowSize]);
   React.useEffect(() => {
@@ -400,7 +416,7 @@ const DraftResumeForm = () => {
       ...prevData,
       contact: {
         ...prevData.contact,
-        "cell": value,
+        cell: value,
       },
     }));
   };
@@ -409,7 +425,7 @@ const DraftResumeForm = () => {
       ...prevData,
       contact: {
         ...prevData.contact,
-        "email": value,
+        email: value,
       },
     }));
   };
@@ -614,9 +630,9 @@ const DraftResumeForm = () => {
         style={{
           transition: "all 0.36s ease",
           position: "absolute",
-          top: 60,
-          left: "50%",
-          transform: "translateX(-50%)",
+          top: style.top,
+          left: style.left,
+          transform: "translate(-50%, -50%)",
           height: style.container_height,
           width: style.container_width,
         }}

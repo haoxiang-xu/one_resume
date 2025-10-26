@@ -1,4 +1,4 @@
-import React from "react";
+import { useContext } from "react";
 
 import Header from "../COMPONENTs/header/header";
 import Logo from "../COMPONENTs/logo/logo";
@@ -9,10 +9,11 @@ import { ConfigContext } from "../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const Resume = () => {
-  const { theme, onThemeMode } = React.useContext(ConfigContext);
+  const { theme, onThemeMode } = useContext(ConfigContext);
+
   return (
     <div
-      className="resume-page"
+      id="resume-page"
       style={{
         position: "absolute",
         top: 0,
@@ -20,11 +21,25 @@ const Resume = () => {
         width: "100%",
         height: "100%",
         overflowX: "hidden",
-        overflowY: "auto",
-        backgroundColor: onThemeMode === "light_mode" ? "#F4F4F4" : theme?.backgroundColor,
+        overflowY: "hidden",
+        backgroundColor:
+          onThemeMode === "light_mode" ? "#F4F4F4" : theme?.backgroundColor,
       }}
     >
-      <DraftResumeForm />
+      <div
+        className="scrolling-space-v"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 3,
+          width: "calc(100% - 6px)",
+          height: "100%",
+          overflowX: "hidden",
+          overflowY: "scroll",
+        }}
+      >
+        <DraftResumeForm />
+      </div>
       <Header items={["light switch", "user"]} /> <Logo format={"stroke"} />
     </div>
   );
