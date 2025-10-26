@@ -507,12 +507,6 @@ const ContactForm = () => {
     }
   }, [onForm]);
 
-  const form_on_submit = useCallback(() => {
-    if (!check_if_all_text_filled_and_valid()) {
-      return;
-    }
-    move_to_form("education");
-  }, [formData, move_to_form]);
   const check_if_all_text_filled_and_valid = useCallback(() => {
     let is_valid = true;
     let textfield_to_focus = null;
@@ -581,6 +575,14 @@ const ContactForm = () => {
     }
     return is_valid;
   }, [formData]);
+  
+  const form_on_submit = useCallback(() => {
+    if (!check_if_all_text_filled_and_valid()) {
+      return;
+    }
+    move_to_form("education");
+  }, [move_to_form, check_if_all_text_filled_and_valid]);
+
 
   return (
     <div

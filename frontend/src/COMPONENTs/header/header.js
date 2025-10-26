@@ -7,6 +7,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 import { LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import SettingsFragment from "../settings_fragment/settings_fragment";
 
 const default_margin = 30;
 const highlighter_margin_top = 4;
@@ -119,11 +120,13 @@ const Header = ({ items = [] }) => {
     }
     if (item === "user") {
       return (
-        <Icon
-          src="user"
-          color={theme?.font.color || "#21252b"}
-          style={{ width: 18, height: 18 }}
-        />
+        <SettingsFragment>
+          <Icon
+            src="user"
+            color={theme?.font.color || "#21252b"}
+            style={{ width: 18, height: 18 }}
+          />
+        </SettingsFragment>
       );
     }
     return item;
@@ -175,7 +178,9 @@ const Header = ({ items = [] }) => {
                 setNavigateTo("/auth");
               }
             }}
-            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseEnter={() => {
+              setHoveredIndex(index);
+            }}
           >
             {render_item_componet(item)}
           </div>
