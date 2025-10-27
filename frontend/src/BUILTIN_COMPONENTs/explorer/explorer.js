@@ -1,9 +1,4 @@
-import {
-  useState,
-  useContext,
-  createContext,
-  useCallback,
-} from "react";
+import { useState, useContext, createContext, useCallback } from "react";
 
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
@@ -70,7 +65,8 @@ const ExplorerItem = ({ item }) => {
         display: "flex",
         alignItems: "center",
         paddingLeft: item?.style?.paddingLeft || 13,
-        borderRadius: item?.style?.borderRadius || default_explorer_item_border_radius,
+        borderRadius:
+          item?.style?.borderRadius || default_explorer_item_border_radius,
         cursor: "pointer",
         ...item?.style,
         backgroundColor:
@@ -99,7 +95,11 @@ const ExplorerItem = ({ item }) => {
           fontFamily: item?.style?.fontFamily || theme?.font.family || "Jost",
           fontSize: 15,
           color: item?.style?.fontColor || theme?.font.color || "#21252b",
+
           userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          MsUserSelect: "none",
         }}
       >
         {item.label}

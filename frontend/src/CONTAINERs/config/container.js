@@ -30,10 +30,12 @@ const ConfigContainer = ({ children }) => {
   const [availableThemes, setAvailableThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);
   const initialize_theme = useCallback(() => {
-    setOnThemeMode(system_theme);
+    if (syncWithSystemTheme) {
+      setOnThemeMode(system_theme);
+    }
     setAvailableThemes(Object.keys(available_themes));
     setSelectedTheme(Object.keys(available_themes)[0]);
-  }, [system_theme]);
+  }, [system_theme, syncWithSystemTheme]);
   useEffect(() => {
     initialize_theme();
   }, [initialize_theme]);

@@ -6,9 +6,9 @@ import { DataContext } from "../../CONTAINERs/data/context";
 
 import NameCard from "../draft_resume_form/name_card";
 
-const ProfileSectionContext = createContext();
+const ProfilePageContext = createContext();
 
-const ProfileSection = () => {
+const ProfilePage = () => {
   const { userInfo } = useContext(DataContext);
 
   const [formData, setFormData] = useState(null);
@@ -211,7 +211,7 @@ const ProfileSection = () => {
   /* { contact } ----------------------------------------------------------------------------- */
 
   return (
-    <ProfileSectionContext.Provider
+    <ProfilePageContext.Provider
       value={{
         formData,
         resumeOnFocus,
@@ -245,11 +245,11 @@ const ProfileSection = () => {
           height: "100%",
         }}
       >
-        <NameCard context={"profile_section"}/>
+        <NameCard context={"profile_page"} />
       </div>
-    </ProfileSectionContext.Provider>
+    </ProfilePageContext.Provider>
   );
 };
 
-export default ProfileSection;
-export { ProfileSectionContext };
+export default ProfilePage;
+export { ProfilePageContext };

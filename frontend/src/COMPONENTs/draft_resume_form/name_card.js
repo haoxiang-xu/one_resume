@@ -5,7 +5,6 @@ import {
   useEffect,
   useRef,
   createContext,
-  use,
 } from "react";
 
 import satisfied_dark from "../../assets/others/satisfied_dark.png";
@@ -37,7 +36,7 @@ import dayjs from "dayjs";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { DraftResumeFormContext } from "./draft_resume_form";
-import { ProfileSectionContext } from "../settings_fragment/profile_section";
+import { ProfilePageContext } from "../settings_fragment/profile_page";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const NameCardContext = createContext();
@@ -58,11 +57,11 @@ const contactTypeOptions = [
 ];
 const useActiveContext = (context) => {
   const draftResumeFormContext = useContext(DraftResumeFormContext);
-  const profileSectionContext = useContext(ProfileSectionContext);
+  const profilePageContext = useContext(ProfilePageContext);
   if (context === "draft_resume_form") {
     return draftResumeFormContext;
-  } else if (context === "profile_section") {
-    return profileSectionContext;
+  } else if (context === "profile_page") {
+    return profilePageContext;
   }
 };
 
@@ -3163,7 +3162,7 @@ const NameCard = ({ context }) => {
     return () => clearTimeout(timeoutId);
   }, [onEdit]);
   useEffect(() => {
-    if (context === "profile_section") {
+    if (context === "profile_page") {
       setOnEdit("pending");
     }
   }, [context]);
@@ -3186,14 +3185,14 @@ const NameCard = ({ context }) => {
 
               backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
               border:
-                context === "profile_section"
+                context === "profile_page"
                   ? null
                   : onThemeMode === "dark_mode"
                   ? "1px solid rgba(255, 255, 255, 0.16)"
                   : "none",
               borderRadius: "8px",
               boxShadow:
-                context === "profile_section"
+                context === "profile_page"
                   ? null
                   : "0 0px 8px rgba(0, 0, 0, 0.16)",
             }}
@@ -3388,7 +3387,7 @@ const NameCard = ({ context }) => {
         </>
       </NameCardContext.Provider>
     );
-  } else if (context === "profile_section") {
+  } else if (context === "profile_page") {
     return (
       <NameCardContext.Provider value={{ onEdit, setOnEdit, context }}>
         <div

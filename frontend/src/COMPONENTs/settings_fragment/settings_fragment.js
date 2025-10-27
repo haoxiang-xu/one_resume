@@ -9,7 +9,8 @@ import {
 import Dialog from "@mui/material/Dialog";
 import Explorer from "../../BUILTIN_COMPONENTs/explorer/explorer";
 import IconButton from "../../MATERIAL_COMPONENTs/icon_button/icon_button";
-import ProfileSection from "./profile_section";
+import GeneralPage from "./general_page";
+import ProfilePage from "./profile_page";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -28,8 +29,11 @@ const Context = () => {
 
   useEffect(() => {
     switch (selectedKey) {
+      case "general":
+        setComponent(<GeneralPage />);
+        break;
       case "profile":
-        setComponent(<ProfileSection />);
+        setComponent(<ProfilePage />);
         break;
       default:
         setComponent(<div></div>);
