@@ -1,7 +1,7 @@
 import { useState, useContext, Fragment, createContext } from "react";
 
 import Dialog from "@mui/material/Dialog";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import Explorer from "../../BUILTIN_COMPONENTs/explorer/explorer";
 import IconButton from "../../MATERIAL_COMPONENTs/icon_button/icon_button";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -10,46 +10,9 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 const SettingsFragmentContext = createContext();
 
-const SideMenuItem = ({ item }) => {
-  const { theme } = useContext(ConfigContext);
-
-  return (
-    <div
-      key={item.key}
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: "6px",
-        margin: "8px",
-        cursor: "pointer",
-        borderRadius: "10px",
-        // background: theme?.foregroundColor || "#FFFFFF",
-      }}
-    >
-      <Icon
-        src={item.icon}
-        style={{
-          width: 18,
-          height: 18,
-          marginRight: 12,
-        }}
-      />
-      <span
-        style={{
-          fontFamily: "Jost",
-          fontSize: 15,
-          color: theme?.font.color || "#21252b",
-        }}
-      >
-        {item.label}
-      </span>
-    </div>
-  );
-};
 const SideMenu = () => {
   const { onThemeMode } = useContext(ConfigContext);
-  const { handle_dialog_close, side_menu_structure } = useContext(
+  const { handle_dialog_close, side_menu_items, selectedKey, setSelectedKey } = useContext(
     SettingsFragmentContext
   );
 
@@ -76,26 +39,28 @@ const SideMenu = () => {
         }}
         onClick={handle_dialog_close}
       />
-      <div
+      <Explorer
         style={{
           position: "absolute",
           top: 40,
           left: 0,
           width: "100%",
         }}
-      >
-        {side_menu_structure.map((item, index) => (
-          <SideMenuItem key={index} item={item} />
-        ))}
-      </div>
+        items={side_menu_items}
+        selectedKey={selectedKey}
+        setSelectedKey={setSelectedKey}
+      />
     </div>
   );
 };
 
 const SettingsFragment = ({ children }) => {
   const { theme, DialogTransition } = useContext(ConfigContext);
+
   const [open, setOpen] = useState(false);
-  const side_menu_structure = [
+  const [selectedKey, setSelectedKey] = useState(null);
+
+  const side_menu_items = [
     {
       key: "general",
       icon: "settings",
@@ -110,7 +75,7 @@ const SettingsFragment = ({ children }) => {
       key: "account",
       icon: "key",
       label: "Account",
-    }
+    },
   ];
   const handle_dialog_open = () => {
     setOpen(true);
@@ -125,7 +90,9 @@ const SettingsFragment = ({ children }) => {
         open,
         handle_dialog_open,
         handle_dialog_close,
-        side_menu_structure,
+        selectedKey,
+        setSelectedKey,
+        side_menu_items,
       }}
     >
       <Fragment>

@@ -27,21 +27,21 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
       setStyle({
         width: size.width - 18,
         height: size.height - 4,
-        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        opacity: onThemeMode === "dark_mode" ? 1 : 1,
         borderRadius: "32px",
       });
     } else if (hoveredItem === "user") {
       setStyle({
         width: size.width - 8,
         height: size.height + 8,
-        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        opacity: onThemeMode === "dark_mode" ? 1 : 1,
         borderRadius: "32px",
       });
     } else {
       setStyle({
         width: size.width,
         height: size.height,
-        opacity: onThemeMode === "dark_mode" ? 0.16 : 0.16,
+        opacity: onThemeMode === "dark_mode" ? 1 : 1,
         borderRadius: "8px",
       });
     }
@@ -57,7 +57,9 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
         left: position.left,
         width: style.width,
         height: style.height,
-        backgroundColor: onThemeMode === "dark_mode" ? "#ffffff" : "#000000",
+        backgroundColor:
+          onThemeMode === "dark_mode" ? "#ffffff27" : "#00000027",
+        backdropFilter: "blur(24px)",
         opacity:
           hoveredIndex === null || hoveredIndex === undefined
             ? 0
@@ -143,6 +145,12 @@ const Header = ({ items = [] }) => {
         height: "60px",
       }}
     >
+      <HoverHighlightor
+        hoveredItem={items[hoveredIndex]}
+        hoveredIndex={hoveredIndex}
+        position={highlightPosition}
+        size={highlightSize}
+      />
       <div
         className="top-menu-items"
         style={{
@@ -186,12 +194,6 @@ const Header = ({ items = [] }) => {
           </div>
         ))}
       </div>
-      <HoverHighlightor
-        hoveredItem={items[hoveredIndex]}
-        hoveredIndex={hoveredIndex}
-        position={highlightPosition}
-        size={highlightSize}
-      />
       {navigateTo && <Navigate to={navigateTo} />}
     </div>
   );
