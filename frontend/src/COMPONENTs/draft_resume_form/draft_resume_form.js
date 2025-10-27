@@ -142,7 +142,7 @@ const FormStepper = ({ containerWidth }) => {
               height: "100%",
             }}
           >
-            <NameCard />
+            <NameCard context={"draft_resume_form"} />
           </div>
         );
       }, 160);

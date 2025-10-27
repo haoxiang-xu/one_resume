@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   createContext,
+  use,
 } from "react";
 
 import satisfied_dark from "../../assets/others/satisfied_dark.png";
@@ -36,6 +37,7 @@ import dayjs from "dayjs";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { DraftResumeFormContext } from "./draft_resume_form";
+import { ProfileSectionContext } from "../settings_fragment/profile_section";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const NameCardContext = createContext();
@@ -54,6 +56,15 @@ const contactTypeOptions = [
   { value: "portfolio", label: "Portfolio", icon: "passport" },
   { value: "other", label: "Other", icon: "link" },
 ];
+const useActiveContext = (context) => {
+  const draftResumeFormContext = useContext(DraftResumeFormContext);
+  const profileSectionContext = useContext(ProfileSectionContext);
+  if (context === "draft_resume_form") {
+    return draftResumeFormContext;
+  } else if (context === "profile_section") {
+    return profileSectionContext;
+  }
+};
 
 const DeleteConfirmDialog = ({
   title,
@@ -267,13 +278,13 @@ const MonthRangePicker = ({ startDate, endDate, setStartDate, setEndDate }) => {
 };
 const ContactInfoTag = ({ index, icon, text, type, value }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
   const {
     update_cell,
     update_email,
     delete_contact_extra_row,
     update_contact_extra_row,
-  } = useContext(DraftResumeFormContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
+  } = useActiveContext(context);
 
   const [newContact, setNewContact] = useState({
     type: type,
@@ -1084,10 +1095,8 @@ const ContactInfoTag = ({ index, icon, text, type, value }) => {
 };
 const ContactSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { formData, add_contact_extra_row } = useContext(
-    DraftResumeFormContext
-  );
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
+  const { formData, add_contact_extra_row } = useActiveContext(context);
   const [error, setError] = useState({
     newContact: { status: false, msg: "" },
   });
@@ -1403,9 +1412,9 @@ const ContactSection = () => {
 };
 const EducationEditTag = ({ index }) => {
   const { theme } = useContext(ConfigContext);
+  const { setOnEdit, context } = useContext(NameCardContext);
   const { get_education_row, edit_education_row, add_education_row } =
-    useContext(DraftResumeFormContext);
-  const { setOnEdit } = useContext(NameCardContext);
+    useActiveContext(context);
   const [style, setStyle] = useState({
     height: 0,
   });
@@ -1797,8 +1806,9 @@ const EducationTag = ({
   endDate,
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { delete_education_row } = useContext(DraftResumeFormContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
+  const { delete_education_row } = useActiveContext(context);
+
   const [onHover, setOnHover] = useState(false);
   const [onEditing, setOnEditing] = useState(false);
   const [style, setStyle] = useState({
@@ -2195,8 +2205,8 @@ const EducationTag = ({
 };
 const EducationSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { formData } = useContext(DraftResumeFormContext);
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
+  const { formData } = useActiveContext(context);
 
   return (
     <div
@@ -2292,9 +2302,10 @@ const EducationSection = () => {
   );
 };
 const ExperienceEditTag = ({ index }) => {
+  const { setOnEdit, context } = useContext(NameCardContext);
   const { get_experience_row, add_experience_row, edit_experience_row } =
-    useContext(DraftResumeFormContext);
-  const { setOnEdit } = useContext(NameCardContext);
+    useActiveContext(context);
+
   const [style, setStyle] = useState({
     height: 0,
   });
@@ -2603,10 +2614,9 @@ const ExperienceEditTag = ({ index }) => {
 };
 const ExperienceTag = ({ icon, index, text, item }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { get_experience_row, delete_experience_row } = useContext(
-    DraftResumeFormContext
-  );
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
+  const { get_experience_row, delete_experience_row } =
+    useActiveContext(context);
   const [experience, setExperience] = useState({});
   const [onEditing, setOnEditing] = useState(false);
   const [onHover, setOnHover] = useState(false);
@@ -3024,8 +3034,8 @@ const ExperienceTag = ({ icon, index, text, item }) => {
 };
 const ExperienceSection = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
-  const { onEdit, setOnEdit } = useContext(NameCardContext);
-  const { formData } = useContext(DraftResumeFormContext);
+  const { onEdit, setOnEdit, context } = useContext(NameCardContext);
+  const { formData } = useActiveContext(context);
   return (
     <div
       className="experience-section"
@@ -3114,9 +3124,9 @@ const ExperienceSection = () => {
     </div>
   );
 };
-const NameCard = () => {
+const NameCard = ({ context }) => {
   const { theme, onThemeMode, DialogTransition } = useContext(ConfigContext);
-  const { formData } = useContext(DraftResumeFormContext);
+  const { formData } = useActiveContext(context);
   const [onEdit, setOnEdit] = useState("none");
   const nameCardRef = useRef(null);
   const editDialogRef = useRef(null);
@@ -3129,9 +3139,7 @@ const NameCard = () => {
       if (!container) {
         return false;
       }
-      const target = container.querySelector(
-        `[data-on-edit-key="${onEdit}"]`
-      );
+      const target = container.querySelector(`[data-on-edit-key="${onEdit}"]`);
       if (target) {
         target.scrollIntoView({
           behavior: "smooth",
@@ -3154,10 +3162,235 @@ const NameCard = () => {
     }, 240);
     return () => clearTimeout(timeoutId);
   }, [onEdit]);
+  useEffect(() => {
+    if (context === "profile_section") {
+      setOnEdit("pending");
+    }
+  }, [context]);
 
-  return (
-    <NameCardContext.Provider value={{ onEdit, setOnEdit }}>
-      <>
+  if (context === "draft_resume_form") {
+    return (
+      <NameCardContext.Provider value={{ onEdit, setOnEdit, context }}>
+        <>
+          <div
+            style={{
+              transition: "all 0.2s ease",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              transform: "none",
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              zIndex: 0,
+
+              backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
+              border:
+                context === "profile_section"
+                  ? null
+                  : onThemeMode === "dark_mode"
+                  ? "1px solid rgba(255, 255, 255, 0.16)"
+                  : "none",
+              borderRadius: "8px",
+              boxShadow:
+                context === "profile_section"
+                  ? null
+                  : "0 0px 8px rgba(0, 0, 0, 0.16)",
+            }}
+          >
+            <div
+              className="scrolling-space-v"
+              ref={nameCardRef}
+              style={{
+                position: "absolute",
+                top: "8px",
+                left: "8px",
+                width: "calc(100% - 16px)",
+                height: "calc(100% - 16px)",
+                overflowX: "hidden",
+                overflowY: "scroll",
+              }}
+            >
+              <img
+                src={
+                  onThemeMode === "dark_mode" ? satisfied_light : satisfied_dark
+                }
+                alt="satisfied"
+                draggable="false"
+                style={{
+                  position: "absolute",
+                  top: "6px",
+                  left: "6px",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+
+                  pointerEvents: "none",
+
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                  MozUserSelect: "none",
+                  MsUserSelect: "none",
+                }}
+              />
+              <span
+                className="name-card-name-title"
+                style={{
+                  position: "relative",
+                  marginLeft: "50px",
+                  fontFamily: "Jost",
+                  fontSize: "32px",
+                  color: theme ? theme.font.color : "#000000",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                  MozUserSelect: "none",
+                  MsUserSelect: "none",
+                }}
+              >
+                {formData?.first_name} {formData?.last_name}
+              </span>
+              {onEdit === "none" ? (
+                <>
+                  <ContactSection />
+                  <EducationSection />
+                  <ExperienceSection />
+                </>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    width: "100%",
+                  }}
+                >
+                  <Skeleton variant="rounded" animation="wave" height={160} />
+                  <Skeleton variant="rounded" animation="wave" height={20} />
+                  <Skeleton variant="rounded" animation="wave" height={20} />
+                </Box>
+              )}
+            </div>
+          </div>
+          <Dialog
+            open={onEdit !== "none"}
+            onClose={() => {
+              setOnEdit("none");
+            }}
+            slots={{
+              transition: DialogTransition,
+            }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            PaperProps={{
+              sx: {
+                height: "792px",
+                width: "490px",
+                borderRadius: "10px",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              },
+            }}
+            onClick={(e) => {
+              // setOnEdit("pending");
+            }}
+          >
+            <DialogContent>
+              <div
+                style={{
+                  transition: "all 0.2s ease",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  transform: "none",
+                  width: "100%",
+                  height: "100%",
+                  overflow: "hidden",
+                  zIndex: 0,
+
+                  backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
+                  border:
+                    onThemeMode === "dark_mode"
+                      ? "1px solid rgba(255, 255, 255, 0.16)"
+                      : "none",
+                  borderRadius: "10px",
+                  boxShadow: "0 0px 8px rgba(0, 0, 0, 0.16)",
+                }}
+              >
+                <div
+                  className="scrolling-space-v"
+                  ref={editDialogRef}
+                  style={{
+                    position: "absolute",
+                    top: "8px",
+                    left: "8px",
+                    width: "calc(100% - 16px)",
+                    height: "calc(100% - 16px)",
+                    overflowX: "hidden",
+                    overflowY: "scroll",
+                  }}
+                >
+                  <img
+                    src={
+                      onThemeMode === "dark_mode"
+                        ? satisfied_light
+                        : satisfied_dark
+                    }
+                    alt="satisfied"
+                    draggable="false"
+                    style={{
+                      position: "absolute",
+                      top: "6px",
+                      left: "6px",
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+
+                      pointerEvents: "none",
+
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      MsUserSelect: "none",
+                    }}
+                  />
+                  <span
+                    className="name-card-name-title"
+                    style={{
+                      position: "relative",
+                      marginLeft: "50px",
+                      fontFamily: "Jost",
+                      fontSize: "32px",
+                      color: theme ? theme.font.color : "#000000",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      MsUserSelect: "none",
+                    }}
+                  >
+                    {formData?.first_name} {formData?.last_name}
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                    }}
+                  >
+                    <ContactSection />
+                    <EducationSection />
+                    <ExperienceSection />
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      </NameCardContext.Provider>
+    );
+  } else if (context === "profile_section") {
+    return (
+      <NameCardContext.Provider value={{ onEdit, setOnEdit, context }}>
         <div
           style={{
             transition: "all 0.2s ease",
@@ -3171,17 +3404,11 @@ const NameCard = () => {
             zIndex: 0,
 
             backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
-            border:
-              onThemeMode === "dark_mode"
-                ? "1px solid rgba(255, 255, 255, 0.16)"
-                : "none",
-            borderRadius: "8px",
-            boxShadow: "0 0px 8px rgba(0, 0, 0, 0.16)",
           }}
         >
           <div
             className="scrolling-space-v"
-            ref={nameCardRef}
+            ref={editDialogRef}
             style={{
               position: "absolute",
               top: "8px",
@@ -3231,144 +3458,23 @@ const NameCard = () => {
             >
               {formData?.first_name} {formData?.last_name}
             </span>
-            {onEdit === "none" ? (
-              <>
-                <ContactSection />
-                <EducationSection />
-                <ExperienceSection />
-              </>
-            ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "4px",
-                  width: "100%",
-                }}
-              >
-                <Skeleton variant="rounded" animation="wave" height={160} />
-                <Skeleton variant="rounded" animation="wave" height={20} />
-                <Skeleton variant="rounded" animation="wave" height={20} />
-              </Box>
-            )}
-          </div>
-        </div>
-        <Dialog
-          open={onEdit !== "none"}
-          onClose={() => {
-            setOnEdit("none");
-          }}
-          slots={{
-            transition: DialogTransition,
-          }}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          PaperProps={{
-            sx: {
-              height: "792px",
-              width: "490px",
-              borderRadius: "10px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            },
-          }}
-          onClick={(e) => {
-            // setOnEdit("pending");
-          }}
-        >
-          <DialogContent>
             <div
               style={{
-                transition: "all 0.2s ease",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                transform: "none",
-                width: "100%",
-                height: "100%",
-                overflow: "hidden",
-                zIndex: 0,
-
-                backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
-                border:
-                  onThemeMode === "dark_mode"
-                    ? "1px solid rgba(255, 255, 255, 0.16)"
-                    : "none",
-                borderRadius: "8px",
-                boxShadow: "0 0px 8px rgba(0, 0, 0, 0.16)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "2px",
               }}
             >
-              <div
-                className="scrolling-space-v"
-                ref={editDialogRef}
-                style={{
-                  position: "absolute",
-                  top: "8px",
-                  left: "8px",
-                  width: "calc(100% - 16px)",
-                  height: "calc(100% - 16px)",
-                  overflowX: "hidden",
-                  overflowY: "scroll",
-                }}
-              >
-                <img
-                  src={
-                    onThemeMode === "dark_mode"
-                      ? satisfied_light
-                      : satisfied_dark
-                  }
-                  alt="satisfied"
-                  draggable="false"
-                  style={{
-                    position: "absolute",
-                    top: "6px",
-                    left: "6px",
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "50%",
-
-                    pointerEvents: "none",
-
-                    userSelect: "none",
-                    WebkitUserSelect: "none",
-                    MozUserSelect: "none",
-                    MsUserSelect: "none",
-                  }}
-                />
-                <span
-                  className="name-card-name-title"
-                  style={{
-                    position: "relative",
-                    marginLeft: "50px",
-                    fontFamily: "Jost",
-                    fontSize: "32px",
-                    color: theme ? theme.font.color : "#000000",
-                    pointerEvents: "none",
-                    userSelect: "none",
-                    WebkitUserSelect: "none",
-                    MozUserSelect: "none",
-                    MsUserSelect: "none",
-                  }}
-                >
-                  {formData?.first_name} {formData?.last_name}
-                </span>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2px",
-                  }}
-                >
-                  <ContactSection />
-                  <EducationSection />
-                  <ExperienceSection />
-                </div>
-              </div>
+              <ContactSection />
+              <EducationSection />
+              <ExperienceSection />
             </div>
-          </DialogContent>
-        </Dialog>
-      </>
-    </NameCardContext.Provider>
-  );
+          </div>
+        </div>
+      </NameCardContext.Provider>
+    );
+  }
+  return null;
 };
 
 export default NameCard;

@@ -14,7 +14,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 const ExplorerContext = createContext();
 
 const default_explorer_item_height = 36;
-const default_explorer_item_border_radius = 9;
+const default_explorer_item_border_radius = 6;
 
 const HoverHighlightor = () => {
   const { onThemeMode } = useContext(ConfigContext);
