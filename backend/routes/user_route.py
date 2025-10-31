@@ -43,6 +43,12 @@ def update_user_info():
         client = MongoClient(os.getenv("MONGODB_URL"))
         database = client["one_resume_db"]
         user_info_collection = database["user_info"]
+        
+        # No user found check
+        user_info = user_info_collection.find_one({"_id": user_id})
+        if not user_info:
+            client.close()
+            return jsonify({'message': 'User not found!'}), 404
 
         # Get the updated user info from the request
         updated_info = request.json
@@ -51,10 +57,7 @@ def update_user_info():
             return jsonify({'message': 'No data provided'}), 400
 
         # Update the user info in the database
-        result = user_info_collection.update_one({"_id": user_id}, {"$set": updated_info})
-        if result.modified_count == 0:
-            client.close()
-            return jsonify({'message': 'No changes made'}), 400
+        user_info_collection.update_one({"_id": user_id}, {"$set": updated_info})
 
         client.close()
         return jsonify({'message': 'User info updated successfully'}), 200

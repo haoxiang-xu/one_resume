@@ -282,6 +282,23 @@ const RequestContainer = ({ children }) => {
 
     return payload;
   };
+  const update_user_info = async (data) => {
+    try {
+      const res = await fetch(`${root_url}api/user/update_user_info`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload.message || "Unknown server error");
+      }
+      return payload;
+    } catch (err) {
+      alert("error", "Failed to update user info");
+    }
+  };
 
   return (
     <RequestContext.Provider
@@ -291,6 +308,7 @@ const RequestContainer = ({ children }) => {
         auth,
         forgot_password,
         get_user_info,
+        update_user_info,
       }}
     >
       {children}

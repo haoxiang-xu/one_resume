@@ -376,7 +376,6 @@ const DraftResumeForm = () => {
   React.useEffect(() => {
     if (userInfo) {
       setFormData(userInfo);
-      console.log(userInfo);
     }
   }, [userInfo]);
   React.useEffect(() => {

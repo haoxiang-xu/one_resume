@@ -2,6 +2,7 @@ import { useContext, useState, useEffect, createContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { DataContext } from "../../CONTAINERs/data/context";
+import { RequestContext } from "../../CONTAINERs/request/container";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 import NameCard from "../draft_resume_form/name_card";
@@ -10,6 +11,7 @@ const ProfilePageContext = createContext();
 
 const ProfilePage = () => {
   const { userInfo } = useContext(DataContext);
+  const { update_user_info } = useContext(RequestContext);
 
   const [formData, setFormData] = useState(null);
   const [resumeOnFocus, setResumeOnFocus] = useState(false);
@@ -23,59 +25,75 @@ const ProfilePage = () => {
 
   /* { contact } ----------------------------------------------------------------------------- */
   const update_cell = (value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      contact: {
-        ...prevData.contact,
-        cell: value,
-      },
-    }));
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          cell: value,
+        },
+      };
+      update_user_info(newFormData);
+      return newFormData;
+    });
   };
   const update_email = (value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      contact: {
-        ...prevData.contact,
-        email: value,
-      },
-    }));
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          email: value,
+        },
+      };
+      update_user_info(newFormData);
+      return newFormData;
+    });
   };
   const add_contact_extra_row = (type, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      contact: {
-        ...prevData.contact,
-        extra: [
-          ...prevData.contact.extra,
-          { contact_type: type, contact_value: value },
-        ],
-      },
-    }));
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          extra: [
+            ...prevData.contact.extra,
+            { contact_type: type, contact_value: value },
+          ],
+        },
+      };
+      update_user_info(newFormData);
+      return newFormData;
+    });
   };
   const update_contact_extra_row = (index, type, value) => {
     setFormData((prevData) => {
       const newExtra = [...prevData.contact.extra];
       newExtra[index] = { contact_type: type, contact_value: value };
-      return {
+      const newFormData = {
         ...prevData,
         contact: {
           ...prevData.contact,
           extra: newExtra,
         },
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   const delete_contact_extra_row = (index) => {
     setFormData((prevData) => {
       const newExtra = [...prevData.contact.extra];
       newExtra.splice(index, 1);
-      return {
+      const newFormData = {
         ...prevData,
         contact: {
           ...prevData.contact,
           extra: newExtra,
         },
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   const get_education_row = (index) => {
@@ -93,20 +111,24 @@ const ProfilePage = () => {
     startDate,
     endDate
   ) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      education: [
-        ...prevData.education,
-        {
-          degree: degree || "",
-          gpa_grade: gpa_grade || "",
-          institution: institution || "",
-          specialization: specialization || "",
-          startDate: startDate || null,
-          endDate: endDate || null,
-        },
-      ],
-    }));
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        education: [
+          ...prevData.education,
+          {
+            degree: degree || "",
+            gpa_grade: gpa_grade || "",
+            institution: institution || "",
+            specialization: specialization || "",
+            startDate: startDate || null,
+            endDate: endDate || null,
+          },
+        ],
+      };
+      update_user_info(newFormData);
+      return newFormData;
+    });
   };
   const edit_education_row = (
     index,
@@ -127,20 +149,24 @@ const ProfilePage = () => {
         startDate: startDate || null,
         endDate: endDate || null,
       };
-      return {
+      const newFormData = {
         ...prevData,
         education: newEducation,
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   const delete_education_row = (index) => {
     setFormData((prevData) => {
       const newEducation = [...prevData.education];
       newEducation.splice(index, 1);
-      return {
+      const newFormData = {
         ...prevData,
         education: newEducation,
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   const get_experience_row = (index) => {
@@ -158,20 +184,24 @@ const ProfilePage = () => {
     startDate,
     endDate
   ) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      experience: [
-        ...prevData.experience,
-        {
-          company: company || "",
-          role: role || "",
-          location: location || "",
-          description: description || "",
-          startDate: startDate || null,
-          endDate: endDate || null,
-        },
-      ],
-    }));
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        experience: [
+          ...prevData.experience,
+          {
+            company: company || "",
+            role: role || "",
+            location: location || "",
+            description: description || "",
+            startDate: startDate || null,
+            endDate: endDate || null,
+          },
+        ],
+      };
+      update_user_info(newFormData);
+      return newFormData;
+    });
   };
   const edit_experience_row = (
     index,
@@ -192,20 +222,24 @@ const ProfilePage = () => {
         startDate: startDate || null,
         endDate: endDate || null,
       };
-      return {
+      const newFormData = {
         ...prevData,
         experience: newExperience,
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   const delete_experience_row = (index) => {
     setFormData((prevData) => {
       const newExperience = [...prevData.experience];
       newExperience.splice(index, 1);
-      return {
+      const newFormData = {
         ...prevData,
         experience: newExperience,
       };
+      update_user_info(newFormData);
+      return newFormData;
     });
   };
   /* { contact } ----------------------------------------------------------------------------- */

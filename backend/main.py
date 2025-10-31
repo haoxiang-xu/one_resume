@@ -25,7 +25,7 @@ app = Flask(__name__)
 CORS(
     app,
     supports_credentials=True,               # 允许携带 Cookie
-    methods=["GET", "POST", "OPTIONS"],
+    methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"]
 )
 load_dotenv()
