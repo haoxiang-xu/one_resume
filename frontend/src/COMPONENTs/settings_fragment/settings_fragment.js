@@ -14,6 +14,7 @@ import ProfilePage from "./profile_page";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
+import Icon from "@mui/material/Icon";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const SettingsFragmentContext = createContext();
@@ -87,12 +88,29 @@ const SideMenu = () => {
         style={{
           position: "absolute",
           top: 44,
+          bottom: 44,
           left: 0,
+          overflowY: "auto",
           width: "100%",
         }}
         items={side_menu_items}
         selectedKey={selectedKey}
         setSelectedKey={setSelectedKey}
+      />
+      <IconButton
+        src="logout"
+        style={{
+          position: "absolute",
+          bottom: 6,
+          left: 6,
+          icon: {
+            width: 19,
+            height: 19,
+          }
+        }}
+        color="error"
+        prefixLabel={"logout"}
+        onClick={handle_dialog_close}
       />
     </div>
   );

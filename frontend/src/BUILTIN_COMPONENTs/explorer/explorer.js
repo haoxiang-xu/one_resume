@@ -149,6 +149,7 @@ const Explorer = ({ items, selectedKey, setSelectedKey, ...props }) => {
       }}
     >
       <div
+        className="scrolling-space-v"
         style={{
           ...props.style,
         }}

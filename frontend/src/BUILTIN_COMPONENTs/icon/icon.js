@@ -12,7 +12,7 @@ const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
 
   const [component, setComponent] = useState(
-    <div className="mini-ui-img-icon placeholder" {...props} />
+    <div className="mini-ui-img-icon" {...props} />
   );
 
   const fetch_icon = useCallback(async () => {
