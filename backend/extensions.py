@@ -4,11 +4,12 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import wraps
 
-# Shared rate limiter instance used across blueprints.
+# { rate limiting } -------------------------------------------------------------------------------------------------------------------------------------- #
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["100 per hour"],
 )
+# { rate limiting } -------------------------------------------------------------------------------------------------------------------------------------- #
 
 # { authentication } ------------------------------------------------------------------------------------------------------------------------------------- #
 def require_auth(f):
