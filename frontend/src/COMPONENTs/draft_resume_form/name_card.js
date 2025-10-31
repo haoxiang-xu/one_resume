@@ -155,6 +155,7 @@ const DeleteConfirmDialog = ({
             color="error"
             onClick={() => {
               onConfirm();
+              handle_dialog_close();
             }}
             autoFocus
             sx={{
