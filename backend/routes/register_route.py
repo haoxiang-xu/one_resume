@@ -5,7 +5,7 @@ import os
 
 from extensions import limiter
 
-register_blueprint = Blueprint('auth', __name__, url_prefix='/api/register')
+register_blueprint = Blueprint('register', __name__, url_prefix='/api/register')
 
 # { registering } ---------------------------------------------------------------------------------------------------------------------------------------- #
 
