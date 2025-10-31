@@ -8,7 +8,6 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, jsonify, request, make_response, current_app as app, g
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from extensions import limiter
 
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/api/auth')

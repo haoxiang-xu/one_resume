@@ -9,7 +9,6 @@ from flask_cors import CORS
 from flask_limiter.errors import RateLimitExceeded
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from functools import wraps
 import requests
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
@@ -18,6 +17,7 @@ from urllib.parse import urlencode
 from extensions import limiter
 from routes.register_route import register_blueprint
 from routes.auth_route import auth_blueprint
+from routes.user_route import user_blueprint
 
 FRONTEND_ORIGIN = os.getenv("FRONTEND_URL", "http://localhost:2907")
 
@@ -34,6 +34,7 @@ limiter.init_app(app)
 
 app.register_blueprint(register_blueprint)
 app.register_blueprint(auth_blueprint)
+app.register_blueprint(user_blueprint)
 
 # Email configuration
 app.config['SMTP_EMAIL'] = "lance924852785@gmail.com"
@@ -51,58 +52,6 @@ app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 app.config['GOOGLE_REDIRECT_URI'] = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:8888/api/auth/google/callback')
 app.config['FRONTEND_ENDPOINT'] = os.getenv('FRONTEND_URL')
-
-# { authentication } ------------------------------------------------------------------------------------------------------------------------------------- #
-def require_auth(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        # Let CORS pre‑flight (OPTIONS) requests through unchallenged
-        if request.method == "OPTIONS":
-            return f(*args, **kwargs)
-
-        token = request.cookies.get(app.config["JWT_COOKIE_NAME"])
-        if not token:
-            return jsonify({'message': 'unauth'}), 401
-        try:
-            payload = jwt.decode(token,
-                                 app.config['JWT_SECRET_KEY'],
-                                 algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'message': 'invalid token'}), 401
-
-        g.current_user = payload         # store for the downstream route
-        return f(*args, **kwargs)
-    return wrapper
-# { authentication } ------------------------------------------------------------------------------------------------------------------------------------- #
-
-# { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
-@app.route("/api/user/get_user_info", methods=["GET"])
-@limiter.limit("60 per minute")
-@require_auth
-def get_user_info():
-    try:
-        user_id = g.current_user['user_id']
-        client = MongoClient(os.getenv("MONGODB_URL"))
-        database = client["one_resume_db"]
-        user_info_collection = database["user_info"]
-
-        user_info = user_info_collection.find_one({"_id": user_id})
-
-        if not user_info:
-            client.close()
-            return jsonify({'message': 'User not found!'}), 404
-        
-        user_info["_id"] = str(user_info["_id"])
-        user_info.pop('password', None)
-        
-        client.close()
-        
-        return jsonify(user_info), 200
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
-# { data retrieving } ------------------------------------------------------------------------------------------------------------------------------------ #
 
 # { google login } ---------------------------------------------------------------------------------------------------------------------------------------- #
 @app.route('/api/auth/google/login', methods=['GET'])

@@ -1,8 +1,7 @@
+import os
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
-import os
-
 from extensions import limiter
 
 register_blueprint = Blueprint('register', __name__, url_prefix='/api/register')
