@@ -7,6 +7,7 @@ const default_icon_button_size = {
   height: 32,
 };
 const default_border_radius = "6px";
+const default_font_size = "14px";
 
 const IconButton = ({
   src,
@@ -36,7 +37,11 @@ const IconButton = ({
             padding: style?.padding || "4px 8px 4px 8px",
             mt: 1,
             borderRadius: style?.borderRadius || default_border_radius,
+
             textTransform: "none",
+            fontFamily: style?.fontFamily ? style.fontFamily : "inherit",
+            fontSize: style?.fontSize ? style.fontSize : default_font_size,
+            fontWeight: style?.fontWeight ? style.fontWeight : "inherit",
           }}
           color={color ? color : "inherit"}
           aria-label={ariaLabel ? ariaLabel : "icon button"}
@@ -80,7 +85,11 @@ const IconButton = ({
             padding: style?.padding || "4px 8px 4px 8px",
             mt: 1,
             borderRadius: style?.borderRadius || default_border_radius,
+
             textTransform: "none",
+            fontFamily: style?.fontFamily ? style.fontFamily : "inherit",
+            fontSize: style?.fontSize ? style.fontSize : default_font_size,
+            fontWeight: style?.fontWeight ? style.fontWeight : "inherit",
           }}
           color={color ? color : "inherit"}
           aria-label={ariaLabel ? ariaLabel : "icon button"}

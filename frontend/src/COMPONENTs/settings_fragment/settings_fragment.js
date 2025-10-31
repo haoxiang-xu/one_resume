@@ -14,7 +14,6 @@ import ProfilePage from "./profile_page";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
-import Icon from "@mui/material/Icon";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const SettingsFragmentContext = createContext();
@@ -103,10 +102,11 @@ const SideMenu = () => {
           position: "absolute",
           bottom: 6,
           left: 6,
+          fontFamily: "Jost",
           icon: {
-            width: 19,
-            height: 19,
-          }
+            width: 18,
+            height: 18,
+          },
         }}
         color="error"
         prefixLabel={"logout"}
