@@ -1,8 +1,20 @@
-import { styled } from "@mui/joy";
+import { useContext } from "react";
+
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+import { ConfigContext } from "../../CONTAINERs/config/context";
+/* { Contexts } -------------------------------------------------------------------------------------------------------------- */
+
 import ConfigPanel from "../../JOY_COMPONENTs/config_panel/config_panel";
 import { Select } from "../../JOY_COMPONENTs/config_panel/config_panel";
 
 const GeneralPage = () => {
+  const {
+    onThemeMode,
+    setOnThemeMode,
+    syncWithSystemTheme,
+    setSyncWithSystemTheme,
+  } = useContext(ConfigContext);
+
   return (
     <div
       style={{
@@ -20,11 +32,20 @@ const GeneralPage = () => {
             label: "system theme",
             component: Select,
             props: {
-              defaultValue: "sync with system",
+              defaultValue: "sync_with_browser",
+              value: syncWithSystemTheme ? "sync_with_browser" : onThemeMode,
+              onchange: (event, value) => {
+                if (value === "sync_with_browser") {
+                  setSyncWithSystemTheme(true);
+                } else {
+                  setSyncWithSystemTheme(false);
+                  setOnThemeMode(value);
+                }
+              },
               options: [
                 { value: "light_mode", label: "Light mode" },
                 { value: "dark_mode", label: "Dark mode" },
-                { value: "sync_with_system", label: "Sync with system" },
+                { value: "sync_with_browser", label: "Sync with browser" },
               ],
             },
             style: {

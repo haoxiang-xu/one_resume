@@ -64,7 +64,9 @@ const ConfigPanelSelect = ({ label, props = {}, style }) => {
         {label || "Select"}
       </span>
       <Select
+        value={props.value || ""}
         defaultValue={props.defaultValue ?? ""}
+        onChange={props.onchange || (() => {})}
         placeholder={props.placeholder || "Select an option"}
         indicator={<KeyboardArrowDown />}
         sx={{
