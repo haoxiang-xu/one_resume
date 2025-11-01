@@ -1,3 +1,7 @@
+import { styled } from "@mui/joy";
+import ConfigPanel from "../../JOY_COMPONENTs/config_panel/config_panel";
+import { Select } from "../../JOY_COMPONENTs/config_panel/config_panel";
+
 const GeneralPage = () => {
   return (
     <div
@@ -9,22 +13,28 @@ const GeneralPage = () => {
         width: "100%",
       }}
     >
-      <span
-        style={{
-          position: "absolute",
-          top: 8,
-          left: 16,
-          fontSize: 32,
-          fontFamily: "Jost",
-
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          MsUserSelect: "none",
-        }}
-      >
-        General
-      </span>
+      <ConfigPanel
+        title="General"
+        structure={[
+          {
+            label: "system theme",
+            component: Select,
+            props: {
+              defaultValue: "sync with system",
+              options: [
+                { value: "light_mode", label: "Light mode" },
+                { value: "dark_mode", label: "Dark mode" },
+                { value: "sync_with_system", label: "Sync with system" },
+              ],
+            },
+            style: {
+              fontFamily: "Jost",
+              fontSize: 16,
+            },
+          },
+        ]}
+      />
+      <div></div>
     </div>
   );
 };
