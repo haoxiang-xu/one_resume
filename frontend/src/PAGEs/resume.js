@@ -22,7 +22,7 @@ const Resume = () => {
   };
 
   useEffect(() => {
-    if (scrollPosition > 20) {
+    if (scrollPosition > 50) {
       setHeaderStyle({
         height: "100%",
         backdropFilter: "saturate(180%) blur(36px)",
