@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 
 import Header from "../COMPONENTs/header/header";
 import Logo from "../COMPONENTs/logo/logo";
@@ -6,10 +6,49 @@ import DraftResumeForm from "../COMPONENTs/draft_resume_form/draft_resume_form";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
+import { boxClasses } from "@mui/joy";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const Resume = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
+  const pageRef = useRef(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [headerStyle, setHeaderStyle] = useState({});
+
+  const handleScroll = () => {
+    if (pageRef.current) {
+      setScrollPosition(pageRef.current.scrollTop);
+    }
+  };
+
+  useEffect(() => {
+    if (scrollPosition > 20) {
+      setHeaderStyle({
+        height: "100%",
+        backdropFilter: "saturate(180%) blur(36px)",
+        borderBottom:
+          onThemeMode === "light_mode"
+            ? "1px solid rgba(0, 0, 0, 0.16)"
+            : "1px solid rgba(255, 255, 255, 0.16)",
+        boxShadow:
+          onThemeMode === "light_mode"
+            ? "0 8px 32px 0 rgba(18, 18, 18, 0.1)"
+            : "0 8px 32px 0 rgba(31, 38, 135, 0.25)",
+        backgroundColor:
+          onThemeMode === "light_mode"
+            ? "rgba(255, 255, 255, 0.5)"
+            : "rgba(18, 18, 18, 0.9)",
+        transition: "all 0.32s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+      });
+    } else {
+      setHeaderStyle({
+        height: "0%",
+        backdropFilter: "none",
+        backgroundColor: "transparent",
+        transition: "all 0.32s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+      });
+    }
+  }, [onThemeMode, scrollPosition]);
 
   return (
     <div
@@ -28,6 +67,7 @@ const Resume = () => {
     >
       <div
         className="scrolling-space-v"
+        ref={pageRef}
         style={{
           position: "absolute",
           top: 0,
@@ -37,10 +77,12 @@ const Resume = () => {
           overflowX: "hidden",
           overflowY: "scroll",
         }}
+        onScroll={handleScroll}
       >
         <DraftResumeForm />
       </div>
-      <Header items={["light switch", "user"]} /> <Logo format={"stroke"} />
+      <Header items={["light switch", "user"]} style={headerStyle} />
+      <Logo format={"stroke"} />
     </div>
   );
 };

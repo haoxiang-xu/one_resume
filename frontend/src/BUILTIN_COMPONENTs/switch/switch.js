@@ -218,7 +218,8 @@ const LightSwitch = ({ style }) => {
     }),
     []
   );
-  const { onThemeMode, setOnThemeMode } = useContext(ConfigContext);
+  const { onThemeMode, setOnThemeMode, setSyncWithSystemTheme } =
+    useContext(ConfigContext);
 
   const preprocess_style = useCallback(() => {
     let reprocessed_style = { ...style };
@@ -237,6 +238,7 @@ const LightSwitch = ({ style }) => {
       off_icon_src="moon"
       on={onThemeMode === "light_mode"}
       setOn={() => {
+        setSyncWithSystemTheme(false);
         setOnThemeMode(
           onThemeMode === "dark_mode" ? "light_mode" : "dark_mode"
         );

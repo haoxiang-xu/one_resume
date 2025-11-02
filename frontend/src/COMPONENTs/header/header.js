@@ -58,7 +58,7 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
         width: style.width,
         height: style.height,
         backgroundColor:
-          onThemeMode === "dark_mode" ? "#ffffff27" : "#00000027",
+          onThemeMode === "dark_mode" ? "#ffffff31" : "#00000027",
         backdropFilter: "blur(24px)",
         opacity:
           hoveredIndex === null || hoveredIndex === undefined
@@ -70,7 +70,7 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
     ></div>
   );
 };
-const Header = ({ items = [] }) => {
+const Header = ({ items = [], style }) => {
   const { theme, windowSize } = useContext(ConfigContext);
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
@@ -145,6 +145,23 @@ const Header = ({ items = [] }) => {
         height: "60px",
       }}
     >
+      <div
+        style={{
+          width: "100%",
+          height: style?.height ? style.height : "100%",
+          borderBottom: style?.borderBottom
+            ? style.borderBottom
+            : "none",
+          boxShadow: style?.boxShadow ? style.boxShadow : "none",
+          backdropFilter: style?.backdropFilter ? style.backdropFilter : "none",
+          backgroundColor: style?.backgroundColor
+            ? style.backgroundColor
+            : theme?.backgroundColor,
+          transition: style?.transition
+            ? style.transition
+            : "all 0.3s ease-in-out",
+        }}
+      ></div>
       <HoverHighlightor
         hoveredItem={items[hoveredIndex]}
         hoveredIndex={hoveredIndex}
