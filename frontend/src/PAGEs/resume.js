@@ -6,7 +6,6 @@ import DraftResumeForm from "../COMPONENTs/draft_resume_form/draft_resume_form";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../CONTAINERs/config/context";
-import { boxClasses } from "@mui/joy";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const Resume = () => {
