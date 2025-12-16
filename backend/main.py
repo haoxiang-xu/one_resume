@@ -18,6 +18,7 @@ from extensions import limiter
 from routes.register_route import register_blueprint
 from routes.auth_route import auth_blueprint
 from routes.user_route import user_blueprint
+from routes.resume_route import resume_blueprint
 
 FRONTEND_ORIGIN = os.getenv("FRONTEND_URL", "http://localhost:2907")
 
@@ -35,6 +36,7 @@ limiter.init_app(app)
 app.register_blueprint(register_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(resume_blueprint)
 
 # Email configuration
 app.config['SMTP_EMAIL'] = "lance924852785@gmail.com"

@@ -11,6 +11,7 @@ import Landing from "./PAGEs/landing";
 import Register from "./PAGEs/register";
 import Auth from "./PAGEs/auth";
 import Resume from "./PAGEs/resume";
+import PlaywrightDemo from "./DEMOs/playwright";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/resume" element={<Resume />} />
+              <Route path="/demo/playwright" element={<PlaywrightDemo />} />
             </Routes>
           </Router>
         </RequestContainer>
