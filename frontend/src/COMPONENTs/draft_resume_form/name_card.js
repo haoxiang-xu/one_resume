@@ -31,6 +31,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import VanillaTilt from "vanilla-tilt";
 import dayjs from "dayjs";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -3130,6 +3131,7 @@ const NameCard = ({ context }) => {
   const [onEdit, setOnEdit] = useState("none");
   const nameCardRef = useRef(null);
   const editDialogRef = useRef(null);
+  const tiltRef = useRef(null);
 
   useEffect(() => {
     if (onEdit === "none" || onEdit === "pending") {
@@ -3167,12 +3169,21 @@ const NameCard = ({ context }) => {
       setOnEdit("pending");
     }
   }, [context]);
+  useEffect(() => {
+    VanillaTilt.init(tiltRef.current, {
+      reverse: true,
+      reset: true,
+      max: 6,
+      speed: 360,
+    });
+  }, []);
 
   if (context === "draft_resume_form") {
     return (
       <NameCardContext.Provider value={{ onEdit, setOnEdit, context }}>
         <>
           <div
+            ref={tiltRef}
             style={{
               transition: "all 0.2s ease",
               position: "absolute",
