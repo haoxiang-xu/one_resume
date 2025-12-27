@@ -967,7 +967,7 @@ const LoginOptions = () => {
   );
 };
 const AuthForm = () => {
-  const { windowSize } = useContext(ConfigContext);
+  const { window_size } = useContext(ConfigContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -998,7 +998,7 @@ const AuthForm = () => {
         className="auth-form"
         style={{
           position: "absolute",
-          top: windowSize.height / 2 - 200,
+          top: window_size.height / 2 - 200,
           left: "50%",
           transform: "translate(-50%, 0%)",
         }}
