@@ -360,7 +360,7 @@ const FormStepper = ({ containerWidth }) => {
 };
 const DraftResumeForm = () => {
   const { userInfo } = React.useContext(DataContext);
-  const { theme, windowSize } = React.useContext(ConfigContext);
+  const { theme, window_size } = React.useContext(ConfigContext);
 
   const [formData, setFormData] = React.useState(null);
   const [onNameCardEdit, setOnNameCardEdit] = React.useState(false);
@@ -379,7 +379,7 @@ const DraftResumeForm = () => {
     }
   }, [userInfo]);
   React.useEffect(() => {
-    if (windowSize.width >= 1200) {
+    if (window_size.width >= 1200) {
       setStyle({
         top: "50%",
         left: "50%",
@@ -396,18 +396,18 @@ const DraftResumeForm = () => {
         container_height: 811,
       });
     }
-    if (windowSize.height < 811 + 128) {
+    if (window_size.height < 811 + 128) {
       setStyle((prevStyle) => ({
         ...prevStyle,
         top: 64 + 811 / 2,
       }));
     }
-  }, [windowSize]);
+  }, [window_size]);
   React.useEffect(() => {
-    if (windowSize.width >= 1200) {
+    if (window_size.width >= 1200) {
       setResumeOnFocus(false);
     }
-  }, [windowSize]);
+  }, [window_size]);
 
   /* { contact } ----------------------------------------------------------------------------- */
   const update_cell = (value) => {

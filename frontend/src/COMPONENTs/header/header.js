@@ -71,7 +71,7 @@ const HoverHighlightor = ({ hoveredItem, hoveredIndex, position, size }) => {
   );
 };
 const Header = ({ items = [], style }) => {
-  const { theme, windowSize } = useContext(ConfigContext);
+  const { theme, window_size } = useContext(ConfigContext);
   const itemRefs = useRef([]);
   itemRefs.current = items.map((_, i) => itemRefs.current[i] || createRef());
 
@@ -79,7 +79,7 @@ const Header = ({ items = [], style }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [highlightPosition, setHighlightPosition] = useState({
     top: 0,
-    left: windowSize.width,
+    left: window_size.width,
   });
   const [highlightSize, setHighlightSize] = useState({ width: 50, height: 50 });
 
@@ -149,9 +149,7 @@ const Header = ({ items = [], style }) => {
         style={{
           width: "100%",
           height: style?.height ? style.height : "100%",
-          borderBottom: style?.borderBottom
-            ? style.borderBottom
-            : "none",
+          borderBottom: style?.borderBottom ? style.borderBottom : "none",
           boxShadow: style?.boxShadow ? style.boxShadow : "none",
           backdropFilter: style?.backdropFilter ? style.backdropFilter : "none",
           backgroundColor: style?.backgroundColor

@@ -2443,7 +2443,7 @@ const UserForm = () => {
 };
 const RegisterForm = ({ onForm, setOnForm }) => {
   const { register } = useContext(RequestContext);
-  const { windowSize } = useContext(ConfigContext);
+  const { window_size } = useContext(ConfigContext);
   const [formData, setFormData] = useState({
     name: {
       firstName: "",
@@ -2840,7 +2840,7 @@ const RegisterForm = ({ onForm, setOnForm }) => {
         className="register-form"
         style={{
           position: "absolute",
-          top: windowSize.height / 2 - 200,
+          top: window_size.height / 2 - 200,
           left: "50%",
           transform: "translate(-50%, 0%)",
         }}
