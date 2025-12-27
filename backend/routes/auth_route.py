@@ -14,8 +14,9 @@ auth_blueprint = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 # { login & logout } ------------------------------------------------------------------------------------------------------------------------------------- #
 
-# check user status
+# check user status (no rate limit)
 @auth_blueprint.route("/user", methods=["GET"])
+@limiter.exempt
 def auth_user():
     token = request.cookies.get(app.config["JWT_COOKIE_NAME"])
     if not token:
