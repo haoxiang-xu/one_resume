@@ -11,7 +11,7 @@ import Landing from "./PAGEs/landing";
 import Register from "./PAGEs/register";
 import Auth from "./PAGEs/auth";
 import Resume from "./PAGEs/resume";
-import PlaywrightDemo from "./DEMOs/playwright";
+import PlaywrightDemo from "./DEMOs/play_wright";
 /* Pages ------------------------------------------------------------------------------------------------------------------- */
 
 const App = () => {
