@@ -65,6 +65,9 @@ function inflateRect(rect, pad) {
   };
 }
 
+const MAGNET_PAD_PX = 120; // 磁吸范围（鼠标进入后会贴近轨道）
+const MAGNET_SNAP_LERP = { base: 0.18, extra: 0.22 }; // 磁吸强度
+
 // ---------- Tab component ----------
 function Tab({ id, label, index, isOverlay = false, tiltDeg = 0, getZIndex }) {
   const {
@@ -122,7 +125,14 @@ function Tab({ id, label, index, isOverlay = false, tiltDeg = 0, getZIndex }) {
 }
 
 // ---------- Container (tab strip) ----------
-function TabStrip({ id, title, items, containerRefMap }) {
+function TabStrip({
+  id,
+  title,
+  items,
+  containerRefMap,
+  activeId,
+  activeShouldHide,
+}) {
   const { setNodeRef, isOver } = useDroppable({
     id,
     data: { type: "container" },
@@ -134,15 +144,20 @@ function TabStrip({ id, title, items, containerRefMap }) {
     containerRefMap.current[id] = node;
   };
 
+  const renderItems =
+    activeShouldHide && activeId
+      ? items.filter((t) => t.id !== activeId)
+      : items;
+
   return (
     <div className="stripBlock">
       <div className="stripTitle">{title}</div>
       <div ref={refCb} className={`strip ${isOver ? "stripOver" : ""}`}>
         <SortableContext
-          items={items.map((t) => t.id)}
+          items={renderItems.map((t) => t.id)}
           strategy={horizontalListSortingStrategy}
         >
-          {items.map((t, idx) => (
+          {renderItems.map((t, idx) => (
             <Tab
               key={t.id}
               id={t.id}
@@ -188,6 +203,7 @@ export default function App() {
 
   const [activeId, setActiveId] = useState(null);
   const [activeFromContainer, setActiveFromContainer] = useState(null);
+  const [activeOverId, setActiveOverId] = useState(null);
 
   // magnetic overlay offset: pull overlay toward strip centerline when near
   const [magnetDY, setMagnetDY] = useState(0);
@@ -237,13 +253,12 @@ export default function App() {
     const py = lastPointerRef.current.y;
 
     const rects = containerRectsRef.current;
-    const MAGNET_PAD = 80; // 磁吸范围（越大越“吸”）
     let best = null;
 
     for (const cid of Object.keys(rects)) {
       const r = rects[cid];
       if (!r) continue;
-      const inflated = inflateRect(r, MAGNET_PAD);
+      const inflated = inflateRect(r, MAGNET_PAD_PX);
       const inside =
         px >= inflated.left &&
         px <= inflated.right &&
@@ -273,6 +288,7 @@ export default function App() {
 
     const fromCid = findContainerId(itemsByContainer, id);
     setActiveFromContainer(fromCid);
+    setActiveOverId(null);
 
     // ensure fresh rects
     measureContainerRects();
@@ -289,6 +305,8 @@ export default function App() {
   };
 
   const onDragMove = (event) => {
+    // update over target for hide logic
+    setActiveOverId(event.over?.id ?? null);
     // Track pointer & approximate velocity -> small tilt
     const ev = event.activatorEvent;
     const now = performance.now();
@@ -315,14 +333,13 @@ export default function App() {
 
     // Magnetic "pull to strip centerline" for overlay
     const rects = containerRectsRef.current;
-    const MAGNET_PAD = 80;
     let nearest = null;
 
     for (const cid of Object.keys(rects)) {
       const r = rects[cid];
       if (!r) continue;
 
-      const inflated = inflateRect(r, MAGNET_PAD);
+      const inflated = inflateRect(r, MAGNET_PAD_PX);
       const inside =
         x >= inflated.left &&
         x <= inflated.right &&
@@ -331,26 +348,34 @@ export default function App() {
 
       if (!inside) continue;
 
-      // prefer closest real rect
       const dist = distancePointToRect(x, y, r);
-      if (!nearest || dist < nearest.dist) nearest = { cid, dist, rect: r };
+      const strength = clamp(1 - dist / MAGNET_PAD_PX, 0, 1); // 0: 无吸力, 1: 完全贴合
+      if (!nearest || dist < nearest.dist)
+        nearest = { cid, dist, rect: r, strength };
     }
 
     if (nearest) {
       // pull Y toward centerline of strip (Chrome tab strip feel)
       const centerY = nearest.rect.top + nearest.rect.height / 2;
-      const dy = clamp((centerY - y) * 0.35, -16, 16);
+      const dy = clamp((centerY - y) * 0.35, -16, 16) * nearest.strength;
       magnetTargetRef.current = dy;
     } else {
       magnetTargetRef.current = 0;
     }
 
-    setMagnetDY((prev) => prev + (magnetTargetRef.current - prev) * 0.2);
+    // Stickiness：越靠近轨道，越快贴合；离开则快速回到鼠标
+    const lerp =
+      MAGNET_SNAP_LERP.base + (nearest?.strength || 0) * MAGNET_SNAP_LERP.extra;
+    setMagnetDY((prev) => prev + (magnetTargetRef.current - prev) * lerp);
   };
 
   const onDragOver = (event) => {
     const { active, over } = event;
-    if (!over) return;
+    if (!over) {
+      setActiveOverId(null);
+      return;
+    }
+    setActiveOverId(over.id);
 
     const activeItemId = active.id;
     const overId = over.id;
@@ -437,6 +462,7 @@ export default function App() {
 
     setActiveId(null);
     setActiveFromContainer(null);
+    setActiveOverId(null);
     magnetTargetRef.current = 0;
     setMagnetDY(0);
     setTiltDeg(0);
@@ -467,6 +493,7 @@ export default function App() {
         onDragCancel={() => {
           setActiveId(null);
           setActiveFromContainer(null);
+          setActiveOverId(null);
           magnetTargetRef.current = 0;
           setMagnetDY(0);
           setTiltDeg(0);
@@ -478,12 +505,24 @@ export default function App() {
             title="Window A"
             items={itemsByContainer.left}
             containerRefMap={containerRefMap}
+            activeId={activeId}
+            activeShouldHide={
+              activeId &&
+              activeFromContainer === "left" &&
+              (!activeOverId || itemsByContainer[activeOverId])
+            }
           />
           <TabStrip
             id="right"
             title="Window B"
             items={itemsByContainer.right}
             containerRefMap={containerRefMap}
+            activeId={activeId}
+            activeShouldHide={
+              activeId &&
+              activeFromContainer === "right" &&
+              (!activeOverId || itemsByContainer[activeOverId])
+            }
           />
         </div>
 
