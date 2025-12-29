@@ -2083,13 +2083,25 @@ const EducationTag = ({
         >
           {specialization}
         </span>
+        <Icon 
+          src={"at"}
+          style={{
+            position: "absolute",
+            top: 45,
+            left: 36,
+            width: "14px",
+            height: "14px",
+            opacity: 0.72,
+          }}
+          color={theme ? theme.font.color : "#000000"}
+        />
         <span
           className="contact-info-text"
           style={{
             position: "absolute",
             fontFamily: "Jost",
             top: 45,
-            left: 36,
+            left: 52,
             right: 0,
             flex: "1 1 auto",
             fontSize: "14px",
@@ -2105,7 +2117,7 @@ const EducationTag = ({
             MsUserSelect: "none",
           }}
         >
-          {"@" + institution}
+          {institution}
         </span>
         <span
           className="contact-info-text"
@@ -2859,13 +2871,24 @@ const ExperienceTag = ({ icon, index, text, item }) => {
         >
           {experience.role}
         </span>
+        <Icon
+          style={{
+            position: "absolute",
+            top: 24,
+            left: 36,
+            width: "14px",
+            height: "14px",
+            opacity: 0.72,
+          }}
+          src={"at"}
+        />
         <span
           className="experience-company-name"
           style={{
             position: "absolute",
             fontFamily: "Jost",
             top: 24,
-            left: 36,
+            left: 54,
             right: 0,
             flex: "1 1 auto",
             fontSize: "14px",
@@ -2881,7 +2904,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
             MsUserSelect: "none",
           }}
         >
-          {"@ " + experience.company}
+          {experience.company}
         </span>
         <Icon
           style={{
