@@ -2014,7 +2014,7 @@ const EducationTag = ({
           borderRadius: "16px",
           marginRight: "6px",
           marginTop: "6px",
-          marginBottom: "6px",
+          marginBottom: "24px",
         }}
         onMouseEnter={() => {
           setOnHover(true);
@@ -2124,7 +2124,7 @@ const EducationTag = ({
           style={{
             position: "absolute",
             fontFamily: "Jost",
-            top: 64,
+            top: 66,
             left: 36,
             right: 0,
             flex: "1 1 auto",
@@ -2154,7 +2154,7 @@ const EducationTag = ({
             top: -6,
             right: -6,
             width: style.width,
-            height: "calc(100% + 12px)",
+            height: "calc(100% + 24px)",
             zIndex: 1,
             backdropFilter: "blur(8px)",
             backgroundColor: theme ? theme.foregroundColor : "#FFFFFF",
