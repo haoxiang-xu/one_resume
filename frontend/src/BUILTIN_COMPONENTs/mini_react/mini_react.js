@@ -37,7 +37,7 @@ const useWindowSize = () => {
   return windowSize;
 };
 const useMouse = () => {
-  const [mouse, setMouse] = useState({ x: 0, y: 0, vx: 0, vy: 0 });
+  const [mouse, setMouse] = useState({ x: -999, y: -999, vx: 0, vy: 0 });
 
   const lastRef = useRef({
     x: 0,
