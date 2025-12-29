@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState, forwardRef } from "react";
 import {
   useSystemTheme,
-  useMouse,
   useWindowSize,
   useWebBrowser,
   useDeviceType,
@@ -56,7 +55,6 @@ const ConfigContainer = ({ children }) => {
   /* { STYLE } =========================================================================================================== */
 
   /* { ENVIRONMENT } ===================================================================================================== */
-  const mouse = useMouse();
   const window_size = useWindowSize();
   const env_browser = useWebBrowser();
   const device_type = useDeviceType();
@@ -75,7 +73,6 @@ const ConfigContainer = ({ children }) => {
         onThemeMode,
         setOnThemeMode,
         /* { ENVIRONMENT } ==================================== */
-        mouse,
         window_size,
         env_browser,
         device_type,

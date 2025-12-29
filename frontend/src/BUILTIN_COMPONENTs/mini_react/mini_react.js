@@ -44,30 +44,34 @@ const useMouse = () => {
     y: 0,
     t: performance.now(),
   });
+  const idleTimerRef = useRef(null);
 
   useEffect(() => {
     const onMove = (e) => {
       const now = performance.now();
-      const dt = now - lastRef.current.t; // ms
+      const dt = now - lastRef.current.t;
 
       const dx = e.clientX - lastRef.current.x;
       const dy = e.clientY - lastRef.current.y;
 
-      const vx = dt > 0 ? (dx / dt) * 1000 : 0; // px/s
-      const vy = dt > 0 ? (dy / dt) * 1000 : 0; // px/s
+      const vx = dt > 0 ? (dx / dt) * 1000 : 0;
+      const vy = dt > 0 ? (dy / dt) * 1000 : 0;
 
       lastRef.current = { x: e.clientX, y: e.clientY, t: now };
 
-      setMouse({
-        x: e.clientX,
-        y: e.clientY,
-        vx,
-        vy,
-      });
+      setMouse({ x: e.clientX, y: e.clientY, vx, vy });
+
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = setTimeout(() => {
+        setMouse((m) => ({ ...m, vx: 0, vy: 0 }));
+      }, 60);
     };
 
     window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
   }, []);
 
   return mouse;
