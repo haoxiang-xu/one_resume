@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState, forwardRef } from "react";
-import { useSystemTheme, useWindowSize, useWebBrowser, useDeviceType } from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
+import {
+  useSystemTheme,
+  useMouse,
+  useWindowSize,
+  useWebBrowser,
+  useDeviceType,
+} from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
 import { MaterialUIThemeWrapper } from "../../BUILTIN_COMPONENTs/mini_react/mini_material";
 import Slide from "@mui/material/Slide";
 import ScrollingSpace from "../../BUILTIN_COMPONENTs/class/scrolling_sapce";
@@ -50,6 +56,7 @@ const ConfigContainer = ({ children }) => {
   /* { STYLE } =========================================================================================================== */
 
   /* { ENVIRONMENT } ===================================================================================================== */
+  const mouse = useMouse();
   const window_size = useWindowSize();
   const env_browser = useWebBrowser();
   const device_type = useDeviceType();
@@ -68,6 +75,7 @@ const ConfigContainer = ({ children }) => {
         onThemeMode,
         setOnThemeMode,
         /* { ENVIRONMENT } ==================================== */
+        mouse,
         window_size,
         env_browser,
         device_type,

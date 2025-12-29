@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 const useSystemTheme = () => {
@@ -36,14 +36,41 @@ const useWindowSize = () => {
   }, []);
   return windowSize;
 };
-const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+const useMouse = () => {
+  const [mouse, setMouse] = useState({ x: 0, y: 0, vx: 0, vy: 0 });
+
+  const lastRef = useRef({
+    x: 0,
+    y: 0,
+    t: performance.now(),
+  });
+
   useEffect(() => {
-    const onMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    const onMove = (e) => {
+      const now = performance.now();
+      const dt = now - lastRef.current.t; // ms
+
+      const dx = e.clientX - lastRef.current.x;
+      const dy = e.clientY - lastRef.current.y;
+
+      const vx = dt > 0 ? (dx / dt) * 1000 : 0; // px/s
+      const vy = dt > 0 ? (dy / dt) * 1000 : 0; // px/s
+
+      lastRef.current = { x: e.clientX, y: e.clientY, t: now };
+
+      setMouse({
+        x: e.clientX,
+        y: e.clientY,
+        vx,
+        vy,
+      });
+    };
+
     window.addEventListener("pointermove", onMove);
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
-  return mousePosition;
+
+  return mouse;
 };
 const useWebBrowser = () => {
   const [envBrowser, setEnvBrowser] = useState(null);
@@ -98,7 +125,7 @@ const useDeviceType = () => {
 export {
   useSystemTheme,
   useWindowSize,
-  useMousePosition,
+  useMouse,
   useWebBrowser,
   useDeviceType,
 };
