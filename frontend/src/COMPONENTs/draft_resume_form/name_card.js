@@ -3209,6 +3209,7 @@ const NameCard = ({ context }) => {
       reset: true,
       max: 6,
       speed: 360,
+      scale: 1.02,
     });
   }, []);
 

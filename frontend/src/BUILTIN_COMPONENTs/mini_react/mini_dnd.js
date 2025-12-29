@@ -11,25 +11,20 @@ import {
 import { useMouse } from "./mini_react.js";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
-const DnDContext = createContext({
-  draggableSize: { width: 0, height: 0 },
-  setDraggableSize: () => {},
-  draggableComponentRender: null,
-  setDraggableComponentRender: () => {},
-  draggableInnerPosition: { x: 0, y: 0 },
-  setDraggableInnerPosition: () => {},
-  draggableOuterPosition: { x: 0, y: 0 },
-  setDraggableOutterPosition: () => {},
-  draggableConfig: {},
-  setDraggableConfig: () => {},
-});
+const DnDContext = createContext();
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const Draggable = ({
   render = () => {
     return <div></div>;
   },
+  tilt = false,
+  tilt_config = {
+    x_max_deg: 45,
+    y_max_deg: 45,
+    z_max_deg: 20,
+  },
+  scale = 1,
 }) => {
   const {
     draggableComponentRender,
@@ -37,6 +32,7 @@ const Draggable = ({
     setDraggableComponentRender,
     setDraggableInnerPosition,
     setDraggableOutterPosition,
+    setDraggableConfig,
   } = useContext(DnDContext);
   const hasCapturedRef = useRef(false);
 
@@ -56,6 +52,7 @@ const Draggable = ({
       x: rect.left,
       y: rect.top,
     });
+    setDraggableConfig({ tilt, tilt_config, scale });
     setDraggableSize({ width: rect.width, height: rect.height });
     initialize_draggable_component_render();
   };
@@ -86,6 +83,7 @@ const DnDGhost = ({ debug = false }) => {
     draggableSize,
     draggableInnerPosition,
     draggableComponentRender,
+    draggableConfig,
     setDraggableComponentRender,
     setDraggableInnerPosition,
     setDraggableOutterPosition,
@@ -164,26 +162,28 @@ const DnDGhost = ({ debug = false }) => {
     }
   }, [draggableComponentRender]);
   useEffect(() => {
-    if (mouse.vx !== undefined && mouse.vy !== undefined) {
-      if (mouse.vx === 0 && mouse.vy === 0) {
+    if (draggableConfig?.tilt === true) {
+      if (mouse.vx !== undefined && mouse.vy !== undefined) {
+        if (mouse.vx === 0 && mouse.vy === 0) {
+          setRotate((prev) => ({
+            x: 0,
+            y: 0,
+            z: 0,
+          }));
+          return;
+        }
         setRotate((prev) => ({
-          x: 0,
-          y: 0,
-          z: 0,
+          x: smooth(prev.x, velocityToDegTanh(mouse.vy, { maxDeg: 45 })),
+          y: smooth(prev.y, -velocityToDegTanh(mouse.vx, { maxDeg: 45 })),
+          z: computeRotateZ(mouse.vx, mouse.vy, origin, draggableSize, {
+            maxDeg: 45,
+            vAtMax: 1400,
+            lever: 1.2,
+          }),
         }));
-        return;
       }
-      setRotate((prev) => ({
-        x: smooth(prev.x, velocityToDegTanh(mouse.vy, { maxDeg: 45 })),
-        y: smooth(prev.y, -velocityToDegTanh(mouse.vx, { maxDeg: 45 })),
-        z: computeRotateZ(mouse.vx, mouse.vy, origin, draggableSize, {
-          maxDeg: 45,
-          vAtMax: 1400,
-          lever: 1.2,
-        }),
-      }));
     }
-  }, [mouse.vx, mouse.vy, origin, draggableSize]);
+  }, [mouse.vx, mouse.vy, origin, draggableSize, draggableConfig]);
   useEffect(() => {
     setOrigin({
       x: clamp(
@@ -197,8 +197,8 @@ const DnDGhost = ({ debug = false }) => {
         100
       ).toFixed(2),
     });
-    setScale(1.05);
-  }, [draggableSize, draggableInnerPosition]);
+    setScale(draggableConfig.scale || 1);
+  }, [draggableSize, draggableInnerPosition, draggableConfig]);
 
   return (
     <div
@@ -263,7 +263,14 @@ const DnDWrapper = ({ children }) => {
   });
   const [draggableComponentRender, setDraggableComponentRender] =
     useState(null);
-  const [draggableConfig, setDraggableConfig] = useState({});
+  const [draggableConfig, setDraggableConfig] = useState({
+    tilt: false,
+    tilt_config: {
+      x_max_deg: 45,
+      y_max_deg: 45,
+      z_max_deg: 20,
+    },
+  });
 
   return (
     <DnDContext.Provider
