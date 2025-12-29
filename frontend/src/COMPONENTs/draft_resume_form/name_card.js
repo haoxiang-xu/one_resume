@@ -2881,15 +2881,26 @@ const ExperienceTag = ({ icon, index, text, item }) => {
             MsUserSelect: "none",
           }}
         >
-          {"@" + experience.company}
+          {"@ " + experience.company}
         </span>
+        <Icon
+          style={{
+            position: "absolute",
+            top: 45,
+            left: 35,
+            width: "16px",
+            height: "16px",
+            opacity: 0.72,
+          }}
+          src={"map"}
+        />
         <span
           className="experience-location"
           style={{
             position: "absolute",
             fontFamily: "Jost",
             top: 45,
-            left: 36,
+            left: 54,
             right: 0,
             flex: "1 1 auto",
             fontSize: "14px",
@@ -2913,7 +2924,7 @@ const ExperienceTag = ({ icon, index, text, item }) => {
           style={{
             position: "absolute",
             fontFamily: "Jost",
-            top: 64,
+            top: 65,
             left: 36,
             height: 64,
             right: 0,
