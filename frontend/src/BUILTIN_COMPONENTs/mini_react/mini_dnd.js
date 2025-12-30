@@ -9,6 +9,7 @@ import {
   isValidElement,
 } from "react";
 import { useMouse } from "./mini_react.js";
+import VanillaTilt from "vanilla-tilt";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 const DnDContext = createContext();
@@ -20,11 +21,12 @@ const Draggable = ({
   },
   tilt = false,
   tilt_config = {
-    x_max_deg: 45,
-    y_max_deg: 45,
+    vanilla_max_deg: 10,
+    x_max_deg: 30,
+    y_max_deg: 30,
     z_max_deg: 20,
   },
-  scale = 1,
+  scale = 1.05,
 }) => {
   const {
     draggableComponentRender,
@@ -34,6 +36,7 @@ const Draggable = ({
     setDraggableOutterPosition,
     setDraggableConfig,
   } = useContext(DnDContext);
+  const tiltRef = useRef(null);
   const hasCapturedRef = useRef(false);
 
   const initialize_draggable_component_render = useCallback(() => {
@@ -65,6 +68,16 @@ const Draggable = ({
   };
 
   useEffect(() => {
+    if (!tiltRef.current) return;
+    if (tilt !== true) return;
+    VanillaTilt.init(tiltRef.current, {
+      reverse: true,
+      reset: true,
+      max: tilt_config.vanilla_max_deg,
+      scale: scale,
+    });
+  }, [scale, tilt_config, tiltRef]);
+  useEffect(() => {
     if (draggableComponentRender === null) {
       hasCapturedRef.current = false;
     }
@@ -72,11 +85,49 @@ const Draggable = ({
 
   return (
     <div onMouseDown={handleDragStart} style={{ cursor: "grab" }}>
-      {render()}
+      {(() => {
+        const rendered_component = render();
+        if (isValidElement(rendered_component)) {
+          return cloneElement(rendered_component, { ref: tiltRef });
+        }
+        return <div ref={tiltRef}>{rendered_component}</div>;
+      })()}
     </div>
   );
 };
-const Droppable = () => {};
+const Droppable = ({ draggables, style, draggable_style }) => {
+  return (
+    <div style={{ ...(style || {}) }}>
+      {draggables && draggables.length > 0
+        ? draggables.map((item, index) => {
+            return (
+              <Draggable
+                key={index}
+                render={() => {
+                  const rendered_component = item.render();
+                  if (isValidElement(rendered_component)) {
+                    const merged_style = {
+                      ...(rendered_component.props.style || {}),
+                      ...(draggable_style || {}),
+                    };
+                    return cloneElement(rendered_component, {
+                      style: merged_style,
+                    });
+                  } else {
+                    return (
+                      <div style={draggable_style}>{rendered_component}</div>
+                    );
+                  }
+                }}
+                tilt={item.tilt}
+                scale={item.scale}
+              />
+            );
+          })
+        : null}
+    </div>
+  );
+};
 const DnDGhost = ({ debug = false }) => {
   const mouse = useMouse();
   const {
@@ -147,7 +198,12 @@ const DnDGhost = ({ debug = false }) => {
         const ghost_component = draggableComponentRender;
         const mergedStyle = {
           ...(ghost_component.props.style || {}),
-          transform: "translate(-50%, -50%)",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          margin: 0,
+          padding: 0,
+          transform: "translate(0%, 0%)",
           width: draggableSize.width,
           height: draggableSize.height,
         };
