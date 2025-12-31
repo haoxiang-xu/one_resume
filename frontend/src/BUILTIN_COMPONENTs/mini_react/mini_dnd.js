@@ -23,6 +23,11 @@ const default_tilt_config = {
   y_max_deg: 30,
   z_max_deg: 20,
 };
+const default_draggable_style = {
+  top: 0,
+  height: 45,
+  gap: 5,
+};
 
 const Draggable = ({
   render = () => {
@@ -111,7 +116,7 @@ const Draggable = ({
       max: tilt_config.vanilla_max_deg || default_tilt_config.vanilla_max_deg,
       scale: tilt_config.vanilla_scale || default_tilt_config.vanilla_scale,
     });
-  }, [ tilt_config, tiltRef]);
+  }, [tilt_config, tiltRef]);
   useEffect(() => {
     if (draggableComponentRender === null) {
       hasCapturedRef.current = false;
@@ -119,7 +124,10 @@ const Draggable = ({
   }, [draggableComponentRender]);
 
   return (
-    <div onMouseDown={handleDragStart} style={{ cursor: "grab" }}>
+    <div
+      onMouseDown={handleDragStart}
+      style={{ cursor: "grab", width: "fit-content", height: "fit-content" }}
+    >
       {(() => {
         const rendered_component = render();
         if (isValidElement(rendered_component)) {
@@ -133,26 +141,42 @@ const Draggable = ({
 const Droppable = ({
   draggables,
   style,
-  draggable_style = {
-    top: 45,
-    height: 45,
-    gap: 5,
-  },
+  draggable_style = default_draggable_style,
 }) => {
   const [draggableStyles, setDraggableStyles] = useState(null);
+  const [droppableOutterPosition, setDroppableOutterPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const capturePosition = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDroppableOutterPosition({
+      x: rect.left,
+      y: rect.top,
+    });
+    console.log("Captured Droppable position:", rect.left, rect.top);
+  };
 
   useEffect(() => {
     let index = 0;
     for (let draggable in draggables) {
       const style = {
+        ...default_draggable_style,
         ...draggable_style,
         transition: "top 300ms ease, left 300ms ease",
         position: "absolute",
         top:
-          index * (draggable_style.top + (draggable_style.gap || 0)) +
-          (draggable_style.gap || 0),
-        left: draggable_style.gap || 0,
-        width: "calc(100% - " + (draggable_style.gap || 0) * 2 + "px)",
+          index *
+            ((draggable_style.height || default_draggable_style.height) +
+              (draggable_style.gap || default_draggable_style.gap || 0) +
+              (draggable_style.top || default_draggable_style.top || 0)) +
+          (draggable_style.gap || default_draggable_style.gap || 0),
+        left: draggable_style.gap || default_draggable_style.gap || 0,
+        width:
+          "calc(100% - " +
+          (draggable_style.gap || default_draggable_style.gap || 0) * 2 +
+          "px)",
         margin: 0,
       };
       index += 1;
@@ -164,7 +188,7 @@ const Droppable = ({
   }, []);
 
   return (
-    <div style={{ ...(style || {}) }}>
+    <div style={{ ...(style || {}) }} onMouseDown={capturePosition}>
       {draggables && draggables.length > 0 && draggableStyles !== null
         ? draggables.map((item, index) => {
             return (
