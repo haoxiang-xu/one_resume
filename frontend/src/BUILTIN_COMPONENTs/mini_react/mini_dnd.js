@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useContext,
+  useLayoutEffect,
   useRef,
   cloneElement,
   isValidElement,
@@ -15,18 +16,20 @@ import VanillaTilt from "vanilla-tilt";
 const DnDContext = createContext();
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
+const default_tilt_config = {
+  vanilla_max_deg: 10,
+  vanilla_scale: 1.05,
+  x_max_deg: 30,
+  y_max_deg: 30,
+  z_max_deg: 20,
+};
+
 const Draggable = ({
   render = () => {
     return <div></div>;
   },
   tilt = false,
-  tilt_config = {
-    vanilla_max_deg: 10,
-    x_max_deg: 30,
-    y_max_deg: 30,
-    z_max_deg: 20,
-  },
-  scale = 1.05,
+  tilt_config = default_tilt_config,
 }) => {
   const {
     draggableComponentRender,
@@ -38,25 +41,57 @@ const Draggable = ({
   } = useContext(DnDContext);
   const tiltRef = useRef(null);
   const hasCapturedRef = useRef(false);
+  const baseSizeRef = useRef({ width: 0, height: 0 });
 
   const initialize_draggable_component_render = useCallback(() => {
     setDraggableComponentRender(render());
   }, [render, setDraggableComponentRender]);
+  useLayoutEffect(() => {
+    const el = tiltRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      baseSizeRef.current = {
+        width: el.offsetWidth || el.clientWidth || 0,
+        height: el.offsetHeight || el.clientHeight || 0,
+      };
+    };
+
+    measure();
+
+    let ro;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(measure);
+      ro.observe(el);
+    }
+
+    return () => {
+      if (ro) {
+        ro.disconnect();
+      }
+    };
+  }, []);
   const capturePosition = (e) => {
-    const rect = (
-      e.target instanceof Element ? e.target : e.currentTarget
-    ).getBoundingClientRect();
+    const target =
+      tiltRef.current ||
+      (e.target instanceof Element ? e.target : e.currentTarget);
+    const rect = target.getBoundingClientRect();
+    const baseWidth = baseSizeRef.current.width || rect.width;
+    const baseHeight = baseSizeRef.current.height || rect.height;
+    const ratioX = rect.width ? (e.clientX - rect.left) / rect.width : 0;
+    const ratioY = rect.height ? (e.clientY - rect.top) / rect.height : 0;
+
     hasCapturedRef.current = true;
     setDraggableInnerPosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: ratioX * baseWidth,
+      y: ratioY * baseHeight,
     });
     setDraggableOutterPosition({
       x: rect.left,
       y: rect.top,
     });
-    setDraggableConfig({ tilt, tilt_config, scale });
-    setDraggableSize({ width: rect.width, height: rect.height });
+    setDraggableConfig({ tilt, tilt_config });
+    setDraggableSize({ width: baseWidth, height: baseHeight });
     initialize_draggable_component_render();
   };
   const handleDragStart = (e) => {
@@ -73,10 +108,10 @@ const Draggable = ({
     VanillaTilt.init(tiltRef.current, {
       reverse: true,
       reset: true,
-      max: tilt_config.vanilla_max_deg,
-      scale: scale,
+      max: tilt_config.vanilla_max_deg || default_tilt_config.vanilla_max_deg,
+      scale: tilt_config.vanilla_scale || default_tilt_config.vanilla_scale,
     });
-  }, [scale, tilt_config, tiltRef]);
+  }, [ tilt_config, tiltRef]);
   useEffect(() => {
     if (draggableComponentRender === null) {
       hasCapturedRef.current = false;
@@ -95,10 +130,42 @@ const Draggable = ({
     </div>
   );
 };
-const Droppable = ({ draggables, style, draggable_style }) => {
+const Droppable = ({
+  draggables,
+  style,
+  draggable_style = {
+    top: 45,
+    height: 45,
+    gap: 5,
+  },
+}) => {
+  const [draggableStyles, setDraggableStyles] = useState(null);
+
+  useEffect(() => {
+    let index = 0;
+    for (let draggable in draggables) {
+      const style = {
+        ...draggable_style,
+        transition: "top 300ms ease, left 300ms ease",
+        position: "absolute",
+        top:
+          index * (draggable_style.top + (draggable_style.gap || 0)) +
+          (draggable_style.gap || 0),
+        left: draggable_style.gap || 0,
+        width: "calc(100% - " + (draggable_style.gap || 0) * 2 + "px)",
+        margin: 0,
+      };
+      index += 1;
+      setDraggableStyles((prev) => ({
+        ...(prev || {}),
+        [draggable]: style,
+      }));
+    }
+  }, []);
+
   return (
     <div style={{ ...(style || {}) }}>
-      {draggables && draggables.length > 0
+      {draggables && draggables.length > 0 && draggableStyles !== null
         ? draggables.map((item, index) => {
             return (
               <Draggable
@@ -108,19 +175,21 @@ const Droppable = ({ draggables, style, draggable_style }) => {
                   if (isValidElement(rendered_component)) {
                     const merged_style = {
                       ...(rendered_component.props.style || {}),
-                      ...(draggable_style || {}),
+                      ...(draggableStyles?.[index] || {}),
                     };
                     return cloneElement(rendered_component, {
                       style: merged_style,
                     });
                   } else {
                     return (
-                      <div style={draggable_style}>{rendered_component}</div>
+                      <div style={draggableStyles?.[index] || {}}>
+                        {rendered_component}
+                      </div>
                     );
                   }
                 }}
                 tilt={item.tilt}
-                scale={item.scale}
+                tilt_config={item.tilt_config}
               />
             );
           })
@@ -203,7 +272,7 @@ const DnDGhost = ({ debug = false }) => {
           left: 0,
           margin: 0,
           padding: 0,
-          transform: "translate(0%, 0%)",
+          transform: `translate(0%, 0%)`,
           width: draggableSize.width,
           height: draggableSize.height,
         };
@@ -253,7 +322,7 @@ const DnDGhost = ({ debug = false }) => {
         100
       ).toFixed(2),
     });
-    setScale(draggableConfig.scale || 1);
+    setScale(draggableConfig.tilt_config?.vanilla_scale);
   }, [draggableSize, draggableInnerPosition, draggableConfig]);
 
   return (
@@ -265,7 +334,7 @@ const DnDGhost = ({ debug = false }) => {
         left: mouse.x - draggableInnerPosition.x,
         width: draggableSize.width,
         height: draggableSize.height,
-        border: debug ? "2px dashed rgba(255, 255, 255, 0.75)" : "none",
+        outline: debug ? "3px dashed rgba(255, 255, 255, 0.75)" : "none",
         zIndex: 2048,
         transformOrigin: `${origin.x}% ${origin.y}%`,
         transition: "transform 420ms cubic-bezier(0.22, 1.18, 0.36, 1)",
@@ -307,7 +376,7 @@ const DnDGhost = ({ debug = false }) => {
     </div>
   );
 };
-const DnDWrapper = ({ children }) => {
+const DnDWrapper = ({ children, debug = false }) => {
   const [draggableSize, setDraggableSize] = useState({ width: 0, height: 0 });
   const [draggableInnerPosition, setDraggableInnerPosition] = useState({
     x: 0,
@@ -344,7 +413,7 @@ const DnDWrapper = ({ children }) => {
       }}
     >
       {children}
-      {draggableComponentRender ? <DnDGhost /> : null}
+      {draggableComponentRender ? <DnDGhost debug={debug} /> : null}
     </DnDContext.Provider>
   );
 };
