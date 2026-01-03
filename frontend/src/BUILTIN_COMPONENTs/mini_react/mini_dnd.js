@@ -116,7 +116,7 @@ const Draggable = ({
       max: tilt_config.vanilla_max_deg || default_tilt_config.vanilla_max_deg,
       scale: tilt_config.vanilla_scale || default_tilt_config.vanilla_scale,
     });
-  }, [tilt_config, tiltRef]);
+  }, [tilt, tilt_config, tiltRef]);
   useEffect(() => {
     if (draggableComponentRender === null) {
       hasCapturedRef.current = false;
@@ -159,6 +159,9 @@ const Droppable = ({
   };
 
   useEffect(() => {
+    console.log("Droppable position updated:", droppableOutterPosition);
+  }, [droppableOutterPosition]);
+  useEffect(() => {
     let index = 0;
     for (let draggable in draggables) {
       const style = {
@@ -185,7 +188,7 @@ const Droppable = ({
         [draggable]: style,
       }));
     }
-  }, []);
+  }, [draggables, draggable_style]);
 
   return (
     <div style={{ ...(style || {}) }} onMouseDown={capturePosition}>
@@ -244,38 +247,6 @@ const DnDGhost = ({ debug = false }) => {
     const normalized = Math.tanh(v / vAtMax);
     return normalized * maxDeg;
   };
-  const computeRotateZ = (
-    vx,
-    vy,
-    originPct,
-    size,
-    {
-      maxDeg = 10, // rotateZ 最大角度一般别太大，3~12之间舒服
-      vAtMax = 1400, // 速度到这附近基本饱和
-      lever = 1.0, // “抓角落更容易拧”的倍率
-    } = {}
-  ) => {
-    if (!size?.width || !size?.height) return 0;
-
-    const ox = originPct.x / 100 - 0.5;
-    const oy = originPct.y / 100 - 0.5;
-
-    // 杠杆长度：离中心越远越大（0~0.707）
-    const r = Math.sqrt(ox * ox + oy * oy);
-    const leverFactor = 1 + lever * (r / 0.707); // 1..(1+lever)
-
-    // 速度归一化
-    const nx = normTanh(vx, vAtMax);
-    const ny = normTanh(vy, vAtMax);
-
-    // 扭矩方向：2D 叉积（origin 向量 × 速度向量）
-    // z = ox*vy - oy*vx
-    const torque = ox * ny - oy * nx;
-
-    // 映射到角度
-    const deg = clamp(torque * maxDeg * leverFactor, -maxDeg, maxDeg);
-    return deg;
-  };
   const smooth = (prev, next, alpha = 0.18) => {
     return prev + (next - prev) * alpha;
   };
@@ -309,8 +280,40 @@ const DnDGhost = ({ debug = false }) => {
         }
       });
     }
-  }, [draggableComponentRender]);
+  }, [draggableComponentRender, draggableSize]);
   useEffect(() => {
+    const computeRotateZ = (
+      vx,
+      vy,
+      originPct,
+      size,
+      {
+        maxDeg = 10, // rotateZ 最大角度一般别太大，3~12之间舒服
+        vAtMax = 1400, // 速度到这附近基本饱和
+        lever = 1.0, // “抓角落更容易拧”的倍率
+      } = {}
+    ) => {
+      if (!size?.width || !size?.height) return 0;
+
+      const ox = originPct.x / 100 - 0.5;
+      const oy = originPct.y / 100 - 0.5;
+
+      // 杠杆长度：离中心越远越大（0~0.707）
+      const r = Math.sqrt(ox * ox + oy * oy);
+      const leverFactor = 1 + lever * (r / 0.707); // 1..(1+lever)
+
+      // 速度归一化
+      const nx = normTanh(vx, vAtMax);
+      const ny = normTanh(vy, vAtMax);
+
+      // 扭矩方向：2D 叉积（origin 向量 × 速度向量）
+      // z = ox*vy - oy*vx
+      const torque = ox * ny - oy * nx;
+
+      // 映射到角度
+      const deg = clamp(torque * maxDeg * leverFactor, -maxDeg, maxDeg);
+      return deg;
+    };
     if (draggableConfig?.tilt === true) {
       if (mouse.vx !== undefined && mouse.vy !== undefined) {
         if (mouse.vx === 0 && mouse.vy === 0) {
